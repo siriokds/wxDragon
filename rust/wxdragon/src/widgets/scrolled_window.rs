@@ -14,7 +14,9 @@ widget_style_enum!(
     variants: {
         Default: 0, "Default style.",
         HScroll: ffi::WXD_HSCROLL, "Includes horizontal scrollbar.",
-        VScroll: ffi::WXD_VSCROLL, "Includes vertical scrollbar."
+        VScroll: ffi::WXD_VSCROLL, "Includes vertical scrollbar.",
+        BorderNone: ffi::WXD_BORDER_NONE, "No border.",
+        WantsChars: ffi::WXD_WANTS_CHARS, "Receives all keys, including Tab and Enter."
     },
     default_variant: Default
 );
