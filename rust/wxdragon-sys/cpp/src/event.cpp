@@ -1280,6 +1280,24 @@ get_wx_event_type_for_c_enum(WXDEventTypeCEnum c_enum_val)
     case WXD_EVENT_TYPE_CALENDAR_WEEKDAY_CLICKED:
         return wxEVT_CALENDAR_WEEKDAY_CLICKED;
 
+    // Window scroll events
+    case WXD_EVENT_TYPE_SCROLLWIN_TOP:
+        return wxEVT_SCROLLWIN_TOP;
+    case WXD_EVENT_TYPE_SCROLLWIN_BOTTOM:
+        return wxEVT_SCROLLWIN_BOTTOM;
+    case WXD_EVENT_TYPE_SCROLLWIN_LINEUP:
+        return wxEVT_SCROLLWIN_LINEUP;
+    case WXD_EVENT_TYPE_SCROLLWIN_LINEDOWN:
+        return wxEVT_SCROLLWIN_LINEDOWN;
+    case WXD_EVENT_TYPE_SCROLLWIN_PAGEUP:
+        return wxEVT_SCROLLWIN_PAGEUP;
+    case WXD_EVENT_TYPE_SCROLLWIN_PAGEDOWN:
+        return wxEVT_SCROLLWIN_PAGEDOWN;
+    case WXD_EVENT_TYPE_SCROLLWIN_THUMBTRACK:
+        return wxEVT_SCROLLWIN_THUMBTRACK;
+    case WXD_EVENT_TYPE_SCROLLWIN_THUMBRELEASE:
+        return wxEVT_SCROLLWIN_THUMBRELEASE;
+
     // Scroll events
     case WXD_EVENT_TYPE_SCROLL_TOP:
         return wxEVT_SCROLL_TOP;

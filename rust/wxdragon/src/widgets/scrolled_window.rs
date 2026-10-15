@@ -180,6 +180,30 @@ impl ScrolledWindow {
         unsafe { ffi::wxd_ScrolledWindow_SetVirtualSize(self.as_ptr(), width, height) };
     }
 
+    /// Binds `callback` to every window scroll event (`wxEVT_SCROLLWIN_*`:
+    /// top, bottom, line up/down, page up/down, thumb track and release).
+    /// Call `event.skip(true)` to let the default scrolling happen.
+    pub fn on_scroll_win<F>(&self, callback: F)
+    where
+        F: FnMut(crate::event::Event) + 'static,
+    {
+        use crate::event::EventType;
+        let shared = std::rc::Rc::new(std::cell::RefCell::new(callback));
+        for kind in [
+            EventType::SCROLLWIN_TOP,
+            EventType::SCROLLWIN_BOTTOM,
+            EventType::SCROLLWIN_LINEUP,
+            EventType::SCROLLWIN_LINEDOWN,
+            EventType::SCROLLWIN_PAGEUP,
+            EventType::SCROLLWIN_PAGEDOWN,
+            EventType::SCROLLWIN_THUMBTRACK,
+            EventType::SCROLLWIN_THUMBRELEASE,
+        ] {
+            let shared = shared.clone();
+            self.bind_internal(kind, move |event| (shared.borrow_mut())(event));
+        }
+    }
+
     pub fn get_scroll_pixels_per_unit(&self) -> (i32, i32) {
         let ptr = self.scrolled_window_ptr();
         if ptr.is_null() {
