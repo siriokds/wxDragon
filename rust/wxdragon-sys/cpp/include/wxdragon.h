@@ -168,6 +168,7 @@ extern "C" {
 #include "core/wxd_config.h"
 #include "core/wxd_display.h"
 #include "core/wxd_colourdatabase.h"
+#include "core/wxd_fontenumerator.h"
 #include "core/wxd_misc.h"
 #include "core/wxd_syssettings.h"
 
