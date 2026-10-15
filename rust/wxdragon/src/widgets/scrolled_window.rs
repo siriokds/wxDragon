@@ -167,6 +167,19 @@ impl ScrolledWindow {
     }
 
     /// Gets the number of pixels per scroll unit.
+    /// Gets the position of the top-left corner of the visible area, in
+    /// scroll units (multiply by `get_scroll_pixels_per_unit` for pixels).
+    pub fn get_view_start(&self) -> (i32, i32) {
+        let (mut x, mut y) = (0, 0);
+        unsafe { ffi::wxd_ScrolledWindow_GetViewStart(self.as_ptr(), &mut x, &mut y) };
+        (x, y)
+    }
+
+    /// Sets the size of the whole scrollable area, in pixels.
+    pub fn set_virtual_size(&self, width: i32, height: i32) {
+        unsafe { ffi::wxd_ScrolledWindow_SetVirtualSize(self.as_ptr(), width, height) };
+    }
+
     pub fn get_scroll_pixels_per_unit(&self) -> (i32, i32) {
         let ptr = self.scrolled_window_ptr();
         if ptr.is_null() {
