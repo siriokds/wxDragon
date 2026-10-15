@@ -107,6 +107,33 @@ wxd_Bitmap_IsOk(const wxd_Bitmap_t* bitmap)
     return bmp->IsOk();
 }
 
+WXD_EXPORTED void
+wxd_Bitmap_SetScaleFactor(wxd_Bitmap_t* bitmap, double scale)
+{
+    wxBitmap* bmp = reinterpret_cast<wxBitmap*>(bitmap);
+    if (bmp && bmp->IsOk() && scale > 0)
+        bmp->SetScaleFactor(scale);
+}
+
+WXD_EXPORTED double
+wxd_Bitmap_GetScaleFactor(const wxd_Bitmap_t* bitmap)
+{
+    const wxBitmap* bmp = reinterpret_cast<const wxBitmap*>(bitmap);
+    if (!bmp || !bmp->IsOk())
+        return 1.0;
+    return bmp->GetScaleFactor();
+}
+
+WXD_EXPORTED wxd_Size
+wxd_Bitmap_GetDIPSize(const wxd_Bitmap_t* bitmap)
+{
+    const wxBitmap* bmp = reinterpret_cast<const wxBitmap*>(bitmap);
+    if (!bmp || !bmp->IsOk())
+        return { 0, 0 };
+    wxSize size = bmp->GetDIPSize();
+    return { size.GetWidth(), size.GetHeight() };
+}
+
 WXD_EXPORTED wxd_Bitmap_t*
 wxd_Bitmap_Clone(const wxd_Bitmap_t* bitmap)
 {

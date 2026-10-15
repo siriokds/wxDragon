@@ -1288,4 +1288,11 @@ wxd_Window_NewControlId(void)
     return wxWindow::NewControlId();
 }
 
+WXD_EXPORTED double
+wxd_Window_GetContentScaleFactor(wxd_Window_t* window)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    return wx_window ? wx_window->GetContentScaleFactor() : 1.0;
+}
+
 } // extern "C"

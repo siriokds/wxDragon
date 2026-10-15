@@ -336,4 +336,9 @@ wxd_Window_GetTopLevelWindows(wxd_Window_t** out, int capacity);
 WXD_EXPORTED int
 wxd_Window_NewControlId(void);
 
+// The ratio between physical pixels and logical units of the window's
+// screen (2.0 on Retina, 1.5 on a 150% Windows screen).
+WXD_EXPORTED double
+wxd_Window_GetContentScaleFactor(wxd_Window_t* window);
+
 #endif // WXD_WINDOW_BASE_H

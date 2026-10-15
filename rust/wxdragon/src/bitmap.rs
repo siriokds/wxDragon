@@ -111,6 +111,32 @@ impl Bitmap {
         unsafe { ffi::wxd_Bitmap_GetHeight(self.as_const_ptr()) as i32 }
     }
 
+    /// Sets the scale of the pixels: 2.0 makes a 32x32 bitmap draw as 16x16
+    /// logical units (crisp on a Retina screen).
+    pub fn set_scale_factor(&self, scale: f64) {
+        let ptr = self.as_const_ptr() as *mut ffi::wxd_Bitmap_t;
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_Bitmap_SetScaleFactor(ptr, scale) };
+        }
+    }
+
+    /// The scale of the pixels (1.0 if none was set).
+    pub fn get_scale_factor(&self) -> f64 {
+        if self.as_const_ptr().is_null() {
+            return 1.0;
+        }
+        unsafe { ffi::wxd_Bitmap_GetScaleFactor(self.as_const_ptr()) }
+    }
+
+    /// The size in device-independent pixels (pixel size divided by the scale).
+    pub fn get_dip_size(&self) -> crate::geometry::Size {
+        if self.as_const_ptr().is_null() {
+            return crate::geometry::Size::new(0, 0);
+        }
+        let size = unsafe { ffi::wxd_Bitmap_GetDIPSize(self.as_const_ptr()) };
+        crate::geometry::Size::new(size.width, size.height)
+    }
+
     /// Checks if the bitmap is valid.
     pub fn is_ok(&self) -> bool {
         if self.as_const_ptr().is_null() {

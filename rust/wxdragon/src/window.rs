@@ -858,6 +858,16 @@ pub trait WxWidget: std::any::Any {
         }
     }
 
+    /// The ratio between physical pixels and logical units of the window's
+    /// screen (2.0 on Retina, 1.5 on a 150% Windows screen).
+    fn get_content_scale_factor(&self) -> f64 {
+        let handle = self.handle_ptr();
+        if handle.is_null() {
+            return 1.0;
+        }
+        unsafe { ffi::wxd_Window_GetContentScaleFactor(handle) }
+    }
+
     /// Gets the top-level window (frame or dialog) containing this window.
     fn get_top_level_parent(&self) -> Option<Window> {
         let handle = self.handle_ptr();
