@@ -214,7 +214,9 @@ crate::widget_style_enum!(
         TabStop: ffi::WXD_WS_TABSTOP, "The window can receive keyboard focus when the user presses the TAB key.",
         ThickFrame: ffi::WXD_WS_THICKFRAME, "The window has a sizing border.",
         Visible: ffi::WXD_WS_VISIBLE, "The window is initially visible.",
-        VScroll: ffi::WXD_WS_VSCROLL, "The window has a vertical scroll bar."
+        VScroll: ffi::WXD_WS_VSCROLL, "The window has a vertical scroll bar.",
+        WantsChars: ffi::WXD_WANTS_CHARS, "The window receives all keys, including Tab and Enter, instead of the dialog navigation using them.",
+        FullRepaintOnResize: ffi::WXD_FULL_REPAINT_ON_RESIZE, "The whole window is repainted when it is resized, not only the newly exposed part."
     },
     default_variant: Overlapped
 );

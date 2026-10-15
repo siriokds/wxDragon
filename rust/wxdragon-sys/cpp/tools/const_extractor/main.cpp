@@ -165,6 +165,8 @@ main(int argc, char** argv)
     constants_to_extract.push_back({ "wxMAXIMIZE_BOX", wxMAXIMIZE_BOX });
     constants_to_extract.push_back({ "wxMINIMIZE_BOX", wxMINIMIZE_BOX });
     constants_to_extract.push_back({ "wxTAB_TRAVERSAL", wxTAB_TRAVERSAL });
+    constants_to_extract.push_back({ "wxWANTS_CHARS", wxWANTS_CHARS });
+    constants_to_extract.push_back({ "wxFULL_REPAINT_ON_RESIZE", wxFULL_REPAINT_ON_RESIZE });
     constants_to_extract.push_back({ "wxALIGN_LEFT", wxALIGN_LEFT });
     constants_to_extract.push_back({ "wxALIGN_RIGHT", wxALIGN_RIGHT });
     constants_to_extract.push_back(
