@@ -48,6 +48,8 @@ pub enum WindowEvent {
     UpdateUi,
     InitDialog,
     MouseCaptureLost,
+    /// The system colours or the light/dark appearance changed.
+    SysColourChanged,
 
     // Misc events
     Idle,
@@ -493,6 +495,7 @@ crate::implement_window_category_event_handlers!(
     UpdateUi => update_ui, EventType::UPDATE_UI,
     InitDialog => init_dialog, EventType::INIT_DIALOG,
     MouseCaptureLost => mouse_capture_lost, EventType::MOUSE_CAPTURE_LOST,
+    SysColourChanged => sys_colour_changed, EventType::SYS_COLOUR_CHANGED,
     Idle => idle, EventType::IDLE,
     Close => close, EventType::CLOSE_WINDOW,
     EndSession => end_session, EventType::END_SESSION,
