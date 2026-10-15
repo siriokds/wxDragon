@@ -1280,6 +1280,24 @@ get_wx_event_type_for_c_enum(WXDEventTypeCEnum c_enum_val)
     case WXD_EVENT_TYPE_CALENDAR_WEEKDAY_CLICKED:
         return wxEVT_CALENDAR_WEEKDAY_CLICKED;
 
+    // Window events
+    case WXD_EVENT_TYPE_LEFT_DCLICK:
+        return wxEVT_LEFT_DCLICK;
+    case WXD_EVENT_TYPE_MOUSE_CAPTURE_LOST:
+        return wxEVT_MOUSE_CAPTURE_LOST;
+    case WXD_EVENT_TYPE_MAXIMIZE:
+        return wxEVT_MAXIMIZE;
+    case WXD_EVENT_TYPE_DPI_CHANGED:
+        return wxEVT_DPI_CHANGED;
+    case WXD_EVENT_TYPE_DISPLAY_CHANGED:
+        return wxEVT_DISPLAY_CHANGED;
+    case WXD_EVENT_TYPE_ACTIVATE_APP:
+        return wxEVT_ACTIVATE_APP;
+    case WXD_EVENT_TYPE_UPDATE_UI:
+        return wxEVT_UPDATE_UI;
+    case WXD_EVENT_TYPE_INIT_DIALOG:
+        return wxEVT_INIT_DIALOG;
+
     // Window scroll events
     case WXD_EVENT_TYPE_SCROLLWIN_TOP:
         return wxEVT_SCROLLWIN_TOP;
@@ -1637,7 +1655,8 @@ wxd_IsMouseButtonEvent(wxd_Event_t* event)
     wxEventType type = wx_event->GetEventType();
 
     // Check if it's any of the mouse button event types
-    return (type == wxEVT_LEFT_DOWN || type == wxEVT_LEFT_UP || type == wxEVT_RIGHT_DOWN ||
+    return (type == wxEVT_LEFT_DOWN || type == wxEVT_LEFT_UP || type == wxEVT_LEFT_DCLICK ||
+            type == wxEVT_RIGHT_DOWN ||
             type == wxEVT_RIGHT_UP || type == wxEVT_MIDDLE_DOWN || type == wxEVT_MIDDLE_UP ||
             type == wxEVT_MOUSEWHEEL) ?
                1 :
@@ -2271,4 +2290,48 @@ wxd_ActivateEvent_IsActive(wxd_Event_t* event)
     if (!activate_event)
         return false;
     return activate_event->GetActive();
+}
+
+WXD_EXPORTED void
+wxd_UpdateUIEvent_Enable(wxd_Event_t* event, bool enable)
+{
+    wxUpdateUIEvent* update = event ? dynamic_cast<wxUpdateUIEvent*>(reinterpret_cast<wxEvent*>(event)) : nullptr;
+    if (update)
+        update->Enable(enable);
+}
+
+WXD_EXPORTED void
+wxd_UpdateUIEvent_Check(wxd_Event_t* event, bool check)
+{
+    wxUpdateUIEvent* update = event ? dynamic_cast<wxUpdateUIEvent*>(reinterpret_cast<wxEvent*>(event)) : nullptr;
+    if (update)
+        update->Check(check);
+}
+
+WXD_EXPORTED void
+wxd_UpdateUIEvent_SetText(wxd_Event_t* event, const char* text)
+{
+    wxUpdateUIEvent* update = event ? dynamic_cast<wxUpdateUIEvent*>(reinterpret_cast<wxEvent*>(event)) : nullptr;
+    if (update && text)
+        update->SetText(wxString::FromUTF8(text));
+}
+
+WXD_EXPORTED wxd_Size
+wxd_DPIChangedEvent_GetOldDPI(wxd_Event_t* event)
+{
+    wxDPIChangedEvent* dpi = event ? dynamic_cast<wxDPIChangedEvent*>(reinterpret_cast<wxEvent*>(event)) : nullptr;
+    if (!dpi)
+        return { -1, -1 };
+    wxSize size = dpi->GetOldDPI();
+    return { size.GetWidth(), size.GetHeight() };
+}
+
+WXD_EXPORTED wxd_Size
+wxd_DPIChangedEvent_GetNewDPI(wxd_Event_t* event)
+{
+    wxDPIChangedEvent* dpi = event ? dynamic_cast<wxDPIChangedEvent*>(reinterpret_cast<wxEvent*>(event)) : nullptr;
+    if (!dpi)
+        return { -1, -1 };
+    wxSize size = dpi->GetNewDPI();
+    return { size.GetWidth(), size.GetHeight() };
 }

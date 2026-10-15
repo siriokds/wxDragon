@@ -23,8 +23,8 @@ pub mod window_events;
 
 // Re-export window events for easier access
 pub use window_events::{
-    IdleEventData, KeyboardEvent, MagnifyEvent, MouseButtonEvent, MouseEnterEvent, MouseLeaveEvent, MouseMotionEvent,
-    SessionEventData, WindowEvent, WindowEventData, WindowEvents, WindowSizeEvent,
+    DpiChangedEventData, IdleEventData, KeyboardEvent, MagnifyEvent, MouseButtonEvent, MouseEnterEvent, MouseLeaveEvent,
+    MouseMotionEvent, SessionEventData, UpdateUiEventData, WindowEvent, WindowEventData, WindowEvents, WindowSizeEvent,
 };
 
 // Re-export button events for easier access
@@ -243,6 +243,15 @@ pub struct EventType: ffi::WXDEventTypeCEnum { // Use the generated C enum type
     const SCROLLWIN_PAGEDOWN = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_SCROLLWIN_PAGEDOWN;
     const SCROLLWIN_THUMBTRACK = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_SCROLLWIN_THUMBTRACK;
     const SCROLLWIN_THUMBRELEASE = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_SCROLLWIN_THUMBRELEASE;
+    // Window events
+    const LEFT_DCLICK = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_LEFT_DCLICK;
+    const MOUSE_CAPTURE_LOST = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_MOUSE_CAPTURE_LOST;
+    const MAXIMIZE = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_MAXIMIZE;
+    const DPI_CHANGED = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_DPI_CHANGED;
+    const DISPLAY_CHANGED = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_DISPLAY_CHANGED;
+    const ACTIVATE_APP = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_ACTIVATE_APP;
+    const UPDATE_UI = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_UPDATE_UI;
+    const INIT_DIALOG = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_INIT_DIALOG;
     const FILE_PICKER_CHANGED = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_FILEPICKER_CHANGED;
     const DIR_PICKER_CHANGED = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_DIRPICKER_CHANGED;
     const FONT_PICKER_CHANGED = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_FONTPICKER_CHANGED;

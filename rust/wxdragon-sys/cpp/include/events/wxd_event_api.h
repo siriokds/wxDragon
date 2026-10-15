@@ -236,6 +236,23 @@ wxd_CollapsiblePaneEvent_GetCollapsed(wxd_Event_t* event);
 WXD_EXPORTED bool
 wxd_ActivateEvent_IsActive(wxd_Event_t* event);
 
+// wxUpdateUIEvent: what the handler decides for the menu item or control.
+WXD_EXPORTED void
+wxd_UpdateUIEvent_Enable(wxd_Event_t* event, bool enable);
+
+WXD_EXPORTED void
+wxd_UpdateUIEvent_Check(wxd_Event_t* event, bool check);
+
+WXD_EXPORTED void
+wxd_UpdateUIEvent_SetText(wxd_Event_t* event, const char* text);
+
+// wxDPIChangedEvent: the resolution before and after.
+WXD_EXPORTED wxd_Size
+wxd_DPIChangedEvent_GetOldDPI(wxd_Event_t* event);
+
+WXD_EXPORTED wxd_Size
+wxd_DPIChangedEvent_GetNewDPI(wxd_Event_t* event);
+
 #ifdef __cplusplus
 }
 #endif

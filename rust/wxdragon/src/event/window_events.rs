@@ -12,6 +12,7 @@ pub enum WindowEvent {
     // Mouse events
     LeftDown,
     LeftUp,
+    LeftDClick,
     RightDown,
     RightUp,
     MiddleDown,
@@ -40,6 +41,14 @@ pub enum WindowEvent {
     KillFocus, // Now implemented in C++ layer
     Activate,  // Now implemented in C++ layer
 
+    Maximize,
+    DpiChanged,
+    DisplayChanged,
+    ActivateApp,
+    UpdateUi,
+    InitDialog,
+    MouseCaptureLost,
+
     // Misc events
     Idle,
     Close,
@@ -61,6 +70,8 @@ pub enum WindowEventData {
     Idle(IdleEventData),
     Activate(ActivateEventData),
     Session(SessionEventData),
+    UpdateUi(UpdateUiEventData),
+    DpiChanged(DpiChangedEventData),
     General(Event),
 }
 
@@ -100,7 +111,11 @@ impl WindowEventData {
                 return WindowEventData::Magnify(MagnifyEvent::new(event));
             } else if event_type == EventType::IDLE {
                 return WindowEventData::Idle(IdleEventData::new(event));
-            } else if event_type == EventType::ACTIVATE {
+            } else if event_type == EventType::UPDATE_UI {
+                return WindowEventData::UpdateUi(UpdateUiEventData::new(event));
+            } else if event_type == EventType::DPI_CHANGED {
+                return WindowEventData::DpiChanged(DpiChangedEventData::new(event));
+            } else if event_type == EventType::ACTIVATE || event_type == EventType::ACTIVATE_APP {
                 return WindowEventData::Activate(ActivateEventData::new(event));
             } else if event_type == EventType::END_SESSION || event_type == EventType::QUERY_END_SESSION {
                 return WindowEventData::Session(SessionEventData::new(event));
@@ -124,6 +139,8 @@ impl WindowEventData {
             WindowEventData::Idle(event) => event.event.skip(skip),
             WindowEventData::Activate(event) => event.event.skip(skip),
             WindowEventData::Session(event) => event.event.skip(skip),
+            WindowEventData::UpdateUi(event) => event.event.skip(skip),
+            WindowEventData::DpiChanged(event) => event.event.skip(skip),
             WindowEventData::General(event) => event.skip(skip),
         }
     }
@@ -321,6 +338,76 @@ impl IdleEventData {
     }
 }
 
+/// Update UI events: the handler decides whether a menu item or control is
+/// enabled, checked, and its label.
+#[derive(Debug)]
+pub struct UpdateUiEventData {
+    pub event: Event,
+}
+
+impl UpdateUiEventData {
+    pub fn new(event: Event) -> Self {
+        Self { event }
+    }
+
+    /// The identifier of the menu item or control being updated.
+    pub fn get_id(&self) -> i32 {
+        self.event.get_id()
+    }
+
+    pub fn enable(&self, enable: bool) {
+        if !self.event.is_null() {
+            unsafe { wxdragon_sys::wxd_UpdateUIEvent_Enable(self.event._as_ptr(), enable) };
+        }
+    }
+
+    pub fn check(&self, check: bool) {
+        if !self.event.is_null() {
+            unsafe { wxdragon_sys::wxd_UpdateUIEvent_Check(self.event._as_ptr(), check) };
+        }
+    }
+
+    pub fn set_text(&self, text: &str) {
+        if self.event.is_null() {
+            return;
+        }
+        if let Ok(text) = std::ffi::CString::new(text) {
+            unsafe { wxdragon_sys::wxd_UpdateUIEvent_SetText(self.event._as_ptr(), text.as_ptr()) };
+        }
+    }
+}
+
+/// DPI changed events: the window moved to a screen with another resolution
+/// (or the resolution changed).
+#[derive(Debug)]
+pub struct DpiChangedEventData {
+    pub event: Event,
+}
+
+impl DpiChangedEventData {
+    pub fn new(event: Event) -> Self {
+        Self { event }
+    }
+
+    /// The resolution before the change, in dots per inch.
+    pub fn get_old_dpi(&self) -> Size {
+        if self.event.is_null() {
+            return Size::new(-1, -1);
+        }
+        let size = unsafe { wxdragon_sys::wxd_DPIChangedEvent_GetOldDPI(self.event._as_ptr()) };
+        Size::new(size.width, size.height)
+    }
+
+    /// The resolution after the change, in dots per inch.
+    pub fn get_new_dpi(&self) -> Size {
+        if self.event.is_null() {
+            return Size::new(-1, -1);
+        }
+        let size = unsafe { wxdragon_sys::wxd_DPIChangedEvent_GetNewDPI(self.event._as_ptr()) };
+        Size::new(size.width, size.height)
+    }
+}
+
 /// Activate events (window gaining or losing focus at the OS level)
 #[derive(Debug)]
 pub struct ActivateEventData {
@@ -368,6 +455,7 @@ crate::implement_window_category_event_handlers!(
     WindowEvents, WindowEvent, WindowEventData,
     LeftDown => mouse_left_down, EventType::LEFT_DOWN,
     LeftUp => mouse_left_up, EventType::LEFT_UP,
+    LeftDClick => mouse_left_dclick, EventType::LEFT_DCLICK,
     RightDown => mouse_right_down, EventType::RIGHT_DOWN,
     RightUp => mouse_right_up, EventType::RIGHT_UP,
     MiddleDown => mouse_middle_down, EventType::MIDDLE_DOWN,
@@ -388,6 +476,13 @@ crate::implement_window_category_event_handlers!(
     SetFocus => set_focus, EventType::SET_FOCUS,
     KillFocus => kill_focus, EventType::KILL_FOCUS,
     Activate => activate, EventType::ACTIVATE,
+    Maximize => maximize, EventType::MAXIMIZE,
+    DpiChanged => dpi_changed, EventType::DPI_CHANGED,
+    DisplayChanged => display_changed, EventType::DISPLAY_CHANGED,
+    ActivateApp => activate_app, EventType::ACTIVATE_APP,
+    UpdateUi => update_ui, EventType::UPDATE_UI,
+    InitDialog => init_dialog, EventType::INIT_DIALOG,
+    MouseCaptureLost => mouse_capture_lost, EventType::MOUSE_CAPTURE_LOST,
     Idle => idle, EventType::IDLE,
     Close => close, EventType::CLOSE_WINDOW,
     EndSession => end_session, EventType::END_SESSION,
