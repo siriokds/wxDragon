@@ -127,4 +127,24 @@ wxd_ScrolledWindow_SetVirtualSize(wxd_ScrolledWindow_t* self, int w, int h)
     }
 }
 
+static wxScrollbarVisibility
+wxd_scrollbar_visibility(int value)
+{
+    if (value < 0)
+        return wxSHOW_SB_NEVER;
+    if (value > 0)
+        return wxSHOW_SB_ALWAYS;
+    return wxSHOW_SB_DEFAULT;
+}
+
+WXD_EXPORTED void
+wxd_ScrolledWindow_ShowScrollbars(wxd_ScrolledWindow_t* self, int horizontal, int vertical)
+{
+    wxScrolledWindow* scrolledWin = (wxScrolledWindow*)self;
+    if (scrolledWin) {
+        scrolledWin->ShowScrollbars(wxd_scrollbar_visibility(horizontal),
+                                    wxd_scrollbar_visibility(vertical));
+    }
+}
+
 } // extern "C"

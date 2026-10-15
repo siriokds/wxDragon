@@ -803,6 +803,73 @@ pub trait WxWidget: std::any::Any {
         }
     }
 
+    /// Centres the window on its parent (or on the screen for a top-level
+    /// window without a parent), in both directions.
+    fn centre_on_parent(&self) {
+        let handle = self.handle_ptr();
+        if !handle.is_null() {
+            unsafe { ffi::wxd_Window_CentreOnParent(handle, ffi::WXD_BOTH as i32) };
+        }
+    }
+
+    /// Recomputes the virtual size of a scrolled window from its sizer.
+    fn fit_inside(&self) {
+        let handle = self.handle_ptr();
+        if !handle.is_null() {
+            unsafe { ffi::wxd_Window_FitInside(handle) };
+        }
+    }
+
+    /// Gets the client area as a rectangle (origin is usually 0, 0).
+    fn get_client_rect(&self) -> crate::geometry::Rect {
+        let handle = self.handle_ptr();
+        if handle.is_null() {
+            return crate::geometry::Rect::new(0, 0, -1, -1);
+        }
+        unsafe { ffi::wxd_Window_GetClientRect(handle) }.into()
+    }
+
+    /// Gets the position of the window on the screen.
+    fn get_screen_position(&self) -> Point {
+        let handle = self.handle_ptr();
+        if handle.is_null() {
+            return Point::new(-1, -1);
+        }
+        let p = unsafe { ffi::wxd_Window_GetScreenPosition(handle) };
+        Point::new(p.x, p.y)
+    }
+
+    /// Gets the rectangle of the window on the screen.
+    fn get_screen_rect(&self) -> crate::geometry::Rect {
+        let handle = self.handle_ptr();
+        if handle.is_null() {
+            return crate::geometry::Rect::new(0, 0, -1, -1);
+        }
+        unsafe { ffi::wxd_Window_GetScreenRect(handle) }.into()
+    }
+
+    /// Sets the size variant of a control (small, mini…), as on macOS.
+    fn set_window_variant(&self, variant: WindowVariant) {
+        let handle = self.handle_ptr();
+        if !handle.is_null() {
+            unsafe { ffi::wxd_Window_SetWindowVariant(handle, variant as i32) };
+        }
+    }
+
+    /// Gets the top-level window (frame or dialog) containing this window.
+    fn get_top_level_parent(&self) -> Option<Window> {
+        let handle = self.handle_ptr();
+        if handle.is_null() {
+            return None;
+        }
+        let ptr = unsafe { ffi::wxd_Window_GetTopLevelParent(handle) };
+        if ptr.is_null() {
+            None
+        } else {
+            Some(unsafe { Window::from_ptr(ptr) })
+        }
+    }
+
     /// Gets the client area size.
     fn get_client_size(&self) -> Size {
         let handle = self.handle_ptr();
@@ -2302,4 +2369,53 @@ mod tests {
             log::warn!("Test failed with error: {:?}", e);
         }
     }
+}
+
+/// The size variants of a control (`wxWindowVariant`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(i32)]
+pub enum WindowVariant {
+    Normal = 0,
+    Small = 1,
+    Mini = 2,
+    Large = 3,
+}
+
+/// When a scrollbar is shown (`wxScrollbarVisibility`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(i32)]
+pub enum ScrollbarVisibility {
+    Never = -1,
+    Default = 0,
+    Always = 1,
+}
+
+/// The window that has the keyboard focus, if any.
+pub fn find_focus() -> Option<Window> {
+    let ptr = unsafe { ffi::wxd_Window_FindFocus() };
+    if ptr.is_null() {
+        None
+    } else {
+        Some(unsafe { Window::from_ptr(ptr) })
+    }
+}
+
+/// All the top-level windows (frames and dialogs) currently open.
+pub fn top_level_windows() -> Vec<Window> {
+    let count = unsafe { ffi::wxd_Window_GetTopLevelWindows(std::ptr::null_mut(), 0) };
+    if count <= 0 {
+        return Vec::new();
+    }
+    let mut ptrs = vec![std::ptr::null_mut(); count as usize];
+    let filled = unsafe { ffi::wxd_Window_GetTopLevelWindows(ptrs.as_mut_ptr(), count) };
+    ptrs.truncate(filled.clamp(0, count) as usize);
+    ptrs.into_iter()
+        .filter(|p| !p.is_null())
+        .map(|p| unsafe { Window::from_ptr(p) })
+        .collect()
+}
+
+/// A new, unique identifier for a control or menu item.
+pub fn new_control_id() -> i32 {
+    unsafe { ffi::wxd_Window_NewControlId() }
 }

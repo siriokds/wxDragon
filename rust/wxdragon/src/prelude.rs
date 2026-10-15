@@ -37,7 +37,10 @@ pub use crate::utils::{
     launch_default_application, launch_default_browser,
 };
 pub use crate::validators::{TextValidator, TextValidatorStyle};
-pub use crate::window::{BackgroundStyle, ExtraWindowStyle, Window, WindowStyle, WxWidget, WxWidgetDowncast};
+pub use crate::window::{
+    BackgroundStyle, ExtraWindowStyle, ScrollbarVisibility, Window, WindowStyle, WindowVariant, WxWidget, WxWidgetDowncast,
+    find_focus, new_control_id, top_level_windows,
+};
 
 // --- Sizers ---
 pub use crate::sizers::box_sizer::{BoxSizer, BoxSizerBuilder};

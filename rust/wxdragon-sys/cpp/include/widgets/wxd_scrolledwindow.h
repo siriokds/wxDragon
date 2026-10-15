@@ -36,4 +36,8 @@ wxd_ScrolledWindow_GetViewStart(wxd_ScrolledWindow_t* self, int* x, int* y);
 WXD_EXPORTED void
 wxd_ScrolledWindow_SetVirtualSize(wxd_ScrolledWindow_t* self, int w, int h);
 
+// visibility: -1 never, 0 default, 1 always (wxScrollbarVisibility)
+WXD_EXPORTED void
+wxd_ScrolledWindow_ShowScrollbars(wxd_ScrolledWindow_t* self, int horizontal, int vertical);
+
 #endif // WXD_SCROLLEDWINDOW_H

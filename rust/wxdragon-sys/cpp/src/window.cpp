@@ -1188,4 +1188,104 @@ wxd_Window_PostMenuCommand(wxd_Window_t* window, int id)
     wxPostEvent(wx_window, evt);
 }
 
+// --- Geometry and placement ---
+
+WXD_EXPORTED void
+wxd_Window_CentreOnParent(wxd_Window_t* window, int direction)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    if (wx_window) {
+        wx_window->CentreOnParent(direction);
+    }
+}
+
+WXD_EXPORTED void
+wxd_Window_FitInside(wxd_Window_t* window)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    if (wx_window) {
+        wx_window->FitInside();
+    }
+}
+
+WXD_EXPORTED wxd_Rect
+wxd_Window_GetClientRect(wxd_Window_t* window)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    if (!wx_window) {
+        return { 0, 0, -1, -1 };
+    }
+    wxRect r = wx_window->GetClientRect();
+    return { r.x, r.y, r.width, r.height };
+}
+
+WXD_EXPORTED wxd_Point
+wxd_Window_GetScreenPosition(wxd_Window_t* window)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    if (!wx_window) {
+        return { -1, -1 };
+    }
+    wxPoint p = wx_window->GetScreenPosition();
+    return { p.x, p.y };
+}
+
+WXD_EXPORTED wxd_Rect
+wxd_Window_GetScreenRect(wxd_Window_t* window)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    if (!wx_window) {
+        return { 0, 0, -1, -1 };
+    }
+    wxRect r = wx_window->GetScreenRect();
+    return { r.x, r.y, r.width, r.height };
+}
+
+WXD_EXPORTED void
+wxd_Window_SetWindowVariant(wxd_Window_t* window, int variant)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    if (wx_window && variant >= wxWINDOW_VARIANT_NORMAL && variant < wxWINDOW_VARIANT_MAX) {
+        wx_window->SetWindowVariant(static_cast<wxWindowVariant>(variant));
+    }
+}
+
+// --- Top-level windows and focus ---
+
+WXD_EXPORTED wxd_Window_t*
+wxd_Window_GetTopLevelParent(wxd_Window_t* window)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    if (!wx_window) {
+        return nullptr;
+    }
+    return reinterpret_cast<wxd_Window_t*>(wxGetTopLevelParent(wx_window));
+}
+
+WXD_EXPORTED wxd_Window_t*
+wxd_Window_FindFocus(void)
+{
+    return reinterpret_cast<wxd_Window_t*>(wxWindow::FindFocus());
+}
+
+WXD_EXPORTED int
+wxd_Window_GetTopLevelWindows(wxd_Window_t** out, int capacity)
+{
+    int count = 0;
+    for (wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst(); node;
+         node = node->GetNext()) {
+        if (out && count < capacity) {
+            out[count] = reinterpret_cast<wxd_Window_t*>(node->GetData());
+        }
+        ++count;
+    }
+    return count;
+}
+
+WXD_EXPORTED int
+wxd_Window_NewControlId(void)
+{
+    return wxWindow::NewControlId();
+}
+
 } // extern "C"

@@ -75,4 +75,7 @@ pub use widgets::dataview::{
 pub use dc::{BrushStyle, DeviceContext, PenStyle};
 
 // Re-export window functionality including downcasting
-pub use window::{BackgroundStyle, ExtraWindowStyle, Window, WxWidget, WxWidgetDowncast};
+pub use window::{
+    BackgroundStyle, ExtraWindowStyle, ScrollbarVisibility, Window, WindowVariant, WxWidget, WxWidgetDowncast, find_focus,
+    new_control_id, top_level_windows,
+};

@@ -204,6 +204,11 @@ impl ScrolledWindow {
         }
     }
 
+    /// Chooses when the scrollbars are shown.
+    pub fn show_scrollbars(&self, horizontal: crate::window::ScrollbarVisibility, vertical: crate::window::ScrollbarVisibility) {
+        unsafe { ffi::wxd_ScrolledWindow_ShowScrollbars(self.as_ptr(), horizontal as i32, vertical as i32) };
+    }
+
     pub fn get_scroll_pixels_per_unit(&self) -> (i32, i32) {
         let ptr = self.scrolled_window_ptr();
         if ptr.is_null() {

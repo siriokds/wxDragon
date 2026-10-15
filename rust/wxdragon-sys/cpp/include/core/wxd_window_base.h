@@ -302,4 +302,38 @@ wxd_Window_ProcessMenuCommand(wxd_Window_t* window, int id);
 WXD_EXPORTED void
 wxd_Window_PostMenuCommand(wxd_Window_t* window, int id);
 
+// --- Geometry and placement ---
+WXD_EXPORTED void
+wxd_Window_CentreOnParent(wxd_Window_t* window, int direction);
+
+WXD_EXPORTED void
+wxd_Window_FitInside(wxd_Window_t* window);
+
+WXD_EXPORTED wxd_Rect
+wxd_Window_GetClientRect(wxd_Window_t* window);
+
+WXD_EXPORTED wxd_Point
+wxd_Window_GetScreenPosition(wxd_Window_t* window);
+
+WXD_EXPORTED wxd_Rect
+wxd_Window_GetScreenRect(wxd_Window_t* window);
+
+// variant: 0 normal, 1 small, 2 mini, 3 large (wxWindowVariant)
+WXD_EXPORTED void
+wxd_Window_SetWindowVariant(wxd_Window_t* window, int variant);
+
+// --- Top-level windows and focus ---
+WXD_EXPORTED wxd_Window_t*
+wxd_Window_GetTopLevelParent(wxd_Window_t* window);
+
+WXD_EXPORTED wxd_Window_t*
+wxd_Window_FindFocus(void);
+
+// Number of top-level windows; fills `out` with up to `capacity` of them.
+WXD_EXPORTED int
+wxd_Window_GetTopLevelWindows(wxd_Window_t** out, int capacity);
+
+WXD_EXPORTED int
+wxd_Window_NewControlId(void);
+
 #endif // WXD_WINDOW_BASE_H
