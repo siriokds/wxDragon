@@ -5,6 +5,15 @@
 #include <wx/bitmap.h>
 #include <wx/bmpbndl.h>
 
+// wxWidgets asserts that a client id ends with "_C": an empty string means
+// wxART_OTHER.
+static wxString
+ArtClientFromUTF8(const char* client)
+{
+    wxString wxClient = wxString::FromUTF8(client);
+    return wxClient.IsEmpty() ? wxString(wxART_OTHER) : wxClient;
+}
+
 // We add extern "C" for all the function definitions to make sure they use C linkage
 extern "C" {
 
@@ -12,12 +21,7 @@ WXD_EXPORTED wxd_Bitmap_t*
 wxd_ArtProvider_GetBitmap(const char* id, const char* client, wxd_Size size_req)
 {
     wxString wxId = wxString::FromUTF8(id);
-    wxString wxClient = wxString::FromUTF8(client);
-    if (wxClient.IsEmpty()) {
-        // wxWidgets uses wxART_OTHER if client is empty string, but being explicit is fine.
-        // However, wxArtProvider::GetBitmap takes wxArtClient which is also a wxString.
-        // An empty wxString is the correct way to represent wxART_OTHER if no specific client is given.
-    }
+    wxString wxClient = ArtClientFromUTF8(client);
 
     wxSize wxSizeReq(size_req.width, size_req.height);
 
@@ -42,7 +46,7 @@ WXD_EXPORTED wxd_BitmapBundle_t*
 wxd_ArtProvider_GetBitmapBundle(const char* id, const char* client, wxd_Size size_req)
 {
     wxString wxId = wxString::FromUTF8(id);
-    wxString wxClient = wxString::FromUTF8(client);
+    wxString wxClient = ArtClientFromUTF8(client);
     wxSize wxSizeReq(size_req.width, size_req.height);
 
     // wxArtProvider::GetBitmapBundle returns a wxBitmapBundle
@@ -61,7 +65,7 @@ wxd_ArtProvider_GetBitmapBundle(const char* id, const char* client, wxd_Size siz
 WXD_EXPORTED wxd_Size
 wxd_ArtProvider_GetDIPSizeHint(const char* client)
 {
-    wxString wxClient = wxString::FromUTF8(client);
+    wxString wxClient = ArtClientFromUTF8(client);
     wxSize wx_size = wxArtProvider::GetDIPSizeHint(wxClient);
 
     wxd_Size size;
@@ -75,7 +79,7 @@ wxd_ArtProvider_GetDIPSizeHint(const char* client)
 WXD_EXPORTED wxd_Size
 wxd_ArtProvider_GetSizeHint(const char* client, wxd_Window_t* window)
 {
-    wxString wxClient = wxString::FromUTF8(client);
+    wxString wxClient = ArtClientFromUTF8(client);
     wxWindow* wx_window = window ? reinterpret_cast<wxWindow*>(window) : nullptr;
 
     wxSize wx_size = wxArtProvider::GetSizeHint(wxClient, wx_window);
@@ -91,7 +95,7 @@ wxd_ArtProvider_GetSizeHint(const char* client, wxd_Window_t* window)
 WXD_EXPORTED wxd_Size
 wxd_ArtProvider_GetNativeDIPSizeHint(const char* client)
 {
-    wxString wxClient = wxString::FromUTF8(client);
+    wxString wxClient = ArtClientFromUTF8(client);
     wxSize wx_size = wxArtProvider::GetNativeDIPSizeHint(wxClient);
 
     wxd_Size size;
@@ -105,7 +109,7 @@ wxd_ArtProvider_GetNativeDIPSizeHint(const char* client)
 WXD_EXPORTED wxd_Size
 wxd_ArtProvider_GetNativeSizeHint(const char* client, wxd_Window_t* window)
 {
-    wxString wxClient = wxString::FromUTF8(client);
+    wxString wxClient = ArtClientFromUTF8(client);
     wxWindow* wx_window = window ? reinterpret_cast<wxWindow*>(window) : nullptr;
 
     wxSize wx_size = wxArtProvider::GetNativeSizeHint(wxClient, wx_window);

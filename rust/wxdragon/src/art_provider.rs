@@ -132,7 +132,7 @@ pub enum ArtClient {
     FrameIcon,
     MessageBox,
     Dialog,
-    Other, // Represents wxART_OTHER, typically an empty string
+    Other, // Represents wxART_OTHER ("wxART_OTHER_C")
 }
 
 impl ArtClient {
@@ -144,7 +144,7 @@ impl ArtClient {
             ArtClient::FrameIcon => "wxART_FRAME_ICON_C",
             ArtClient::MessageBox => "wxART_MESSAGE_BOX_C",
             ArtClient::Dialog => "wxART_DIALOG_C",
-            ArtClient::Other => "", // Empty string for wxART_OTHER
+            ArtClient::Other => "wxART_OTHER_C",
         }
     }
 }
@@ -159,7 +159,7 @@ impl ArtProvider {
     /// * `id` - The art ID (e.g., `ART_FILE_OPEN`, `ART_ERROR`). These are string constants.
     /// * `client_id` - The client for which the bitmap is being requested.
     ///   This might affect the expected size or resolution.
-    ///   An empty string can be used for `wxART_OTHER`.
+    ///   Use `ArtClient::Other` for `wxART_OTHER`.
     /// * `size` - Optional desired size. If `None`, default size is requested (`-1, -1`).
     ///
     /// Returns `Option<Bitmap>`. The bitmap is `None` if not found or an error occurs.
