@@ -41,7 +41,8 @@ widget_style_enum!(
         Vertical: ffi::WXD_SP_VERTICAL, "Vertical split mode (one pane beside the other).",
         PermitUnsplit: ffi::WXD_SP_PERMIT_UNSPLIT, "Always allow unsplitting, even with no minimum pane size.",
         LiveUpdate: ffi::WXD_SP_LIVE_UPDATE, "Redraw window as the sash is moved, rather than just display a line.",
-        ThinSash: ffi::WXD_SP_THIN_SASH, "Use a thin sash."
+        ThinSash: ffi::WXD_SP_THIN_SASH, "Use a thin sash.",
+        Sash3D: ffi::WXD_SP_3DSASH, "Use a 3D sash: wider and easier to grab (the look can be replaced with on_draw_sash)."
     },
     default_variant: Default
 );
@@ -220,6 +221,78 @@ impl SplitterWindow {
             return;
         }
         unsafe { ffi::wxd_SplitterWindow_SetMinimumPaneSize(ptr, size as c_int) };
+    }
+
+    /// Whether the window is split in two panes.
+    pub fn is_split(&self) -> bool {
+        let ptr = self.splitter_ptr();
+        !ptr.is_null() && unsafe { ffi::wxd_SplitterWindow_IsSplit(ptr) }
+    }
+
+    /// Whether the panes are side by side (split vertically).
+    pub fn is_split_vertically(&self) -> bool {
+        let ptr = self.splitter_ptr();
+        !ptr.is_null() && unsafe { ffi::wxd_SplitterWindow_IsSplitVertically(ptr) }
+    }
+
+    /// The thickness of the sash, in pixels.
+    pub fn get_sash_size(&self) -> i32 {
+        let ptr = self.splitter_ptr();
+        if ptr.is_null() {
+            return 0;
+        }
+        unsafe { ffi::wxd_SplitterWindow_GetSashSize(ptr) }
+    }
+
+    /// How a change of size is shared between the panes: 0.0 all to the
+    /// second, 1.0 all to the first, 0.5 half each.
+    pub fn set_sash_gravity(&self, gravity: f64) {
+        let ptr = self.splitter_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_SplitterWindow_SetSashGravity(ptr, gravity) };
+        }
+    }
+
+    /// Draws the sash with `draw` instead of the native look. The closure
+    /// receives the device context, the sash rectangle and whether the
+    /// panes are side by side. It is called only while the window is split.
+    pub fn on_draw_sash<F>(&self, draw: F)
+    where
+        F: FnMut(&crate::dc::GenericDC, crate::geometry::Rect, bool) + 'static,
+    {
+        type Draw = Box<dyn FnMut(&crate::dc::GenericDC, crate::geometry::Rect, bool)>;
+
+        unsafe extern "C" fn trampoline(
+            user_data: *mut std::ffi::c_void,
+            dc: *mut ffi::wxd_DC_t,
+            sash: ffi::wxd_Rect,
+            vertical: bool,
+        ) {
+            let draw = unsafe { &mut *(user_data as *mut Draw) };
+            let dc = unsafe { crate::dc::GenericDC::from_ffi_ptr_unowned(dc) };
+            draw(&dc, sash.into(), vertical);
+        }
+
+        unsafe extern "C" fn free(user_data: *mut std::ffi::c_void) {
+            drop(unsafe { Box::from_raw(user_data as *mut Draw) });
+        }
+
+        let ptr = self.splitter_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        let boxed: Box<Draw> = Box::new(Box::new(draw));
+        let user_data = Box::into_raw(boxed) as *mut std::ffi::c_void;
+        unsafe { ffi::wxd_SplitterWindow_SetDrawSashCallback(ptr, Some(trampoline), Some(free), user_data) };
+    }
+
+    /// Shows or hides the line that follows the mouse while the sash is
+    /// dragged (not needed with `SplitterWindowStyle::LiveUpdate`).
+    pub fn set_sash_tracker_visible(&self, visible: bool) {
+        let ptr = self.splitter_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_SplitterWindow_SetSashTrackerVisible(ptr, visible) };
+        }
     }
 
     /// Returns the underlying WindowHandle for this splitter window.

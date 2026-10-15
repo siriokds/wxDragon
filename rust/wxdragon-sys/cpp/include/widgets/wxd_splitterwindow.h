@@ -31,4 +31,35 @@ wxd_SplitterWindow_GetSashPosition(wxd_SplitterWindow_t* self);
 WXD_EXPORTED void
 wxd_SplitterWindow_SetMinimumPaneSize(wxd_SplitterWindow_t* self, int paneSize);
 
+WXD_EXPORTED bool
+wxd_SplitterWindow_IsSplit(wxd_SplitterWindow_t* self);
+
+// true: the panes are side by side (wxSPLIT_VERTICAL).
+WXD_EXPORTED bool
+wxd_SplitterWindow_IsSplitVertically(wxd_SplitterWindow_t* self);
+
+WXD_EXPORTED int
+wxd_SplitterWindow_GetSashSize(wxd_SplitterWindow_t* self);
+
+WXD_EXPORTED void
+wxd_SplitterWindow_SetSashGravity(wxd_SplitterWindow_t* self, double gravity);
+
+// Custom sash drawing: called instead of wxSplitterWindow::DrawSash with the
+// sash rectangle and the split direction. `free_user_data` releases
+// `user_data` when replaced or when the window is destroyed. Pass a NULL
+// callback to restore the default drawing.
+typedef void (*wxd_SplitterWindow_DrawSash_Callback)(void* user_data, wxd_DC_t* dc, wxd_Rect sash,
+                                                     bool vertical);
+typedef void (*wxd_SplitterWindow_FreeUserData_Callback)(void* user_data);
+
+WXD_EXPORTED void
+wxd_SplitterWindow_SetDrawSashCallback(wxd_SplitterWindow_t* self,
+                                       wxd_SplitterWindow_DrawSash_Callback callback,
+                                       wxd_SplitterWindow_FreeUserData_Callback free_user_data,
+                                       void* user_data);
+
+// false: no tracker line while dragging (useful with wxSP_LIVE_UPDATE).
+WXD_EXPORTED void
+wxd_SplitterWindow_SetSashTrackerVisible(wxd_SplitterWindow_t* self, bool visible);
+
 #endif // WXD_SPLITTERWINDOW_H

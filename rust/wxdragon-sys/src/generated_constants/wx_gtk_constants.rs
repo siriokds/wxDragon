@@ -182,6 +182,7 @@ pub const WXD_NB_NOPAGETHEME: i64 = 1024;
 pub const WXD_SP_NOBORDER: i64 = 0;
 pub const WXD_SP_THIN_SASH: i64 = 0;
 pub const WXD_SP_LIVE_UPDATE: i64 = 128;
+pub const WXD_SP_3DSASH: i64 = 256;
 pub const WXD_SP_3D: i64 = 768;
 pub const WXD_SP_BORDER: i64 = 512;
 pub const WXD_SP_PERMIT_UNSPLIT: i64 = 64;

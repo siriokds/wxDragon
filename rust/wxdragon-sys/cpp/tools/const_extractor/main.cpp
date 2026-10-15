@@ -304,6 +304,7 @@ main(int argc, char** argv)
     constants_to_extract.push_back({ "wxSP_NOBORDER", wxSP_NOBORDER });
     constants_to_extract.push_back({ "wxSP_THIN_SASH", wxSP_THIN_SASH });
     constants_to_extract.push_back({ "wxSP_LIVE_UPDATE", wxSP_LIVE_UPDATE });
+    constants_to_extract.push_back({ "wxSP_3DSASH", wxSP_3DSASH });
     constants_to_extract.push_back({ "wxSP_3D", wxSP_3D });
     constants_to_extract.push_back({ "wxSP_BORDER", wxSP_BORDER });
     constants_to_extract.push_back({ "wxSP_PERMIT_UNSPLIT", wxSP_PERMIT_UNSPLIT });
