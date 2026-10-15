@@ -167,6 +167,12 @@ main(int argc, char** argv)
     constants_to_extract.push_back({ "wxTAB_TRAVERSAL", wxTAB_TRAVERSAL });
     constants_to_extract.push_back({ "wxWANTS_CHARS", wxWANTS_CHARS });
     constants_to_extract.push_back({ "wxFULL_REPAINT_ON_RESIZE", wxFULL_REPAINT_ON_RESIZE });
+    constants_to_extract.push_back({ "wxACCEL_NORMAL", wxACCEL_NORMAL });
+    constants_to_extract.push_back({ "wxACCEL_ALT", wxACCEL_ALT });
+    constants_to_extract.push_back({ "wxACCEL_CTRL", wxACCEL_CTRL });
+    constants_to_extract.push_back({ "wxACCEL_SHIFT", wxACCEL_SHIFT });
+    constants_to_extract.push_back({ "wxACCEL_RAW_CTRL", wxACCEL_RAW_CTRL });
+    constants_to_extract.push_back({ "wxACCEL_CMD", wxACCEL_CMD });
     constants_to_extract.push_back({ "wxALIGN_LEFT", wxALIGN_LEFT });
     constants_to_extract.push_back({ "wxALIGN_RIGHT", wxALIGN_RIGHT });
     constants_to_extract.push_back(

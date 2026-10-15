@@ -196,7 +196,7 @@ pub use crate::widgets::treectrl::{TreeCtrl, TreeCtrlBuilder, TreeCtrlStyle, Tre
 
 // --- Menus ---
 pub use crate::menus::menuitem::{ID_ABOUT, ID_EXIT, ID_SEPARATOR};
-pub use crate::menus::{ItemKind, Menu, MenuBar, MenuItem};
+pub use crate::menus::{AcceleratorFlags, ItemKind, Menu, MenuBar, MenuItem};
 
 // --- Widgets ItemKind (for toolbar) ---
 #[cfg(feature = "aui")]

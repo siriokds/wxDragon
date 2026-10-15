@@ -2,6 +2,9 @@
 #include "../include/wxdragon.h"
 #include <wx/textctrl.h>
 #include <wx/toplevel.h>
+#include <wx/menuitem.h>
+// wxMenuItemImpl (and GetHMenuItem) live in this internal header.
+#include <wx/osx/core/private.h>
 
 void
 wxd_Window_SetAccessibilityLabel(wxd_Window_t* window, const char* label)
@@ -98,4 +101,13 @@ wxd_Window_SetRepresentedFilename(wxd_Window_t* window, const char* path)
     if (tlw) {
         tlw->SetRepresentedFilename(wxString::FromUTF8(path));
     }
+}
+
+void*
+wxd_MenuItem_GetNativeHandle(wxd_MenuItem_t* item)
+{
+    if (!item) return nullptr;
+    wxMenuItem* wx_item = reinterpret_cast<wxMenuItem*>(item);
+    wxMenuItemImpl* peer = wx_item->GetPeer();
+    return peer ? peer->GetHMenuItem() : nullptr;
 }

@@ -587,4 +587,21 @@ wxd_MenuItem_GetBitmap(const wxd_MenuItem_t* item)
     return reinterpret_cast<wxd_Bitmap_t*>(new wxBitmap(bmp));
 }
 
+WXD_EXPORTED void
+wxd_MenuItem_SetAccel(wxd_MenuItem_t* item, int flags, int key_code)
+{
+    if (!item)
+        return;
+    wxMenuItem* wx_item = reinterpret_cast<wxMenuItem*>(item);
+    wxAcceleratorEntry entry(flags, key_code);
+    // Not wxMenuItem::SetAccel(): it appends the localised accelerator string,
+    // which for wxACCEL_RAW_CTRL on macOS is "Ctrl" without the "+" separator
+    // in wxWidgets 3.3 ("CtrlF"), so the menu cannot parse it back and the
+    // shortcut is dropped. The raw string ("RawCtrl+F") parses back correctly.
+    wxString text = wx_item->GetItemLabel().BeforeFirst(wxT('\t'));
+    text += wxT('\t');
+    text += entry.ToRawString();
+    wx_item->SetItemLabel(text);
+}
+
 } // extern "C"

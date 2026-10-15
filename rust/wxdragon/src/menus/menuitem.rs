@@ -236,6 +236,35 @@ impl MenuItem {
         }
     }
 
+    /// Sets the keyboard shortcut. On macOS `AcceleratorFlags::RAW_CTRL` is the
+    /// physical Control key, while `CTRL` (and `CMD`) is Command; elsewhere they
+    /// are the same key.
+    pub fn set_accel(&self, flags: AcceleratorFlags, key_code: i32) {
+        if self.ptr.is_null() {
+            return;
+        }
+        unsafe { ffi::wxd_MenuItem_SetAccel(self.ptr, flags.bits(), key_code) };
+    }
+
+    /// The native menu item (`NSMenuItem*` on macOS), for platform-specific
+    /// customisation such as a template image. Null on other platforms.
+    pub fn native_handle(&self) -> *mut std::ffi::c_void {
+        if self.ptr.is_null() {
+            return std::ptr::null_mut();
+        }
+        #[cfg(target_os = "macos")]
+        {
+            unsafe extern "C" {
+                fn wxd_MenuItem_GetNativeHandle(item: *mut ffi::wxd_MenuItem_t) -> *mut std::ffi::c_void;
+            }
+            unsafe { wxd_MenuItem_GetNativeHandle(self.ptr) }
+        }
+        #[cfg(not(target_os = "macos"))]
+        {
+            std::ptr::null_mut()
+        }
+    }
+
     /// Gets the bitmap associated with the menu item.
     pub fn get_bitmap(&self) -> Option<Bitmap> {
         if self.ptr.is_null() {
@@ -291,3 +320,19 @@ impl WxEvtHandler for MenuItem {
 }
 
 // Note: No Drop impl here, as wxMenu takes ownership.
+
+bitflags::bitflags! {
+    /// Modifier keys of a keyboard shortcut (`wxACCEL_*`).
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+    pub struct AcceleratorFlags: i32 {
+        const NORMAL = ffi::WXD_ACCEL_NORMAL as i32;
+        const ALT = ffi::WXD_ACCEL_ALT as i32;
+        /// Control on Windows and Linux, Command on macOS.
+        const CTRL = ffi::WXD_ACCEL_CTRL as i32;
+        const SHIFT = ffi::WXD_ACCEL_SHIFT as i32;
+        /// The physical Control key on macOS; the same as `CTRL` elsewhere.
+        const RAW_CTRL = ffi::WXD_ACCEL_RAW_CTRL as i32;
+        /// The platform's command key: Command on macOS, Control elsewhere.
+        const CMD = ffi::WXD_ACCEL_CMD as i32;
+    }
+}

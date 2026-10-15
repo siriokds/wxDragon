@@ -8,4 +8,4 @@ pub mod menuitem;
 // Re-export main types
 pub use menu::Menu;
 pub use menubar::MenuBar;
-pub use menuitem::{ItemKind, MenuItem};
+pub use menuitem::{AcceleratorFlags, ItemKind, MenuItem};

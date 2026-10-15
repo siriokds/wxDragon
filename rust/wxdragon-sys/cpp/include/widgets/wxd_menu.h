@@ -313,6 +313,14 @@ wxd_MenuItem_GetSubMenu(const wxd_MenuItem_t* item);
 WXD_EXPORTED void
 wxd_MenuItem_SetBitmap(wxd_MenuItem_t* item, const wxd_Bitmap_t* bitmap);
 
+// Sets the accelerator from wxAcceleratorEntry flags (WXD_ACCEL_*) and a key code.
+WXD_EXPORTED void
+wxd_MenuItem_SetAccel(wxd_MenuItem_t* item, int flags, int key_code);
+
+// The native menu item (NSMenuItem*), for platform-specific customisation (macOS only).
+WXD_EXPORTED void*
+wxd_MenuItem_GetNativeHandle(wxd_MenuItem_t* item);
+
 /**
  * @brief Get the bitmap associated with the menu item.
  * Returns a new heap-allocated clone of the bitmap; caller must destroy.
