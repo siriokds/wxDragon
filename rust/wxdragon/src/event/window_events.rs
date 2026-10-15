@@ -180,6 +180,16 @@ impl MouseMotionEvent {
     pub fn get_position(&self) -> Option<crate::geometry::Point> {
         self.event.get_position()
     }
+
+    /// The mouse moves with a button pressed.
+    pub fn dragging(&self) -> bool {
+        self.event.event.dragging()
+    }
+
+    /// The left mouse button is pressed.
+    pub fn left_is_down(&self) -> bool {
+        self.event.event.left_is_down()
+    }
 }
 
 /// Mouse enter events

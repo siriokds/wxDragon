@@ -2001,6 +2001,42 @@ wxd_KeyEvent_CmdDown(wxd_Event_t* event)
     return keyEvent->CmdDown();
 }
 
+WXD_EXPORTED bool
+wxd_KeyEvent_RawControlDown(wxd_Event_t* event)
+{
+    if (!event)
+        return false;
+    wxKeyEvent* keyEvent = dynamic_cast<wxKeyEvent*>(reinterpret_cast<wxEvent*>(event));
+    return keyEvent ? keyEvent->RawControlDown() : false;
+}
+
+WXD_EXPORTED bool
+wxd_KeyEvent_HasAnyModifiers(wxd_Event_t* event)
+{
+    if (!event)
+        return false;
+    wxKeyEvent* keyEvent = dynamic_cast<wxKeyEvent*>(reinterpret_cast<wxEvent*>(event));
+    return keyEvent ? keyEvent->HasAnyModifiers() : false;
+}
+
+WXD_EXPORTED bool
+wxd_MouseEvent_Dragging(wxd_Event_t* event)
+{
+    if (!event)
+        return false;
+    wxMouseEvent* mouseEvent = dynamic_cast<wxMouseEvent*>(reinterpret_cast<wxEvent*>(event));
+    return mouseEvent ? mouseEvent->Dragging() : false;
+}
+
+WXD_EXPORTED bool
+wxd_MouseEvent_LeftIsDown(wxd_Event_t* event)
+{
+    if (!event)
+        return false;
+    wxMouseEvent* mouseEvent = dynamic_cast<wxMouseEvent*>(reinterpret_cast<wxEvent*>(event));
+    return mouseEvent ? mouseEvent->LeftIsDown() : false;
+}
+
 // General veto support for all event types (replaces old close event specific functions)
 WXD_EXPORTED bool
 wxd_Event_CanVeto(wxd_Event_t* event)

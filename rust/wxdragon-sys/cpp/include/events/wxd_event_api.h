@@ -67,6 +67,20 @@ WXD_EXPORTED bool
 wxd_KeyEvent_MetaDown(wxd_Event_t* event);
 WXD_EXPORTED bool
 wxd_KeyEvent_CmdDown(wxd_Event_t* event);
+
+// The physical Control key (on macOS ControlDown() reports Command).
+WXD_EXPORTED bool
+wxd_KeyEvent_RawControlDown(wxd_Event_t* event);
+
+WXD_EXPORTED bool
+wxd_KeyEvent_HasAnyModifiers(wxd_Event_t* event);
+
+// Mouse state during motion events.
+WXD_EXPORTED bool
+wxd_MouseEvent_Dragging(wxd_Event_t* event);
+
+WXD_EXPORTED bool
+wxd_MouseEvent_LeftIsDown(wxd_Event_t* event);
 WXD_EXPORTED int
 wxd_CommandEvent_GetInt(wxd_Event_t* event);
 

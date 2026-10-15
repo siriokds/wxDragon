@@ -124,6 +124,16 @@ impl KeyEventData {
         self.event.cmd_down()
     }
 
+    /// The physical Control key (on macOS `control_down` reports Command).
+    pub fn raw_control_down(&self) -> bool {
+        self.event.raw_control_down()
+    }
+
+    /// Any modifier key (Control, Alt, Command…) is pressed; Shift does not count.
+    pub fn has_any_modifiers(&self) -> bool {
+        self.event.has_any_modifiers()
+    }
+
     pub fn skip(&self, skip: bool) {
         self.event.skip(skip);
     }

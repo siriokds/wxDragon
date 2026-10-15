@@ -815,6 +815,38 @@ impl Event {
         unsafe { ffi::wxd_KeyEvent_CmdDown(self.0) }
     }
 
+    /// The physical Control key (on macOS `control_down` reports Command).
+    pub fn raw_control_down(&self) -> bool {
+        if self.0.is_null() {
+            return false;
+        }
+        unsafe { ffi::wxd_KeyEvent_RawControlDown(self.0) }
+    }
+
+    /// Any modifier key (Control, Alt, Command…) is pressed; Shift does not count.
+    pub fn has_any_modifiers(&self) -> bool {
+        if self.0.is_null() {
+            return false;
+        }
+        unsafe { ffi::wxd_KeyEvent_HasAnyModifiers(self.0) }
+    }
+
+    /// The mouse moves with a button pressed.
+    pub fn dragging(&self) -> bool {
+        if self.0.is_null() {
+            return false;
+        }
+        unsafe { ffi::wxd_MouseEvent_Dragging(self.0) }
+    }
+
+    /// The left mouse button is pressed.
+    pub fn left_is_down(&self) -> bool {
+        if self.0.is_null() {
+            return false;
+        }
+        unsafe { ffi::wxd_MouseEvent_LeftIsDown(self.0) }
+    }
+
     /// Requests more idle events to be sent.
     /// This should only be called from an idle event handler.
     /// When `need_more` is true, the system will continue sending idle events.
