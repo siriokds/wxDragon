@@ -83,10 +83,49 @@ impl CheckBox {
         self.is_checked()
     }
 
+    /// The state of a three-state checkbox (created with
+    /// `CheckBoxStyle::ThreeState`). `CheckState::Unchecked` if the widget
+    /// has been destroyed.
+    pub fn get_three_state_value(&self) -> CheckState {
+        let ptr = self.widget_ptr();
+        if ptr.is_null() {
+            return CheckState::Unchecked;
+        }
+        match unsafe { ffi::wxd_CheckBox_Get3StateValue(ptr) } {
+            1 => CheckState::Checked,
+            2 => CheckState::Undetermined,
+            _ => CheckState::Unchecked,
+        }
+    }
+
+    /// Sets the state of a three-state checkbox. No-op if the widget has
+    /// been destroyed.
+    pub fn set_three_state_value(&self, state: CheckState) {
+        let ptr = self.widget_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        let raw = match state {
+            CheckState::Unchecked => 0,
+            CheckState::Checked => 1,
+            CheckState::Undetermined => 2,
+        };
+        unsafe { ffi::wxd_CheckBox_Set3StateValue(ptr, raw) };
+    }
+
     /// Returns the underlying WindowHandle for this checkbox.
     pub fn window_handle(&self) -> WindowHandle {
         self.handle
     }
+}
+
+/// The state of a three-state checkbox (`wxCheckBoxState`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CheckState {
+    Unchecked,
+    Checked,
+    /// The third state ("mixed").
+    Undetermined,
 }
 
 // --- CheckBox Event Handling ---

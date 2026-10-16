@@ -75,7 +75,7 @@ pub use crate::widgets::bitmap_combobox::{BitmapComboBox, BitmapComboBoxBuilder}
 pub use crate::widgets::bitmaptogglebutton::{BitmapToggleButton, BitmapToggleButtonBuilder, BitmapToggleButtonStyle};
 pub use crate::widgets::button::{Button, ButtonBuilder, ButtonStyle};
 pub use crate::widgets::calendar_ctrl::{CalendarCtrl, CalendarCtrlBuilder, CalendarCtrlStyle};
-pub use crate::widgets::checkbox::{CheckBox, CheckBoxBuilder, CheckBoxStyle};
+pub use crate::widgets::checkbox::{CheckBox, CheckBoxBuilder, CheckBoxStyle, CheckState};
 pub use crate::widgets::checklistbox::{CheckListBox, CheckListBoxBuilder, CheckListBoxStyle}; // Added Style
 pub use crate::widgets::choice::{Choice, ChoiceBuilder, ChoiceStyle};
 pub use crate::widgets::collapsible_pane::{CollapsiblePane, CollapsiblePaneBuilder, CollapsiblePaneStyle};

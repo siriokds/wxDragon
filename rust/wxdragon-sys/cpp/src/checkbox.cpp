@@ -42,4 +42,25 @@ wxd_CheckBox_SetValue(wxd_CheckBox_t* checkBox, bool value)
     }
 }
 
+// Get the state of a three-state wxCheckBox (wxCheckBoxState as int).
+WXD_EXPORTED int
+wxd_CheckBox_Get3StateValue(wxd_CheckBox_t* checkBox)
+{
+    wxCheckBox* ctrl = (wxCheckBox*)checkBox;
+    if (!ctrl) {
+        return 0;
+    }
+    return static_cast<int>(ctrl->Get3StateValue());
+}
+
+// Set the state of a three-state wxCheckBox (wxCheckBoxState as int).
+WXD_EXPORTED void
+wxd_CheckBox_Set3StateValue(wxd_CheckBox_t* checkBox, int state)
+{
+    wxCheckBox* ctrl = (wxCheckBox*)checkBox;
+    if (ctrl && state >= 0 && state <= 2) {
+        ctrl->Set3StateValue(static_cast<wxCheckBoxState>(state));
+    }
+}
+
 } // extern "C"

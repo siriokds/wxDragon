@@ -116,7 +116,7 @@ pub use bitmap_combobox::{BitmapComboBox, BitmapComboBoxBuilder};
 pub use bitmaptogglebutton::{BitmapToggleButton, BitmapToggleButtonBuilder, BitmapToggleButtonStyle};
 pub use button::{Button, ButtonBuilder};
 pub use calendar_ctrl::{CalendarCtrl, CalendarCtrlBuilder};
-pub use checkbox::{CheckBox, CheckBoxBuilder};
+pub use checkbox::{CheckBox, CheckBoxBuilder, CheckState};
 pub use checklistbox::{CheckListBox, CheckListBoxBuilder};
 pub use choice::{Choice, ChoiceBuilder};
 pub use collapsible_pane::{CollapsiblePane, CollapsiblePaneBuilder, CollapsiblePaneStyle};
