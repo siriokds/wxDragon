@@ -10,6 +10,8 @@ wxd_Frame_Create(wxd_Window_t* parent, wxd_Id id, const char* title, wxd_Point p
 
 WXD_EXPORTED void
 wxd_Frame_Show(wxd_Frame_t* frame, bool show);
+WXD_EXPORTED void
+wxd_Frame_ShowWithoutActivating(wxd_Frame_t* frame);
 
 WXD_EXPORTED void
 wxd_Frame_SetTitle(wxd_Frame_t* frame, const char* title);

@@ -281,6 +281,17 @@ impl Frame {
         unsafe { ffi::wxd_Frame_Show(ptr, show) };
     }
 
+    /// Shows the frame without activating it (it does not take keyboard
+    /// focus away from the currently active window), e.g. for popup-like
+    /// frames. No-op if the frame has been destroyed.
+    pub fn show_without_activating(&self) {
+        let ptr = self.frame_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        unsafe { ffi::wxd_Frame_ShowWithoutActivating(ptr) };
+    }
+
     /// Sets the menu bar for this frame.
     /// The frame takes ownership of the menu bar.
     /// No-op if the frame has been destroyed.

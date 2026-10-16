@@ -38,6 +38,15 @@ wxd_Frame_Show(wxd_Frame_t* frame, bool show)
 }
 
 void
+wxd_Frame_ShowWithoutActivating(wxd_Frame_t* frame)
+{
+    if (!frame)
+        return;
+    wxFrame* wx_frame = reinterpret_cast<wxFrame*>(frame);
+    wx_frame->ShowWithoutActivating();
+}
+
+void
 wxd_Frame_SetTitle(wxd_Frame_t* frame, const char* title)
 {
     if (!frame)
