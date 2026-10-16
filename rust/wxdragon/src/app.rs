@@ -2,6 +2,7 @@
 // Currently, the main application logic is driven by the C wxd_Main function.
 // This module might later contain wrappers for App-specific functions if needed.
 
+use std::cell::RefCell;
 use std::collections::VecDeque;
 #[cfg(target_os = "macos")]
 use std::ffi::c_int;
@@ -47,6 +48,27 @@ where
     queue.push_back(callback);
 }
 
+thread_local! {
+    // Callbacks queued from the main thread by `call_after_local`: they may hold
+    // non-`Send` values (window handles, `Rc`), so they never leave this thread.
+    static LOCAL_QUEUE: RefCell<VecDeque<Box<dyn FnOnce() + 'static>>> = RefCell::new(VecDeque::new());
+}
+
+/// Schedules a callback to run later on the main thread, from the main thread.
+///
+/// Like `wxEvtHandler::CallAfter`: the callback runs on a later event loop
+/// iteration, after the current event handler has returned. Unlike
+/// [`call_after`], it accepts non-`Send` captures (window handles, `Rc`), so it
+/// must be called on the main thread; callbacks queued from another thread are
+/// never run.
+pub fn call_after_local<F>(callback: Box<F>)
+where
+    F: FnOnce() + 'static,
+{
+    LOCAL_QUEUE.with(|queue| queue.borrow_mut().push_back(callback));
+    wake_up_idle();
+}
+
 /// Processes pending callbacks queued via `call_after`.
 ///
 /// This function is called automatically by the event loop.
@@ -54,13 +76,21 @@ where
 ///
 /// Returns true if any callbacks were processed, false if the queue was empty.
 pub fn process_main_thread_queue() -> bool {
+    // Callbacks queued with `call_after_local` before this pass; any queued
+    // while they run wait for the next pass.
+    let local: Vec<_> = LOCAL_QUEUE.with(|queue| queue.borrow_mut().drain(..).collect());
+    let ran_local = !local.is_empty();
+    for callback in local {
+        callback();
+    }
+
     let mut callbacks = Vec::new();
 
     // Move callbacks from the queue to our local vector to minimize lock time
     {
         let mut queue = MAIN_THREAD_QUEUE.lock().unwrap();
         if queue.is_empty() {
-            return false;
+            return ran_local;
         }
 
         // Move up to 10 callbacks at a time to prevent UI freezes

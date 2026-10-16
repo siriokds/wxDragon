@@ -32,6 +32,7 @@ widget_style_enum!(
         ToolWindow: ffi::WXD_FRAME_TOOL_WINDOW, "Tool window style (typically a thin border and title bar).",
         NoTaskbar: ffi::WXD_FRAME_NO_TASKBAR, "No taskbar button (Windows only).",
         FloatOnParent: ffi::WXD_FRAME_FLOAT_ON_PARENT, "Equivalent to StayOnTop for frames.",
+        BorderNone: ffi::WXD_BORDER_NONE, "No border (e.g. a borderless popup-like frame).",
         ClipChildren: ffi::WXD_CLIP_CHILDREN, "Clip children to the frame."
     },
     default_variant: Default
