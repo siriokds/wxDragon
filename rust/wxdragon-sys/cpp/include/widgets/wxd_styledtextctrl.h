@@ -362,4 +362,15 @@ wxd_StyledTextCtrl_DocumentStartExtend(wxd_StyledTextCtrl_t* self);
 WXD_EXPORTED void
 wxd_StyledTextCtrl_DocumentEndExtend(wxd_StyledTextCtrl_t* self);
 
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetSelections(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetSelectionNStart(wxd_StyledTextCtrl_t* self, int selection);
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetSelectionNEnd(wxd_StyledTextCtrl_t* self, int selection);
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetFirstVisibleLine(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetMarginWidth(wxd_StyledTextCtrl_t* self, int margin);
+
 #endif // WXD_STYLEDTEXTCTRL_H

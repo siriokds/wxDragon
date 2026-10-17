@@ -1411,6 +1411,41 @@ wxd_StyledTextCtrl_DocumentEndExtend(wxd_StyledTextCtrl_t* self)
         ctrl->DocumentEndExtend();
 }
 
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetSelections(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    return ctrl ? ctrl->GetSelections() : 0;
+}
+
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetSelectionNStart(wxd_StyledTextCtrl_t* self, int selection)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    return ctrl ? ctrl->GetSelectionNStart(selection) : 0;
+}
+
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetSelectionNEnd(wxd_StyledTextCtrl_t* self, int selection)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    return ctrl ? ctrl->GetSelectionNEnd(selection) : 0;
+}
+
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetFirstVisibleLine(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    return ctrl ? ctrl->GetFirstVisibleLine() : 0;
+}
+
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetMarginWidth(wxd_StyledTextCtrl_t* self, int margin)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    return ctrl ? ctrl->GetMarginWidth(margin) : 0;
+}
+
 }
 
 #endif

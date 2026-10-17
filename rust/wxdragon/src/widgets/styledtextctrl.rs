@@ -953,6 +953,47 @@ impl StyledTextCtrl {
         }
     }
 
+    /// How many selections there are (multiple selection).
+    pub fn get_selections(&self) -> i32 {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return 0;
+        }
+        unsafe { ffi::wxd_StyledTextCtrl_GetSelections(ptr) }
+    }
+
+    /// Start and end of selection `n` (multiple selection).
+    pub fn get_selection_n(&self, n: i32) -> (i32, i32) {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return (0, 0);
+        }
+        unsafe {
+            (
+                ffi::wxd_StyledTextCtrl_GetSelectionNStart(ptr, n),
+                ffi::wxd_StyledTextCtrl_GetSelectionNEnd(ptr, n),
+            )
+        }
+    }
+
+    /// The first line shown at the top of the view.
+    pub fn get_first_visible_line(&self) -> i32 {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return 0;
+        }
+        unsafe { ffi::wxd_StyledTextCtrl_GetFirstVisibleLine(ptr) }
+    }
+
+    /// The width of a margin, in pixels.
+    pub fn get_margin_width(&self, margin: i32) -> i32 {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return 0;
+        }
+        unsafe { ffi::wxd_StyledTextCtrl_GetMarginWidth(ptr, margin) }
+    }
+
     /// Scrolls the view by the specified number of columns and lines.
     pub fn line_scroll(&self, columns: i32, lines: i32) {
         let ptr = self.stc_ptr();

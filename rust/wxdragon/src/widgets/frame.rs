@@ -459,6 +459,17 @@ impl Frame {
         unsafe { ffi::wxd_Frame_ShowFullScreen(ptr, show) }
     }
 
+    /// Shows or hides the frame in full screen mode, hiding only the parts
+    /// named by `style` (see [`FullScreenStyle`]).
+    /// No-op if the frame has been destroyed.
+    pub fn show_full_screen_with(&self, show: bool, style: FullScreenStyle) {
+        let ptr = self.frame_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        unsafe { ffi::wxd_Frame_ShowFullScreenStyle(ptr, show, style.bits() as std::os::raw::c_long) }
+    }
+
     /// Returns true if the frame is currently in full screen mode.
     /// Returns false if the frame has been destroyed.
     pub fn is_full_screen(&self) -> bool {
@@ -620,3 +631,17 @@ impl crate::window::FromWindowWithClassName for Frame {
         }
     }
 }
+
+widget_style_enum!(
+    name: FullScreenStyle,
+    doc: "What full screen mode hides (wxFULLSCREEN_*).",
+    variants: {
+        NoMenuBar: 0x0001, "Hide the menu bar.",
+        NoToolBar: 0x0002, "Hide the tool bar.",
+        NoStatusBar: 0x0004, "Hide the status bar.",
+        NoBorder: 0x0008, "Hide the border.",
+        NoCaption: 0x0010, "Hide the caption.",
+        All: 0x001F, "Hide everything."
+    },
+    default_variant: All
+);

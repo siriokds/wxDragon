@@ -205,6 +205,14 @@ wxd_Frame_ShowFullScreen(wxd_Frame_t* frame, bool show)
     }
 }
 
+WXD_EXPORTED void
+wxd_Frame_ShowFullScreenStyle(wxd_Frame_t* frame, bool show, long style)
+{
+    if (frame) {
+        ((wxFrame*)frame)->ShowFullScreen(show, style);
+    }
+}
+
 bool
 wxd_Frame_IsFullScreen(wxd_Frame_t* frame)
 {

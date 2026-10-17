@@ -63,6 +63,10 @@ wxd_Frame_IsMaximized(wxd_Frame_t* frame);
 
 WXD_EXPORTED void
 wxd_Frame_ShowFullScreen(wxd_Frame_t* frame, bool show);
+// Full screen with only some decorations hidden: a combination of
+// WXD_FULLSCREEN_* (the values of wxFULLSCREEN_*).
+WXD_EXPORTED void
+wxd_Frame_ShowFullScreenStyle(wxd_Frame_t* frame, bool show, long style);
 
 WXD_EXPORTED bool
 wxd_Frame_IsFullScreen(wxd_Frame_t* frame);

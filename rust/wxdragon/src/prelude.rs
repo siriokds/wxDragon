@@ -119,7 +119,7 @@ pub use crate::widgets::editable_listbox::{EditableListBox, EditableListBoxBuild
 pub use crate::widgets::file_ctrl::{FileCtrl, FileCtrlBuilder, FileCtrlStyle};
 pub use crate::widgets::file_picker_ctrl::{FilePickerCtrl, FilePickerCtrlBuilder, FilePickerCtrlStyle};
 pub use crate::widgets::font_picker_ctrl::{FontPickerCtrl, FontPickerCtrlBuilder, FontPickerCtrlStyle};
-pub use crate::widgets::frame::{Frame, FrameBuilder, FrameStyle, UserAttentionFlag};
+pub use crate::widgets::frame::{Frame, FrameBuilder, FrameStyle, FullScreenStyle, UserAttentionFlag};
 pub use crate::widgets::gauge::{Gauge, GaugeBuilder, GaugeStyle};
 pub use crate::widgets::glcanvas::{GLCanvas, GLCanvasBuilder, GLCanvasStyle, GLContext};
 pub use crate::widgets::grid::{
