@@ -699,6 +699,28 @@ wxd_WebView_IsBackendAvailable(const char* backend)
     return wxWebView::IsBackendAvailable(backendStr);
 }
 
+WXD_EXPORTED int
+wxd_WebViewEvent_GetURL(const wxd_Event_t* event, char* buffer, size_t buffer_len)
+{
+    if (!event)
+        return -1;
+    wxWebViewEvent* webEvent = wxDynamicCast((wxEvent*)event, wxWebViewEvent);
+    if (!webEvent)
+        return -1;
+    return (int)wxd_cpp_utils::copy_wxstring_to_buffer(webEvent->GetURL(), buffer, buffer_len);
+}
+
+WXD_EXPORTED int
+wxd_WebViewEvent_GetTarget(const wxd_Event_t* event, char* buffer, size_t buffer_len)
+{
+    if (!event)
+        return -1;
+    wxWebViewEvent* webEvent = wxDynamicCast((wxEvent*)event, wxWebViewEvent);
+    if (!webEvent)
+        return -1;
+    return (int)wxd_cpp_utils::copy_wxstring_to_buffer(webEvent->GetTarget(), buffer, buffer_len);
+}
+
 } // extern "C"
 
 #endif // wxdUSE_WEBVIEW

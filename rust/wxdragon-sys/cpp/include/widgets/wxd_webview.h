@@ -39,6 +39,12 @@ WXD_EXPORTED int wxd_WebView_GetZoomType(wxd_WebView_t* self);
 WXD_EXPORTED void wxd_WebView_SetZoom(wxd_WebView_t* self, int zoom);
 WXD_EXPORTED void wxd_WebView_SetZoomType(wxd_WebView_t* self, int zoomType);
 
+// Events: the URL and the target of a wxWebViewEvent (wx keeps them in
+// GetURL()/GetTarget(), not in the command string). Returns the length, or
+// -1 if the event is not a wxWebViewEvent.
+WXD_EXPORTED int wxd_WebViewEvent_GetURL(const wxd_Event_t* event, char* buffer, size_t buffer_len);
+WXD_EXPORTED int wxd_WebViewEvent_GetTarget(const wxd_Event_t* event, char* buffer, size_t buffer_len);
+
 // Scripting
 WXD_EXPORTED int wxd_WebView_RunScript(wxd_WebView_t* self, const char* javascript, char* output, int output_len);
 

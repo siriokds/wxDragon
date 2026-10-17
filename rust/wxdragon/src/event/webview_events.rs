@@ -2,6 +2,7 @@
 
 use crate::event::event_data::CommandEventData;
 use crate::event::{Event, EventType};
+use wxdragon_sys as ffi;
 
 /// Events specific to WebView controls
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -55,6 +56,34 @@ impl WebViewEventData {
     /// Get the URL associated with the event (if any)
     pub fn get_string(&self) -> Option<String> {
         self.event.get_string()
+    }
+
+    /// The URL of the event (wxWebViewEvent::GetURL): the page being
+    /// navigated to, the link of a new window, the loaded page.
+    pub fn get_url(&self) -> Option<String> {
+        self.read(ffi::wxd_WebViewEvent_GetURL)
+    }
+
+    /// The target frame of the event (wxWebViewEvent::GetTarget).
+    pub fn get_target(&self) -> Option<String> {
+        self.read(ffi::wxd_WebViewEvent_GetTarget)
+    }
+
+    fn read(
+        &self,
+        getter: unsafe extern "C" fn(*const ffi::wxd_Event_t, *mut std::os::raw::c_char, usize) -> i32,
+    ) -> Option<String> {
+        let ptr = self.event.event._as_ptr();
+        if ptr.is_null() {
+            return None;
+        }
+        let len = unsafe { getter(ptr, std::ptr::null_mut(), 0) };
+        if len < 0 {
+            return None;
+        }
+        let mut buf = vec![0; len as usize + 1];
+        unsafe { getter(ptr, buf.as_mut_ptr(), buf.len()) };
+        Some(unsafe { std::ffi::CStr::from_ptr(buf.as_ptr()).to_string_lossy().to_string() })
     }
 
     /// Get the integer value associated with the event (e.g., navigation flags, error code)

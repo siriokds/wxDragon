@@ -167,7 +167,10 @@ IsEventVetoed(wxEvent& event)
     }
 
     // Try wxNotifyEvent (handles most other vetable events)
-    wxNotifyEvent* notifyEvent = wxDynamicCast(&event, wxNotifyEvent);
+    // C++ RTTI, not wxDynamicCast: wx registers some notify events with
+    // another base in its own type system (wxWebViewEvent is declared as a
+    // wxCommandEvent there), and wxDynamicCast would not see them.
+    wxNotifyEvent* notifyEvent = dynamic_cast<wxNotifyEvent*>(&event);
     if (notifyEvent) {
         return !notifyEvent->IsAllowed(); // IsAllowed() returns false if vetoed
     }
@@ -2052,7 +2055,8 @@ wxd_Event_CanVeto(wxd_Event_t* event)
     }
 
     // Try wxNotifyEvent (most other vetable events derive from this)
-    wxNotifyEvent* notify_event = wxDynamicCast(wx_event, wxNotifyEvent);
+    // C++ RTTI: see IsEventVetoed (wxWebViewEvent).
+    wxNotifyEvent* notify_event = dynamic_cast<wxNotifyEvent*>(wx_event);
     if (notify_event) {
         return true; // wxNotifyEvent always supports veto
     }
@@ -2075,7 +2079,8 @@ wxd_Event_Veto(wxd_Event_t* event)
     }
 
     // Try wxNotifyEvent
-    wxNotifyEvent* notify_event = wxDynamicCast(wx_event, wxNotifyEvent);
+    // C++ RTTI: see IsEventVetoed (wxWebViewEvent).
+    wxNotifyEvent* notify_event = dynamic_cast<wxNotifyEvent*>(wx_event);
     if (notify_event) {
         notify_event->Veto();
         return;
@@ -2108,7 +2113,8 @@ wxd_Event_SetCanVeto(wxd_Event_t* event, bool can_veto)
 
     // Try wxNotifyEvent - note that wxNotifyEvent doesn't have SetCanVeto
     // but it's always vetable, so we don't need to do anything for it
-    wxNotifyEvent* notify_event = wxDynamicCast(wx_event, wxNotifyEvent);
+    // C++ RTTI: see IsEventVetoed (wxWebViewEvent).
+    wxNotifyEvent* notify_event = dynamic_cast<wxNotifyEvent*>(wx_event);
     if (notify_event) {
         // wxNotifyEvent doesn't have SetCanVeto method, it's always vetable
         // No action needed for wxNotifyEvent-derived events
