@@ -225,6 +225,15 @@ WXD_EXPORTED wxd_Menu_t*
 wxd_MenuBar_GetMenu(const wxd_MenuBar_t* menubar, size_t index);
 
 /**
+ * @brief macOS: the application menu (the one named after the app, with
+ * About, Settings, Services, Hide and Quit) that wxWidgets creates; its
+ * items keep their standard ids (wxID_ABOUT, wxID_OSX_HIDE, ...).
+ * NULL on other platforms.
+ */
+WXD_EXPORTED wxd_Menu_t*
+wxd_MenuBar_OSXGetAppleMenu(const wxd_MenuBar_t* menubar);
+
+/**
  * @brief Get the number of menus in the menubar.
  */
 WXD_EXPORTED size_t

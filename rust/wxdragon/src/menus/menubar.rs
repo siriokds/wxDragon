@@ -128,6 +128,20 @@ impl MenuBar {
         }
     }
 
+    /// macOS: the application menu wxWidgets creates (About, Settings,
+    /// Services, Hide, Quit), whose items keep their standard ids
+    /// (`ID_ABOUT`, `wxID_OSX_HIDE`, ...), e.g. to translate their labels.
+    /// `None` on other platforms.
+    pub fn osx_apple_menu(&self) -> Option<Menu> {
+        let ptr = unsafe { ffi::wxd_MenuBar_OSXGetAppleMenu(self.ptr) };
+        if ptr.is_null() {
+            None
+        } else {
+            // Non-owning wrapper: the menu bar owns it.
+            Some(Menu::from(ptr as *const ffi::wxd_Menu_t))
+        }
+    }
+
     /// Returns the number of menus in the menu bar.
     pub fn get_menu_count(&self) -> usize {
         unsafe { ffi::wxd_MenuBar_GetMenuCount(self.ptr) }

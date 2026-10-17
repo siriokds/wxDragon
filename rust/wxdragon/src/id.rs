@@ -22,6 +22,19 @@ pub const ID_EXIT: Id = ffi::WXD_ID_EXIT as Id;
 /// Standard ID for About commands.
 pub const ID_ABOUT: Id = ffi::WXD_ID_ABOUT as Id;
 
+/// Standard ID for Preferences / Settings commands.
+pub const ID_PREFERENCES: Id = ffi::WXD_ID_PREFERENCES as Id;
+
+// --- macOS application menu items (wx/defs.h, `wxID_OSX_*`) ---
+/// "Hide <app>".
+pub const ID_OSX_HIDE: Id = 5250;
+/// "Hide Others".
+pub const ID_OSX_HIDEOTHERS: Id = 5251;
+/// "Show All".
+pub const ID_OSX_SHOWALL: Id = 5252;
+/// The "Services" submenu.
+pub const ID_OSX_SERVICES: Id = 5253;
+
 // --- Standard Dialog IDs (Manually Defined) ---
 // Values based on typical wxWidgets assignments, verify if necessary.
 pub const ID_OK: Id = ffi::WXD_ID_OK as Id; // Typically wxID_OK

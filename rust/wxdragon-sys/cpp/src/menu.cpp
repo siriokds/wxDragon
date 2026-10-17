@@ -402,6 +402,20 @@ wxd_MenuBar_GetMenu(const wxd_MenuBar_t* menubar, size_t index)
     return reinterpret_cast<wxd_Menu_t*>(menu);
 }
 
+WXD_EXPORTED wxd_Menu_t*
+wxd_MenuBar_OSXGetAppleMenu(const wxd_MenuBar_t* menubar)
+{
+#ifdef __WXOSX__
+    if (!menubar)
+        return nullptr;
+    const wxMenuBar* wx_menubar = reinterpret_cast<const wxMenuBar*>(menubar);
+    return reinterpret_cast<wxd_Menu_t*>(wx_menubar->OSXGetAppleMenu());
+#else
+    (void)menubar;
+    return nullptr;
+#endif
+}
+
 WXD_EXPORTED size_t
 wxd_MenuBar_GetMenuCount(const wxd_MenuBar_t* menubar)
 {
