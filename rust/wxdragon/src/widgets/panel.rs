@@ -21,7 +21,8 @@ widget_style_enum!(
         BorderSunken: ffi::WXD_BORDER_SUNKEN, "A sunken border.",
         BorderStatic: ffi::WXD_BORDER_STATIC, "A static border.",
         BorderTheme: ffi::WXD_BORDER_THEME, "A theme border.",
-        BorderDefault: ffi::WXD_BORDER_DEFAULT, "A default border."
+        BorderDefault: ffi::WXD_BORDER_DEFAULT, "A default border.",
+        WantsChars: ffi::WXD_WANTS_CHARS, "The panel receives all keys, including Tab and Enter, instead of the dialog navigation using them."
     },
     default_variant: TabTraversal
 );
@@ -98,6 +99,16 @@ impl Panel {
             .get_ptr()
             .map(|p| p as *mut ffi::wxd_Panel_t)
             .unwrap_or(std::ptr::null_mut())
+    }
+
+    /// Refuses (`false`) or allows the keyboard focus. A panel drawn as a
+    /// button should refuse it: on macOS a click would otherwise make it the
+    /// first responder, and typing would then go nowhere.
+    pub fn set_accepts_focus(&self, accepts: bool) {
+        let ptr = self.panel_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_Panel_SetAcceptsFocus(ptr, accepts) };
+        }
     }
 
     /// Returns the underlying WindowHandle for this panel.

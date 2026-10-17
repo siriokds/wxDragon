@@ -13,7 +13,9 @@ widget_style_enum!(
     variants: {
         Default: ffi::WXD_ALIGN_LEFT, "Default style (left-aligned, auto-resizing).",
         AlignRight: ffi::WXD_ALIGN_RIGHT, "Align text to the right.",
-        AlignCenterHorizontal: ffi::WXD_ALIGN_CENTRE_HORIZONTAL, "Align text to the center horizontally."
+        AlignCenterHorizontal: ffi::WXD_ALIGN_CENTRE_HORIZONTAL, "Align text to the center horizontally.",
+        NoAutoResize: ffi::WXD_ST_NO_AUTORESIZE, "Keep the size when the label changes.",
+        EllipsizeMiddle: ffi::WXD_ST_ELLIPSIZE_MIDDLE, "Replace the middle of a label too long for the control with an ellipsis."
     },
     default_variant: Default
 );

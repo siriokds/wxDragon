@@ -101,6 +101,12 @@ impl WindowHandle {
         self.get_ptr().is_some()
     }
 
+    /// The window, if it has not been destroyed: a safe way to keep a window
+    /// found at runtime (e.g. by [`find_focus`]) and use it later.
+    pub fn window(&self) -> Option<Window> {
+        self.get_ptr().map(|ptr| unsafe { Window::from_ptr(ptr) })
+    }
+
     /// Idempotently destroys the underlying window exactly once.
     ///
     /// `wxd_Window_Destroy` defers the actual C++ deletion (via
@@ -301,6 +307,12 @@ impl Window {
     /// Temporary: Made public for FFI callbacks until safe event handling is done.
     pub fn as_ptr(&self) -> *mut ffi::wxd_Window_t {
         self.0
+    }
+
+    /// A handle that knows when this window is destroyed (the existing one if
+    /// the window is already tracked). `Window` itself is a bare pointer.
+    pub fn tracked(&self) -> WindowHandle {
+        WindowHandle::from_ptr(self.0).unwrap_or_else(|| WindowHandle::new(self.0))
     }
 
     /// Checks if the underlying pointer is null.

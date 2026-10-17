@@ -6,5 +6,7 @@
 // --- Panel Functions ---
 WXD_EXPORTED wxd_Panel_t*
 wxd_Panel_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Size size, wxd_Style_t style);
+WXD_EXPORTED void
+wxd_Panel_SetAcceptsFocus(wxd_Panel_t* self, bool accepts);
 
 #endif // WXD_PANEL_H
