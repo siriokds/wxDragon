@@ -4,9 +4,63 @@
 #include "../../include/core/wxd_timer.h"
 #include <wx/timer.h>
 
+namespace {
+
+// A wxTimer that stops for good when its owner window is destroyed.
+//
+// In C++ a timer is usually a member of its window and dies with it. From
+// Rust the timer's lifetime is separate: it can sit in shared state, in a
+// closure, or be leaked on purpose, and keep running after the window is
+// gone. Its next tick then delivers the event to the freed owner
+// (wxTimerImpl::SendEvent -> SafelyProcessEvent on a dangling pointer) and
+// the process crashes, typically while the application is quitting.
+class wxdTimer : public wxTimer
+{
+public:
+    explicit wxdTimer(wxEvtHandler* owner)
+        : wxTimer(owner)
+    {
+        m_window = wxDynamicCast(owner, wxWindow);
+        if (m_window)
+            m_window->Bind(wxEVT_DESTROY, &wxdTimer::OnOwnerDestroy, this);
+    }
+
+    ~wxdTimer() override
+    {
+        if (m_window && !m_ownerGone)
+            m_window->Unbind(wxEVT_DESTROY, &wxdTimer::OnOwnerDestroy, this);
+    }
+
+    bool Start(int milliseconds = -1, bool oneShot = wxTIMER_CONTINUOUS) override
+    {
+        // Nobody would receive the event any more.
+        if (m_ownerGone)
+            return false;
+        return wxTimer::Start(milliseconds, oneShot);
+    }
+
+private:
+    void OnOwnerDestroy(wxWindowDestroyEvent& event)
+    {
+        // Children's destroy events can reach the owner too: only the owner's
+        // own destruction counts.
+        if (event.GetEventObject() == m_window) {
+            Stop();
+            m_ownerGone = true;
+        }
+        event.Skip();
+    }
+
+    wxWindow* m_window = nullptr;
+    bool m_ownerGone = false;
+};
+
+} // namespace
+
 extern "C" {
 
-// Create a new wxTimer associated with an event handler
+// Create a new wxTimer associated with an event handler. If the owner is a
+// window, the timer stops when the window is destroyed (see wxdTimer).
 WXD_EXPORTED wxd_Timer_t*
 wxd_Timer_Create(wxd_EvtHandler_t* owner)
 {
@@ -14,7 +68,7 @@ wxd_Timer_Create(wxd_EvtHandler_t* owner)
     if (!wx_owner) {
         return nullptr;
     }
-    wxTimer* timer = new wxTimer(wx_owner);
+    wxTimer* timer = new wxdTimer(wx_owner);
     return reinterpret_cast<wxd_Timer_t*>(timer);
 }
 
