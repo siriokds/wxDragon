@@ -1212,6 +1212,205 @@ wxd_StyledTextCtrl_GetWrapMode(wxd_StyledTextCtrl_t* self)
     return 0;
 }
 
+
+// --- Added for Dual Rust's text viewer (wxStyledTextCtrl methods not yet wrapped) ---
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetWhitespaceForeground(wxd_StyledTextCtrl_t* self, bool use_setting, wxd_Colour_t colour)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->SetWhitespaceForeground(use_setting, wxColour(colour.r, colour.g, colour.b, colour.a));
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetCaretForeground(wxd_StyledTextCtrl_t* self, wxd_Colour_t colour)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->SetCaretForeground(wxColour(colour.r, colour.g, colour.b, colour.a));
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetSelBackground(wxd_StyledTextCtrl_t* self, bool use_setting, wxd_Colour_t colour)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->SetSelBackground(use_setting, wxColour(colour.r, colour.g, colour.b, colour.a));
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetSelForeground(wxd_StyledTextCtrl_t* self, bool use_setting, wxd_Colour_t colour)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->SetSelForeground(use_setting, wxColour(colour.r, colour.g, colour.b, colour.a));
+}
+
+// Raw bytes, as the document stores them (no conversion: invalid UTF-8 stays
+// as it is and Scintilla shows it as byte blobs).
+WXD_EXPORTED void
+wxd_StyledTextCtrl_AddTextRaw(wxd_StyledTextCtrl_t* self, const char* data, int length)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl && data && length > 0)
+        ctrl->AddTextRaw(data, length);
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_Allocate(wxd_StyledTextCtrl_t* self, int bytes)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->Allocate(bytes);
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetSearchFlags(wxd_StyledTextCtrl_t* self, int flags)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->SetSearchFlags(flags);
+}
+
+// Searches between the target start and end (start > end searches backwards);
+// on success the target is set to the match. Returns the match start or -1.
+WXD_EXPORTED int
+wxd_StyledTextCtrl_SearchInTarget(wxd_StyledTextCtrl_t* self, const char* text)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (!ctrl || !text)
+        return -1;
+    return ctrl->SearchInTarget(wxString::FromUTF8(text));
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_AddSelection(wxd_StyledTextCtrl_t* self, int caret, int anchor)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->AddSelection(caret, anchor);
+}
+
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetColumn(wxd_StyledTextCtrl_t* self, int pos)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    return ctrl ? ctrl->GetColumn(pos) : 0;
+}
+
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetLineEndPosition(wxd_StyledTextCtrl_t* self, int line)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    return ctrl ? ctrl->GetLineEndPosition(line) : 0;
+}
+
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetTextRange(wxd_StyledTextCtrl_t* self, int start, int end, char* buffer, int buffer_len)
+{
+    if (!self || !buffer || buffer_len <= 0)
+        return -1;
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    return wxd_cpp_utils::copy_wxstring_to_buffer(ctrl->GetTextRange(start, end), buffer, (size_t)buffer_len);
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_LineScrollUp(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->LineScrollUp();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_LineScrollDown(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->LineScrollDown();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_PageUp(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->PageUp();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_PageDown(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->PageDown();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_Home(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->Home();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_HomeExtend(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->HomeExtend();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_LineEnd(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->LineEnd();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_LineEndExtend(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->LineEndExtend();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_DocumentStart(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->DocumentStart();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_DocumentEnd(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->DocumentEnd();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_DocumentStartExtend(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->DocumentStartExtend();
+}
+
+WXD_EXPORTED void
+wxd_StyledTextCtrl_DocumentEndExtend(wxd_StyledTextCtrl_t* self)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl)
+        ctrl->DocumentEndExtend();
+}
+
 }
 
 #endif

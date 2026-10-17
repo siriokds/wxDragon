@@ -312,4 +312,54 @@ wxd_StyledTextCtrl_SetWrapMode(wxd_StyledTextCtrl_t* self, int wrap_mode);
 WXD_EXPORTED int
 wxd_StyledTextCtrl_GetWrapMode(wxd_StyledTextCtrl_t* self);
 
+// --- Added for Dual Rust's text viewer (wxStyledTextCtrl methods not yet wrapped) ---
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetWhitespaceForeground(wxd_StyledTextCtrl_t* self, bool use_setting, wxd_Colour_t colour);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetCaretForeground(wxd_StyledTextCtrl_t* self, wxd_Colour_t colour);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetSelBackground(wxd_StyledTextCtrl_t* self, bool use_setting, wxd_Colour_t colour);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetSelForeground(wxd_StyledTextCtrl_t* self, bool use_setting, wxd_Colour_t colour);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_AddTextRaw(wxd_StyledTextCtrl_t* self, const char* data, int length);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_Allocate(wxd_StyledTextCtrl_t* self, int bytes);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetSearchFlags(wxd_StyledTextCtrl_t* self, int flags);
+WXD_EXPORTED int
+wxd_StyledTextCtrl_SearchInTarget(wxd_StyledTextCtrl_t* self, const char* text);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_AddSelection(wxd_StyledTextCtrl_t* self, int caret, int anchor);
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetColumn(wxd_StyledTextCtrl_t* self, int pos);
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetLineEndPosition(wxd_StyledTextCtrl_t* self, int line);
+WXD_EXPORTED int
+wxd_StyledTextCtrl_GetTextRange(wxd_StyledTextCtrl_t* self, int start, int end, char* buffer, int buffer_len);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_LineScrollUp(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_LineScrollDown(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_PageUp(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_PageDown(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_Home(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_HomeExtend(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_LineEnd(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_LineEndExtend(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_DocumentStart(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_DocumentEnd(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_DocumentStartExtend(wxd_StyledTextCtrl_t* self);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_DocumentEndExtend(wxd_StyledTextCtrl_t* self);
+
 #endif // WXD_STYLEDTEXTCTRL_H

@@ -737,6 +737,222 @@ impl StyledTextCtrl {
         unsafe { ffi::wxd_StyledTextCtrl_EnsureCaretVisible(ptr) };
     }
 
+    // --- Added for Dual Rust's text viewer ---
+
+    /// Colour of the visible whitespace dots (`use_setting`: use it or the default).
+    pub fn set_whitespace_foreground(&self, use_setting: bool, color: Colour) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_SetWhitespaceForeground(ptr, use_setting, color.into()) };
+        }
+    }
+
+    /// Colour of the caret.
+    pub fn set_caret_foreground(&self, color: Colour) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_SetCaretForeground(ptr, color.into()) };
+        }
+    }
+
+    /// Background of the selection (`use_setting`: use it or the default).
+    pub fn set_sel_background(&self, use_setting: bool, color: Colour) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_SetSelBackground(ptr, use_setting, color.into()) };
+        }
+    }
+
+    /// Text colour of the selection (`use_setting` false: keep the style's colour).
+    pub fn set_sel_foreground(&self, use_setting: bool, color: Colour) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_SetSelForeground(ptr, use_setting, color.into()) };
+        }
+    }
+
+    /// Adds raw bytes at the caret, without any conversion (invalid UTF-8 is
+    /// shown by Scintilla as byte blobs).
+    pub fn add_text_raw(&self, data: &[u8]) {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() || data.is_empty() {
+            return;
+        }
+        // Scintilla takes an int length.
+        for chunk in data.chunks(1 << 30) {
+            unsafe {
+                ffi::wxd_StyledTextCtrl_AddTextRaw(
+                    ptr,
+                    chunk.as_ptr() as *const std::os::raw::c_char,
+                    chunk.len() as i32,
+                )
+            };
+        }
+    }
+
+    /// Reserves room for `bytes` of text.
+    pub fn allocate(&self, bytes: i32) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_Allocate(ptr, bytes) };
+        }
+    }
+
+    /// The flags used by [`Self::search_in_target`] (`wxSTC_FIND_*`).
+    pub fn set_search_flags(&self, flags: i32) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_SetSearchFlags(ptr, flags) };
+        }
+    }
+
+    /// Searches `text` between the target start and end (start > end searches
+    /// backwards); on success the target becomes the match. Returns its start.
+    pub fn search_in_target(&self, text: &str) -> Option<i32> {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return None;
+        }
+        let c_text = CString::new(text).unwrap_or_default();
+        let at = unsafe { ffi::wxd_StyledTextCtrl_SearchInTarget(ptr, c_text.as_ptr()) };
+        (at >= 0).then_some(at)
+    }
+
+    /// Adds a selection (multiple selection), from `anchor` to `caret`.
+    pub fn add_selection(&self, caret: i32, anchor: i32) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_AddSelection(ptr, caret, anchor) };
+        }
+    }
+
+    /// The column of a position (tabs expanded).
+    pub fn get_column(&self, pos: i32) -> i32 {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return 0;
+        }
+        unsafe { ffi::wxd_StyledTextCtrl_GetColumn(ptr, pos) }
+    }
+
+    /// The position at the end of a line, before the line ending.
+    pub fn get_line_end_position(&self, line: i32) -> i32 {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return 0;
+        }
+        unsafe { ffi::wxd_StyledTextCtrl_GetLineEndPosition(ptr, line) }
+    }
+
+    /// The text between two positions.
+    pub fn get_text_range(&self, start: i32, end: i32) -> String {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return String::new();
+        }
+        unsafe {
+            Self::read_string_with_retry(|buf, len| {
+                ffi::wxd_StyledTextCtrl_GetTextRange(ptr, start, end, buf, len)
+            })
+        }
+    }
+
+    /// Scrolls the view up one line without moving the caret.
+    pub fn line_scroll_up(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_LineScrollUp(ptr) };
+        }
+    }
+
+    /// Scrolls the view down one line without moving the caret.
+    pub fn line_scroll_down(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_LineScrollDown(ptr) };
+        }
+    }
+
+    /// Moves the caret up one page.
+    pub fn page_up(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_PageUp(ptr) };
+        }
+    }
+
+    /// Moves the caret down one page.
+    pub fn page_down(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_PageDown(ptr) };
+        }
+    }
+
+    /// Moves the caret to the start of the line.
+    pub fn home(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_Home(ptr) };
+        }
+    }
+
+    /// Moves the caret to the start of the line, extending the selection.
+    pub fn home_extend(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_HomeExtend(ptr) };
+        }
+    }
+
+    /// Moves the caret to the end of the line.
+    pub fn line_end(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_LineEnd(ptr) };
+        }
+    }
+
+    /// Moves the caret to the end of the line, extending the selection.
+    pub fn line_end_extend(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_LineEndExtend(ptr) };
+        }
+    }
+
+    /// Moves the caret to the start of the document.
+    pub fn document_start(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_DocumentStart(ptr) };
+        }
+    }
+
+    /// Moves the caret to the end of the document.
+    pub fn document_end(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_DocumentEnd(ptr) };
+        }
+    }
+
+    /// Moves the caret to the start of the document, extending the selection.
+    pub fn document_start_extend(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_DocumentStartExtend(ptr) };
+        }
+    }
+
+    /// Moves the caret to the end of the document, extending the selection.
+    pub fn document_end_extend(&self) {
+        let ptr = self.stc_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_StyledTextCtrl_DocumentEndExtend(ptr) };
+        }
+    }
+
     /// Scrolls the view by the specified number of columns and lines.
     pub fn line_scroll(&self, columns: i32, lines: i32) {
         let ptr = self.stc_ptr();
