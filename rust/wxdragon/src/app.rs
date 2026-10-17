@@ -44,8 +44,11 @@ pub fn call_after<F>(callback: Box<F>)
 where
     F: FnOnce() + Send + 'static,
 {
-    let mut queue = MAIN_THREAD_QUEUE.lock().unwrap();
-    queue.push_back(callback);
+    MAIN_THREAD_QUEUE.lock().unwrap().push_back(callback);
+    // The queue is drained on idle: without a wake-up an idle event loop
+    // runs the callback only after some other event (a mouse move, a timer).
+    // `wxWakeUpIdle` is meant for this (wxPostEvent uses it across threads).
+    wake_up_idle();
 }
 
 thread_local! {
