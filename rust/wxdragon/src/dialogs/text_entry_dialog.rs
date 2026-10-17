@@ -178,3 +178,33 @@ impl<'a> TextEntryDialogBuilder<'a> {
         unsafe { TextEntryDialog::from_ptr(ptr) }
     }
 }
+
+/// Asks for a whole number between `min` and `max` (`wxGetNumberFromUser`):
+/// `message` above, `prompt` beside the field, `caption` as the title.
+/// `None` if the user cancels.
+pub fn get_number_from_user(
+    message: &str,
+    prompt: &str,
+    caption: &str,
+    value: i64,
+    min: i64,
+    max: i64,
+    parent: Option<&dyn WxWidget>,
+) -> Option<i64> {
+    let c_message = CString::new(message).unwrap_or_default();
+    let c_prompt = CString::new(prompt).unwrap_or_default();
+    let c_caption = CString::new(caption).unwrap_or_default();
+    let parent = parent.map_or(std::ptr::null_mut(), |p| p.handle_ptr());
+    let n = unsafe {
+        ffi::wxd_GetNumberFromUser(
+            c_message.as_ptr(),
+            c_prompt.as_ptr(),
+            c_caption.as_ptr(),
+            value as _,
+            min as _,
+            max as _,
+            parent,
+        )
+    };
+    (n >= 0).then_some(n as i64)
+}

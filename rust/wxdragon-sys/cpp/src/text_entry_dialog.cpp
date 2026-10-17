@@ -1,6 +1,7 @@
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "wx/textdlg.h"
+#include "wx/numdlg.h"
 #include "../include/wxdragon.h"
 #include "wxd_utils.h" // For string helpers if needed, and wxd_OnWindowDestroy
 
@@ -52,3 +53,13 @@ WXD_EXPORTED void wxd_TextEntryDialog_SetValue(wxd_TextEntryDialog_t* self, cons
     dlg->SetValue(WXD_STR_TO_WX_STRING_UTF8_NULL_OK(value));
 }
 */
+
+WXD_EXPORTED long
+wxd_GetNumberFromUser(const char* message, const char* prompt, const char* caption, long value,
+                      long min, long max, wxd_Window_t* parent)
+{
+    return wxGetNumberFromUser(WXD_STR_TO_WX_STRING_UTF8_NULL_OK(message),
+                               WXD_STR_TO_WX_STRING_UTF8_NULL_OK(prompt),
+                               WXD_STR_TO_WX_STRING_UTF8_NULL_OK(caption), value, min, max,
+                               (wxWindow*)parent);
+}

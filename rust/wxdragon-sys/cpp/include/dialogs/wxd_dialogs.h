@@ -229,6 +229,12 @@ wxd_FontDialog_GetFontData(wxd_FontDialog_t* self);
 WXD_EXPORTED wxd_Font_t*
 wxd_FontDialog_GetFont(wxd_FontDialog_t* self);
 
+// --- wxGetNumberFromUser ---
+// Asks for a whole number between min and max; -1 if cancelled.
+WXD_EXPORTED long
+wxd_GetNumberFromUser(const char* message, const char* prompt, const char* caption, long value,
+                      long min, long max, wxd_Window_t* parent);
+
 // --- TextEntryDialog ---
 WXD_EXPORTED wxd_TextEntryDialog_t*
 wxd_TextEntryDialog_Create(wxd_Window_t* parent, const char* message, const char* caption,

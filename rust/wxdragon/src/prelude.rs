@@ -219,7 +219,9 @@ pub use crate::dialogs::message_dialog::{MessageDialog, MessageDialogBuilder, Me
 pub use crate::dialogs::multi_choice_dialog::{MultiChoiceDialog, MultiChoiceDialogBuilder}; // Added MultiChoiceDialog
 pub use crate::dialogs::progress_dialog::{ProgressDialog, ProgressDialogBuilder, ProgressDialogStyle}; // Added Builder
 pub use crate::dialogs::single_choice_dialog::{SingleChoiceDialog, SingleChoiceDialogBuilder}; // Added SingleChoiceDialog
-pub use crate::dialogs::text_entry_dialog::{TextEntryDialog, TextEntryDialogBuilder, TextEntryDialogStyle};
+pub use crate::dialogs::text_entry_dialog::{
+    TextEntryDialog, TextEntryDialogBuilder, TextEntryDialogStyle, get_number_from_user,
+};
 pub use crate::dialogs::{Dialog, DialogBuilder, DialogStyle}; // Base Dialog struct and builder
 
 // --- Fonts ---
