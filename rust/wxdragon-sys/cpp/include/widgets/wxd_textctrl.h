@@ -41,6 +41,8 @@ WXD_EXPORTED void
 wxd_TextCtrl_SetInsertionPoint(wxd_TextCtrl_t* textCtrl, wxd_Long_t pos);
 WXD_EXPORTED void
 wxd_TextCtrl_SetMaxLength(wxd_TextCtrl_t* textCtrl, wxd_Long_t len);
+WXD_EXPORTED bool
+wxd_TextCtrl_SetHint(wxd_TextCtrl_t* textCtrl, const char* hint);
 WXD_EXPORTED wxd_Long_t
 wxd_TextCtrl_GetLastPosition(wxd_TextCtrl_t* textCtrl);
 WXD_EXPORTED bool

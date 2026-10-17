@@ -419,6 +419,17 @@ impl TextCtrl {
         unsafe { ffi::wxd_TextCtrl_SetMaxLength(ptr, len as i64) };
     }
 
+    /// Sets the hint shown in the control while it is empty.
+    /// Returns false if hints are not supported or the control has been destroyed.
+    pub fn set_hint(&self, hint: &str) -> bool {
+        let ptr = self.textctrl_ptr();
+        if ptr.is_null() {
+            return false;
+        }
+        let c_hint = CString::new(hint).expect("Invalid CString for TextCtrl hint");
+        unsafe { ffi::wxd_TextCtrl_SetHint(ptr, c_hint.as_ptr()) }
+    }
+
     /// Returns the last position in the control.
     /// Returns 0 if the control has been destroyed.
     pub fn get_last_position(&self) -> i64 {

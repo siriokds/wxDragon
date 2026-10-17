@@ -194,6 +194,16 @@ wxd_TextCtrl_SetMaxLength(wxd_TextCtrl_t* textCtrl, wxd_Long_t len)
     }
 }
 
+// Set the hint shown while the control is empty
+WXD_EXPORTED bool
+wxd_TextCtrl_SetHint(wxd_TextCtrl_t* textCtrl, const char* hint)
+{
+    wxTextCtrl* ctrl = (wxTextCtrl*)textCtrl;
+    if (!ctrl)
+        return false;
+    return ctrl->SetHint(wxString::FromUTF8(hint ? hint : ""));
+}
+
 // Get the last position in the control (text length)
 WXD_EXPORTED wxd_Long_t
 wxd_TextCtrl_GetLastPosition(wxd_TextCtrl_t* textCtrl)
