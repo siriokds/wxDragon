@@ -51,6 +51,14 @@ wxd_Gauge_GetValue(const wxd_Gauge_t* self)
     return gauge->GetValue();
 }
 
+WXD_EXPORTED void
+wxd_Gauge_Pulse(wxd_Gauge_t* self)
+{
+    wxGauge* gauge = reinterpret_cast<wxGauge*>(self);
+    if (gauge)
+        gauge->Pulse();
+}
+
 // Note: wxGauge is a wxWindow, so wxd_Window_Destroy should work for cleanup.
 // No specific wxd_Gauge_Destroy needed unless extra cleanup is required.
 

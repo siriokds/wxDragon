@@ -13,5 +13,7 @@ WXD_EXPORTED void
 wxd_Gauge_SetValue(wxd_Gauge_t* self, int value);
 WXD_EXPORTED int
 wxd_Gauge_GetValue(const wxd_Gauge_t* self);
+WXD_EXPORTED void
+wxd_Gauge_Pulse(wxd_Gauge_t* self);
 
 #endif // WXD_GAUGE_H

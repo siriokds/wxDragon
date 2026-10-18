@@ -79,6 +79,17 @@ impl Gauge {
         unsafe { ffi::wxd_Gauge_SetValue(ptr, value as c_int) }
     }
 
+    /// Switches the gauge to indeterminate mode and moves it a bit (call it
+    /// repeatedly while the total is unknown). No-op if the gauge has been
+    /// destroyed.
+    pub fn pulse(&self) {
+        let ptr = self.gauge_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        unsafe { ffi::wxd_Gauge_Pulse(ptr) }
+    }
+
     /// Gets the current value of the gauge.
     /// Returns 0 if the gauge has been destroyed.
     pub fn get_value(&self) -> i32 {
