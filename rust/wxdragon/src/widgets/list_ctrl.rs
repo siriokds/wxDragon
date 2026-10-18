@@ -129,6 +129,10 @@ pub enum ListCtrlEvent {
     ColumnRightClick,
     /// Emitted when a column begins to be dragged
     ColumnBeginDrag,
+    /// Emitted while a column border is being dragged (its width changes)
+    ColumnDragging,
+    /// Emitted when a column border is released after being dragged
+    ColumnEndDrag,
     /// Emitted when beginning in-place editing of an item's label
     BeginLabelEdit,
     /// Emitted when ending in-place editing of an item's label
@@ -1123,6 +1127,8 @@ crate::implement_widget_local_event_handlers!(
     ColumnClick => column_click, EventType::LIST_COL_CLICK,
     ColumnRightClick => column_right_click, EventType::LIST_COL_RIGHT_CLICK,
     ColumnBeginDrag => column_begin_drag, EventType::LIST_COL_BEGIN_DRAG,
+    ColumnDragging => column_dragging, EventType::LIST_COL_DRAGGING,
+    ColumnEndDrag => column_end_drag, EventType::LIST_COL_END_DRAG,
     BeginLabelEdit => begin_label_edit, EventType::LIST_BEGIN_LABEL_EDIT,
     EndLabelEdit => end_label_edit, EventType::LIST_END_LABEL_EDIT,
     BeginDrag => begin_drag, EventType::LIST_BEGIN_DRAG,

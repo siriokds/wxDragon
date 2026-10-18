@@ -1300,6 +1300,10 @@ get_wx_event_type_for_c_enum(WXDEventTypeCEnum c_enum_val)
         return wxEVT_UPDATE_UI;
     case WXD_EVENT_TYPE_INIT_DIALOG:
         return wxEVT_INIT_DIALOG;
+    case WXD_EVENT_TYPE_LIST_COL_DRAGGING:
+        return wxEVT_LIST_COL_DRAGGING;
+    case WXD_EVENT_TYPE_LIST_COL_END_DRAG:
+        return wxEVT_LIST_COL_END_DRAG;
 
     // Window scroll events
     case WXD_EVENT_TYPE_SCROLLWIN_TOP:

@@ -201,6 +201,8 @@ pub struct EventType: ffi::WXDEventTypeCEnum { // Use the generated C enum type
     const LIST_INSERT_ITEM = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_LIST_INSERT_ITEM;
     const LIST_COL_RIGHT_CLICK = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_LIST_COL_RIGHT_CLICK;
     const LIST_COL_BEGIN_DRAG = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_LIST_COL_BEGIN_DRAG;
+    const LIST_COL_DRAGGING = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_LIST_COL_DRAGGING;
+    const LIST_COL_END_DRAG = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_LIST_COL_END_DRAG;
     // ADDED: ColourPickerCtrl event type
     const COLOURPICKER_CHANGED = ffi::WXDEventTypeCEnum_WXD_EVENT_TYPE_COLOURPICKER_CHANGED;
     // DatePicker Event

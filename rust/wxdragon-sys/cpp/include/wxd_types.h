@@ -390,6 +390,8 @@ typedef enum {
     WXD_EVENT_TYPE_ACTIVATE_APP = 425,         // wxEVT_ACTIVATE_APP
     WXD_EVENT_TYPE_UPDATE_UI = 426,            // wxEVT_UPDATE_UI
     WXD_EVENT_TYPE_INIT_DIALOG = 427,          // wxEVT_INIT_DIALOG
+    WXD_EVENT_TYPE_LIST_COL_DRAGGING = 428,    // wxEVT_LIST_COL_DRAGGING
+    WXD_EVENT_TYPE_LIST_COL_END_DRAG = 429,    // wxEVT_LIST_COL_END_DRAG
 
     WXD_EVENT_TYPE_MAX // Keep this last for count if needed, or remove if not used for iteration
 } WXDEventTypeCEnum;
