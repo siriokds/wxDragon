@@ -41,6 +41,20 @@ impl PopupWindow {
         }
     }
 
+    /// Creates a hidden popup window with a transparent background: what the
+    /// paint handler leaves undrawn shows what is behind (for example the
+    /// area outside rounded corners). `None` when the platform cannot do it
+    /// (X11 without a compositing manager); then use [`PopupWindow::new`].
+    pub fn new_transparent(parent: &dyn WxWidget, style: PopupWindowStyle) -> Option<PopupWindow> {
+        let ptr = unsafe { ffi::wxd_PopupWindow_CreateTransparent(parent.handle_ptr(), style.bits() as ffi::wxd_Style_t) };
+        if ptr.is_null() {
+            return None;
+        }
+        Some(PopupWindow {
+            handle: WindowHandle::new(ptr as *mut ffi::wxd_Window_t),
+        })
+    }
+
     /// Returns the underlying WindowHandle.
     pub fn window_handle(&self) -> WindowHandle {
         self.handle
