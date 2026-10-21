@@ -1285,6 +1285,17 @@ impl StyledTextCtrl {
         unsafe { ffi::wxd_StyledTextCtrl_SetKeyWords(ptr, key_word_set, c_key_words.as_ptr()) };
     }
 
+    /// Sets a lexer property, such as `lexer.cpp.backquoted.strings`.
+    pub fn set_property(&self, key: &str, value: &str) {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        let c_key = CString::new(key).unwrap_or_default();
+        let c_value = CString::new(value).unwrap_or_default();
+        unsafe { ffi::wxd_StyledTextCtrl_SetProperty(ptr, c_key.as_ptr(), c_value.as_ptr()) };
+    }
+
     // --- Margin Operations ---
 
     /// Set the type of margin (symbol, number, text, etc.)
