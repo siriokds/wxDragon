@@ -195,6 +195,7 @@ set(WXDRAGON_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/infobar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/richtooltip.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/panel.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/popupwindow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/print.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/progressdialog.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/propertygrid.cpp

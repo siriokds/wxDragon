@@ -46,6 +46,7 @@ pub mod media_ctrl;
 pub mod notebook;
 pub mod notification_message;
 pub mod panel;
+pub mod popup_window;
 pub mod property_grid;
 pub mod radio_button;
 pub mod radiobox;
@@ -147,6 +148,7 @@ pub use mdi_parent_frame::{MDIParentFrame, MDIParentFrameBuilder};
 pub use media_ctrl::{MediaCtrl, MediaCtrlBuilder, MediaCtrlPlayerControls, MediaState};
 pub use notebook::{Notebook, NotebookBuilder};
 pub use panel::{Panel, PanelBuilder};
+pub use popup_window::{PopupWindow, PopupWindowStyle};
 pub use property_grid::{
     Property, PropertyChoice, PropertyGrid, PropertyGridBuilder, PropertyGridEvent, PropertyGridEventData, PropertyGridStyle,
     PropertyId, PropertyKind,

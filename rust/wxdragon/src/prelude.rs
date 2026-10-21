@@ -153,6 +153,7 @@ pub use crate::widgets::notification_message::{
     NotificationMessage, NotificationMessageBuilder, NotificationStyle, TIMEOUT_AUTO, TIMEOUT_NEVER,
 };
 pub use crate::widgets::panel::{Panel, PanelBuilder, PanelStyle};
+pub use crate::widgets::popup_window::{PopupWindow, PopupWindowStyle};
 pub use crate::widgets::property_grid::{
     Property, PropertyChoice, PropertyGrid, PropertyGridBuilder, PropertyGridEvent, PropertyGridEventData, PropertyGridStyle,
     PropertyId, PropertyKind,
