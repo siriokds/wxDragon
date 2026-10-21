@@ -415,6 +415,7 @@ typedef struct wxd_TextCtrl_t wxd_TextCtrl_t;
 typedef struct wxd_CheckBox_t wxd_CheckBox_t;
 typedef struct wxd_Panel_t wxd_Panel_t;
 typedef struct wxd_PopupWindow_t wxd_PopupWindow_t;
+typedef struct wxd_EventFilter_t wxd_EventFilter_t;
 typedef struct wxd_RadioButton_t wxd_RadioButton_t;
 typedef struct wxd_ListBox_t wxd_ListBox_t;
 typedef struct wxd_Choice_t wxd_Choice_t;

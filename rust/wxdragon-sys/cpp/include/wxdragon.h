@@ -121,6 +121,7 @@ extern "C" {
 
 // Timer
 #include "core/wxd_timer.h"
+#include "core/wxd_eventfilter.h"
 
 // File system watcher
 #include "core/wxd_fswatcher.h"

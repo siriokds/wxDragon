@@ -245,6 +245,7 @@ pub use crate::printing::*;
 // --- Application & Misc ---
 // pub use crate::app::App; // Commented out as per previous error, App is in main or app module
 pub use crate::appprogress::AppProgressIndicator;
+pub use crate::event_filter::{EventFilter, FilterResult};
 pub use crate::fswatcher::FileSystemWatcher;
 pub use crate::ipc::{IPCClient, IPCConnection, IPCConnectionBuilder, IPCFormat, IPCServer};
 pub use crate::single_instance_checker::SingleInstanceChecker;

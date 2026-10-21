@@ -122,6 +122,7 @@ endif()
 set(WXDRAGON_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/sound.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/timer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/event_filter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/accessible.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/core/fswatcher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/about.cpp

@@ -22,6 +22,7 @@ pub mod dialogs;
 pub mod display;
 pub mod dnd;
 pub mod event;
+pub mod event_filter;
 pub mod font;
 pub mod font_data;
 pub mod fswatcher;
