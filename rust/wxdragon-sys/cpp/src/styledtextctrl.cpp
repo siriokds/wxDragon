@@ -548,6 +548,15 @@ wxd_StyledTextCtrl_SetLexerLanguage(wxd_StyledTextCtrl_t* self, const char* lang
     }
 }
 
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetKeyWords(wxd_StyledTextCtrl_t* self, int key_word_set, const char* key_words)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl && key_words) {
+        ctrl->SetKeyWords(key_word_set, wxString::FromUTF8(key_words));
+    }
+}
+
 // Margin operations
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetMarginType(wxd_StyledTextCtrl_t* self, int margin, int margin_type)

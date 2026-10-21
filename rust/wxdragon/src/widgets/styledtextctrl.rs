@@ -1274,6 +1274,17 @@ impl StyledTextCtrl {
         unsafe { ffi::wxd_StyledTextCtrl_SetLexerLanguage(ptr, c_language.as_ptr()) };
     }
 
+    /// Sets the key words of set `key_word_set` (0 to 8) for the current
+    /// lexer, separated by spaces.
+    pub fn set_key_words(&self, key_word_set: i32, key_words: &str) {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        let c_key_words = CString::new(key_words).unwrap_or_default();
+        unsafe { ffi::wxd_StyledTextCtrl_SetKeyWords(ptr, key_word_set, c_key_words.as_ptr()) };
+    }
+
     // --- Margin Operations ---
 
     /// Set the type of margin (symbol, number, text, etc.)

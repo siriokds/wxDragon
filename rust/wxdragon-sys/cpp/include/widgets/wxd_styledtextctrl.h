@@ -142,6 +142,8 @@ WXD_EXPORTED int
 wxd_StyledTextCtrl_GetLexer(wxd_StyledTextCtrl_t* self);
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetLexerLanguage(wxd_StyledTextCtrl_t* self, const char* language);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetKeyWords(wxd_StyledTextCtrl_t* self, int key_word_set, const char* key_words);
 
 // Margin operations
 WXD_EXPORTED void
