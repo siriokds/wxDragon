@@ -566,6 +566,15 @@ wxd_StyledTextCtrl_SetProperty(wxd_StyledTextCtrl_t* self, const char* key, cons
     }
 }
 
+WXD_EXPORTED void
+wxd_StyledTextCtrl_Colourise(wxd_StyledTextCtrl_t* self, int start, int end)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (ctrl) {
+        ctrl->Colourise(start, end);
+    }
+}
+
 // Margin operations
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetMarginType(wxd_StyledTextCtrl_t* self, int margin, int margin_type)

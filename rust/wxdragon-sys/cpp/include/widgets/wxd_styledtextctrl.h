@@ -146,6 +146,8 @@ WXD_EXPORTED void
 wxd_StyledTextCtrl_SetKeyWords(wxd_StyledTextCtrl_t* self, int key_word_set, const char* key_words);
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetProperty(wxd_StyledTextCtrl_t* self, const char* key, const char* value);
+WXD_EXPORTED void
+wxd_StyledTextCtrl_Colourise(wxd_StyledTextCtrl_t* self, int start, int end);
 
 // Margin operations
 WXD_EXPORTED void

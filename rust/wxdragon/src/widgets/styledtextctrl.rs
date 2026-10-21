@@ -1296,6 +1296,16 @@ impl StyledTextCtrl {
         unsafe { ffi::wxd_StyledTextCtrl_SetProperty(ptr, c_key.as_ptr(), c_value.as_ptr()) };
     }
 
+    /// Styles the text from `start` to `end` (-1: the end of the document)
+    /// now, instead of when it is drawn.
+    pub fn colourise(&self, start: i32, end: i32) {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        unsafe { ffi::wxd_StyledTextCtrl_Colourise(ptr, start, end) };
+    }
+
     // --- Margin Operations ---
 
     /// Set the type of margin (symbol, number, text, etc.)
