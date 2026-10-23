@@ -45,8 +45,26 @@ thread_local! {
 /// frame.destroy();
 /// assert!(!button.is_valid()); // Handle knows window is gone
 /// ```
+///
+/// # Threads
+///
+/// A handle only reaches its window on the main thread (the registry is per
+/// thread), so it is not `Send`: the compiler rejects handing a widget to
+/// another thread, where every call on it would silently do nothing. To carry
+/// one inside a [`call_after`](crate::call_after) callback sent from a
+/// background thread, wrap it in a [`MainThread`](crate::MainThread).
+///
+/// ```compile_fail
+/// use wxdragon::prelude::*;
+///
+/// fn send<T: Send>(_: T) {}
+///
+/// fn hand_over(button: Button) {
+///     send(button); // a widget cannot go to another thread
+/// }
+/// ```
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Default)]
-pub struct WindowHandle(u64);
+pub struct WindowHandle(u64, std::marker::PhantomData<*const ()>);
 
 impl WindowHandle {
     /// Creates a new handle for a window pointer and registers for destroy notification.
@@ -55,7 +73,7 @@ impl WindowHandle {
     /// The caller must ensure `ptr` points to a valid wxWindow that hasn't been destroyed.
     pub(crate) fn new(ptr: *mut ffi::wxd_Window_t) -> Self {
         if ptr.is_null() {
-            return WindowHandle(0); // Invalid handle for null pointers
+            return WindowHandle(0, std::marker::PhantomData); // Invalid handle for null pointers
         }
 
         let handle_id = NEXT_HANDLE_ID.fetch_add(1, Ordering::SeqCst);
@@ -83,7 +101,7 @@ impl WindowHandle {
             }
         });
 
-        WindowHandle(handle_id)
+        WindowHandle(handle_id, std::marker::PhantomData)
     }
 
     /// Get the raw pointer if the window is still valid, `None` if destroyed.
@@ -150,7 +168,7 @@ impl WindowHandle {
         if ptr.is_null() {
             return None;
         }
-        REVERSE_REGISTRY.with(|r| r.borrow().get(&(ptr as usize)).map(|&id| WindowHandle(id)))
+        REVERSE_REGISTRY.with(|r| r.borrow().get(&(ptr as usize)).map(|&id| WindowHandle(id, std::marker::PhantomData)))
     }
 }
 

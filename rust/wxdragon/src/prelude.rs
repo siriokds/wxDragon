@@ -4,6 +4,7 @@ pub use crate::accessible::Accessible;
 pub use crate::app::{
     App, call_after, call_after_local, get_app, get_app_instance, main, set_appearance, set_top_window, wake_up_idle,
 };
+pub use crate::main_thread::{MainThread, is_main_thread};
 pub use crate::appearance::{
     AppAppearance, Appearance, AppearanceResult, SystemAppearance, get_app as get_app_for_appearance, get_system_appearance,
     is_system_dark_mode,

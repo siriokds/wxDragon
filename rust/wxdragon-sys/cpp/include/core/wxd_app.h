@@ -18,6 +18,9 @@ WXD_EXPORTED void
 wxd_App_ExitMainLoop(wxd_App_t* app);
 WXD_EXPORTED void
 wxd_WakeUpIdle();
+// The calling thread is the one wxWidgets runs its windows on.
+WXD_EXPORTED bool
+wxd_IsMainThread();
 WXD_EXPORTED bool
 wxd_App_GetExitOnFrameDelete(wxd_App_t* app);
 WXD_EXPORTED void

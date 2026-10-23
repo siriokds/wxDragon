@@ -4,6 +4,7 @@
 #include "../include/wxdragon.h"
 #include "wxd_dispatch.h"
 #include <wx/app.h>
+#include <wx/thread.h>
 #include <wx/image.h>
 #include <cstdlib>
 #include <wx/private/safecall.h>
@@ -299,6 +300,12 @@ void
 wxd_WakeUpIdle()
 {
     wxWakeUpIdle();
+}
+
+bool
+wxd_IsMainThread()
+{
+    return wxIsMainThread();
 }
 
 bool

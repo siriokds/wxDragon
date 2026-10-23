@@ -26,19 +26,24 @@ pub(crate) static GUI_TEST_LOCK: Mutex<()> = Mutex::new(());
 /// This is useful when you need to update UI elements from a background thread.
 /// The callback will be executed during the next event loop iteration.
 ///
+/// Widgets are not `Send`: a callback sent from a background thread carries
+/// one in a [`MainThread`](crate::MainThread) and opens it when it runs (on the
+/// main thread). From the main thread itself, [`call_after_local`] takes the
+/// widget as it is.
+///
 /// # Example
 /// ```rust,no_run
 /// use wxdragon::prelude::*;
-/// # // Minimal stub so the snippet compiles in doctests
-/// # struct DummyLabel;
-/// # impl DummyLabel { fn set_label(&self, _s: &str) {} }
-/// # let my_label = DummyLabel;
 ///
-/// // In a background thread:
-/// wxdragon::call_after(Box::new(move || {
-///     // Update UI elements here
-///     my_label.set_label("Updated from background thread");
-/// }));
+/// # fn example(my_label: StaticText) {
+/// let my_label = MainThread::new(my_label);
+/// std::thread::spawn(move || {
+///     wxdragon::call_after(Box::new(move || {
+///         // Update UI elements here
+///         my_label.get().set_label("Updated from background thread");
+///     }));
+/// });
+/// # }
 /// ```
 pub fn call_after<F>(callback: Box<F>)
 where
