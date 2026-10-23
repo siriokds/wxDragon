@@ -16,6 +16,12 @@ type CallbackQueue = Arc<Mutex<VecDeque<Box<dyn FnOnce() + Send + 'static>>>>;
 // Queue for storing callbacks to be executed on the main thread
 static MAIN_THREAD_QUEUE: LazyLock<CallbackQueue> = LazyLock::new(|| Arc::new(Mutex::new(VecDeque::new())));
 
+/// The queue, even if a thread panicked while holding it (the queue itself is
+/// always consistent: only push and pop happen under the lock).
+fn main_thread_queue() -> std::sync::MutexGuard<'static, VecDeque<Box<dyn FnOnce() + Send + 'static>>> {
+    MAIN_THREAD_QUEUE.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
+}
+
 // wxWidgets keeps process-global application state, so tests must not enter
 // separate GUI event loops at the same time.
 #[cfg(test)]
@@ -49,7 +55,7 @@ pub fn call_after<F>(callback: Box<F>)
 where
     F: FnOnce() + Send + 'static,
 {
-    MAIN_THREAD_QUEUE.lock().unwrap().push_back(callback);
+    main_thread_queue().push_back(callback);
     // The queue is drained on idle: without a wake-up an idle event loop
     // runs the callback only after some other event (a mouse move, a timer).
     // `wxWakeUpIdle` is meant for this (wxPostEvent uses it across threads).
@@ -89,14 +95,15 @@ pub fn process_main_thread_queue() -> bool {
     let local: Vec<_> = LOCAL_QUEUE.with(|queue| queue.borrow_mut().drain(..).collect());
     let ran_local = !local.is_empty();
     for callback in local {
-        callback();
+        // A panic stays with its own callback: the others queued with it still run.
+        crate::utils::guard_ffi_callback("call_after_local callback", (), callback);
     }
 
     let mut callbacks = Vec::new();
 
     // Move callbacks from the queue to our local vector to minimize lock time
     {
-        let mut queue = MAIN_THREAD_QUEUE.lock().unwrap();
+        let mut queue = main_thread_queue();
         if queue.is_empty() {
             return ran_local;
         }
@@ -114,7 +121,7 @@ pub fn process_main_thread_queue() -> bool {
 
     // Execute callbacks outside of the lock
     for callback in callbacks {
-        callback();
+        crate::utils::guard_ffi_callback("call_after callback", (), callback);
     }
 
     true // We processed some callbacks
@@ -359,6 +366,19 @@ pub fn activate_app() {
 /// and wakes up the event loop from a sleep state.
 pub fn wake_up_idle() {
     unsafe { ffi::wxd_WakeUpIdle() };
+}
+
+/// How many modal dialogs are open right now.
+///
+/// wxWidgets counts every modal dialog it shows, native ones included (message,
+/// file, directory, colour and font dialogs); dialogs a program opens outside
+/// wxWidgets are not counted.
+///
+/// Callbacks queued with [`call_after`] and [`call_after_local`] also run inside
+/// a modal dialog's event loop: one that would open a window of its own can check
+/// this and wait for the dialog to close.
+pub fn open_modal_count() -> usize {
+    usize::try_from(unsafe { ffi::wxd_App_GetOpenModalCount() }).unwrap_or(0)
 }
 
 /// Gets the current wxWidgets app instance.
@@ -879,5 +899,64 @@ unsafe extern "C" fn on_init_trampoline(user_data: *mut c_void) -> bool {
             log::error!("Panic caught in Rust AppOnInit callback!");
             false // Indicate failure on panic
         }
+    }
+}
+
+#[cfg(test)]
+mod queue_tests {
+    use super::*;
+    use std::cell::Cell;
+    use std::panic::catch_unwind;
+    use std::rc::Rc;
+    use std::sync::Arc;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    /// Runs the queue until it is empty, as idle does, whatever a callback does.
+    fn drain() {
+        for _ in 0..20 {
+            if !catch_unwind(process_main_thread_queue).unwrap_or(true) {
+                return;
+            }
+        }
+    }
+
+    /// A callback that panics must not take down the others queued with it.
+    #[test]
+    fn a_panicking_local_callback_does_not_lose_the_others() {
+        let _gui_test = GUI_TEST_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let ran = Rc::new(Cell::new(0));
+        for n in 0..3 {
+            let ran = ran.clone();
+            call_after_local(Box::new(move || {
+                if n == 1 {
+                    panic!("the second callback fails");
+                }
+                ran.set(ran.get() + 1);
+            }));
+        }
+        drain();
+        assert_eq!(ran.get(), 2);
+    }
+
+    /// The same for callbacks sent from other threads.
+    #[test]
+    fn a_panicking_callback_from_a_thread_does_not_lose_the_others() {
+        let _gui_test = GUI_TEST_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let ran = Arc::new(AtomicUsize::new(0));
+        std::thread::scope(|scope| {
+            scope.spawn(|| {
+                for n in 0..3 {
+                    let ran = ran.clone();
+                    call_after(Box::new(move || {
+                        if n == 1 {
+                            panic!("the second callback fails");
+                        }
+                        ran.fetch_add(1, Ordering::SeqCst);
+                    }));
+                }
+            });
+        });
+        drain();
+        assert_eq!(ran.load(Ordering::SeqCst), 2);
     }
 }

@@ -5,6 +5,7 @@
 #include "wxd_dispatch.h"
 #include <wx/app.h>
 #include <wx/thread.h>
+#include <wx/modalhook.h>
 #include <wx/image.h>
 #include <cstdlib>
 #include <wx/private/safecall.h>
@@ -306,6 +307,12 @@ bool
 wxd_IsMainThread()
 {
     return wxIsMainThread();
+}
+
+int
+wxd_App_GetOpenModalCount()
+{
+    return wxModalDialogHook::GetOpenCount();
 }
 
 bool

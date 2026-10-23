@@ -20,6 +20,7 @@ members = [
   "examples/rust/glcanvas_demo",
   "examples/rust/grid_example",
   "examples/rust/mdi_demo",
+  "examples/rust/modal_count_test",
   "examples/rust/gridbagsizer_test",
   "examples/rust/gridsizer_test",
   "examples/rust/ipc_demo",

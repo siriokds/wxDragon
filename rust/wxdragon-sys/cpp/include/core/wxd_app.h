@@ -21,6 +21,9 @@ wxd_WakeUpIdle();
 // The calling thread is the one wxWidgets runs its windows on.
 WXD_EXPORTED bool
 wxd_IsMainThread();
+// How many modal dialogs are open (wxModalDialogHook::GetOpenCount).
+WXD_EXPORTED int
+wxd_App_GetOpenModalCount();
 WXD_EXPORTED bool
 wxd_App_GetExitOnFrameDelete(wxd_App_t* app);
 WXD_EXPORTED void

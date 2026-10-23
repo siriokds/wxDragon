@@ -2,7 +2,8 @@
 #[cfg(target_os = "windows")]
 pub use crate::accessible::Accessible;
 pub use crate::app::{
-    App, call_after, call_after_local, get_app, get_app_instance, main, set_appearance, set_top_window, wake_up_idle,
+    App, call_after, call_after_local, get_app, get_app_instance, main, open_modal_count, set_appearance, set_top_window,
+    wake_up_idle,
 };
 pub use crate::main_thread::{MainThread, is_main_thread};
 pub use crate::appearance::{
