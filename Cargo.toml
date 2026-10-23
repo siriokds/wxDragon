@@ -10,6 +10,7 @@ members = [
   "examples/rust/dataviewtree",
   "examples/rust/dc_example",
   "examples/rust/destroy_self_test",
+  "examples/rust/destroy_during_dispatch_test",
   "examples/rust/dnd_advanced",
   "examples/rust/event_token_test",
   "examples/rust/events_test",

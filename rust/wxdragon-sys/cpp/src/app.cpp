@@ -2,6 +2,7 @@
 #include <wx/wx.h>
 #include <wx/cmdline.h>
 #include "../include/wxdragon.h"
+#include "wxd_dispatch.h"
 #include <wx/app.h>
 #include <wx/image.h>
 #include <cstdlib>
@@ -37,6 +38,11 @@ public:
     // Idle event handler to process callbacks
     void
     OnIdle(wxIdleEvent& event);
+
+    // Deferred destruction waits for the dispatches inside the windows
+    // (wxd_dispatch.h): busy top-level windows stay out of wxPendingDelete.
+    virtual bool
+    ProcessIdle() override;
 
     // Override OnExit to clean up IPC/DDE objects before module cleanup
     virtual int OnExit() override;
@@ -122,11 +128,21 @@ WxdApp::OnIdle(wxIdleEvent& event)
     // Process any pending Rust callbacks
     int callbacks_processed = process_rust_callbacks();
 
+    // Child windows whose deferred destruction is now safe.
+    wxd_dispatch::DestroyWhatIsSafe();
+
     // Only request more idle events if there were callbacks to process
     // This prevents unnecessary CPU usage when the app is idle
     if (callbacks_processed > 0) {
         event.RequestMore();
     }
+}
+
+bool
+WxdApp::ProcessIdle()
+{
+    wxd_dispatch::PendingDeleteHold hold;
+    return wxApp::ProcessIdle();
 }
 
 // Clean up IPC/DDE objects before wxWidgets module cleanup.

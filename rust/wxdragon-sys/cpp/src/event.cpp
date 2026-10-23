@@ -47,6 +47,7 @@
 #include <wx/stc/stc.h>
 #endif
 #include "../src/wxd_utils.h"
+#include "wxd_dispatch.h"
 #if wxdUSE_AUI && wxUSE_AUI
 #include <wx/aui/framemanager.h>
 #endif
@@ -219,6 +220,13 @@ public:
     size_t dispatchDepth = 0;
     std::vector<void*> pendingDrops;
 
+    // The owner was destroyed while a dispatch of this handler was on the stack
+    // (deferred destruction run by a modal loop the callback opened, or a window
+    // deleted outright by a callback). The handler outlives it until the last
+    // dispatch unwinds, and the dispatch tells wx the event was handled, so wx
+    // stops processing it on the dead window.
+    bool ownerGone = false;
+
     WxdEventHandler(wxEvtHandler* owner) : ownerHandler(owner)
     {
         WXD_LOG_TRACEF("WxdEventHandler 0x%" PRIxPTR " created for wxEvtHandler 0x%p cls=%s",
@@ -267,12 +275,17 @@ public:
     explicit WxdDispatchGuard(WxdEventHandler* handler) : m_handler(handler)
     {
         ++m_handler->dispatchDepth;
+        wxd_dispatch::Enter(m_handler->ownerHandler);
     }
 
     ~WxdDispatchGuard()
     {
+        wxd_dispatch::Leave();
         if (--m_handler->dispatchDepth == 0) {
             m_handler->FlushPendingDrops();
+            if (m_handler->ownerGone) {
+                delete m_handler;
+            }
         }
     }
 
@@ -288,6 +301,18 @@ private:
 WxdHandlerClientData::~WxdHandlerClientData()
 {
     WXD_LOG_TRACEF("WxdHandlerClientData destroying for handler %p", handler);
+    if (!handler) {
+        return;
+    }
+    // The owner is being destroyed: it no longer counts as dispatching.
+    wxd_dispatch::Forget(handler->ownerHandler);
+    if (handler->dispatchDepth > 0) {
+        // A dispatch of this handler is still on the stack: the last guard to
+        // unwind deletes the handler (see WxdEventHandler::ownerGone).
+        handler->ownerGone = true;
+        handler->ownerHandler = nullptr;
+        return;
+    }
     delete handler;
 }
 
@@ -398,6 +423,11 @@ WxdEventHandler::UnbindClosure(size_t token)
         this->closureMap.erase(closure_it);
         this->wx_bindings_made.erase(map_key);
 
+        // A dead owner has no bindings left to remove.
+        if (!this->ownerHandler) {
+            return true;
+        }
+
         // Disconnect from wxWidgets event system
         if (IsVetableEventType(event_type)) {
             if (IsSessionEventType(event_type)) {
@@ -469,6 +499,12 @@ WxdEventHandler::RunClosures(const std::vector<RustClosureInfo>& snapshot, wxEve
         // Call the Rust trampoline function
         info.rust_trampoline(info.closure_ptr, reinterpret_cast<wxd_Event_t*>(&event));
 
+        // The owner was destroyed inside the callback: the other closures belong
+        // to a dead window, and the event counts as handled (see DispatchEvent).
+        if (this->ownerGone) {
+            return true;
+        }
+
         // Check if this handler consumed the event
         if (!event.GetSkipped()) {
             event_consumed = true;
@@ -529,6 +565,15 @@ WxdEventHandler::DispatchEvent(wxEvent& event)
     // Process wxID_ANY handlers only when they are distinct from the specific-ID lookup.
     if (!event_consumed && !specific_key_is_any) {
         event_consumed = this->RunClosures(any_closures, event, keep_dispatching_after_consume);
+    }
+
+    if (this->ownerGone) {
+        // wx stops processing an event as soon as a handler consumes it, precisely
+        // because the handler may have destroyed the object
+        // (wxEvtHandler::SearchDynamicEventTable): report it consumed, so wx never
+        // touches the dead window again. The guard deletes this handler on return.
+        event.Skip(false);
+        return;
     }
 
     // Set final event state

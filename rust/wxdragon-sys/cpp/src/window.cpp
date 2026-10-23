@@ -1,6 +1,7 @@
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h" // Needed for WXD_EXPORTED, wxd_* types, WXD_ID_ANY
+#include "wxd_dispatch.h"
 #include <wx/window.h>           // Needed for wxWindow
 #include <wx/sizer.h>            // Needed for wxSizer
 #include "wx/gdicmn.h"           // For wxSize, wxPoint
@@ -87,9 +88,10 @@ wxd_Window_Destroy(wxd_Window_t* window)
         // wxWindowBase::Destroy() deletes child windows *immediately*. Calling it from
         // the widget's own event handler frees the window (and its WxdEventHandler client
         // data) while it is still on the dispatch call stack -> use-after-free crash.
-        // Defer the Destroy() to idle time so it runs after dispatch unwinds, matching
-        // top-level window behavior and making destroy() safe to call from any handler.
-        wx_window->GetEventHandler()->CallAfter([wx_window] { wx_window->Destroy(); });
+        // Defer the Destroy() to idle time, once no event of the window or of one inside
+        // it is still being dispatched (a modal loop opened by a callback runs idle too),
+        // matching top-level window behavior and making destroy() safe from any handler.
+        wxd_dispatch::ScheduleDestroy(wx_window);
     }
 }
 

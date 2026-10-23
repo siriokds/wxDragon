@@ -129,6 +129,7 @@ set(WXDRAGON_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/activity_indicator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_ctrl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/app.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/dispatch.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/appprogress.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/array_string.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/art_provider.cpp
