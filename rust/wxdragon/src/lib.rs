@@ -56,6 +56,7 @@ pub mod xrc;
 
 // Re-export the prelude for convenience - users should use this
 pub use prelude::*;
+pub use utils::reentrant_skips;
 
 // Re-export procedural macros from wxdragon-macros
 #[cfg(feature = "xrc")]

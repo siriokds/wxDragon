@@ -1046,10 +1046,24 @@ pub unsafe extern "C" fn rust_event_handler_trampoline(user_data: *mut c_void, e
     // Only shared access to the storage is allowed before checking for re-entry.
     // C++ defers its drop until all nested dispatches have returned.
     let callback = unsafe { &*(user_data as *const EventCallback) };
-    callback.call("rust_event_handler_trampoline", (), |closure| {
+    callback.call(HandlerContext(event_ptr_cvoid as *mut ffi::wxd_Event_t), (), |closure| {
         let safe_event = unsafe { Event::from_ptr(event_ptr_cvoid as *mut ffi::wxd_Event_t) };
         closure(safe_event);
     });
+}
+
+/// The event handler being called, named in the log only when something goes
+/// wrong (a panic, a re-entrant call skipped).
+struct HandlerContext(*mut ffi::wxd_Event_t);
+
+impl std::fmt::Display for HandlerContext {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let event = unsafe { Event::from_ptr(self.0) };
+        match event.get_event_type() {
+            Some(event_type) => write!(f, "the {event_type:?} event handler"),
+            None => write!(f, "an event handler"),
+        }
+    }
 }
 
 /// Function called by C++ to drop the Rust closure Box.

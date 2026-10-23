@@ -10,7 +10,7 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 /// out of range index in a data view model callback.
 ///
 /// `context` is only used in the message logged when a panic does happen.
-pub(crate) fn guard_ffi_callback<R>(context: &str, fallback: R, callback: impl FnOnce() -> R) -> R {
+pub(crate) fn guard_ffi_callback<R>(context: impl std::fmt::Display, fallback: R, callback: impl FnOnce() -> R) -> R {
     match catch_unwind(AssertUnwindSafe(callback)) {
         Ok(value) => value,
         Err(_) => {
