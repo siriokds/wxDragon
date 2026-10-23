@@ -168,15 +168,6 @@ impl ScrolledWindow {
         Size { width: w, height: h }
     }
 
-    /// Gets the number of pixels per scroll unit.
-    /// Gets the position of the top-left corner of the visible area, in
-    /// scroll units (multiply by `get_scroll_pixels_per_unit` for pixels).
-    pub fn get_view_start(&self) -> (i32, i32) {
-        let (mut x, mut y) = (0, 0);
-        unsafe { ffi::wxd_ScrolledWindow_GetViewStart(self.as_ptr(), &mut x, &mut y) };
-        (x, y)
-    }
-
     /// Sets the size of the whole scrollable area, in pixels.
     pub fn set_virtual_size(&self, width: i32, height: i32) {
         unsafe { ffi::wxd_ScrolledWindow_SetVirtualSize(self.as_ptr(), width, height) };
@@ -211,6 +202,7 @@ impl ScrolledWindow {
         unsafe { ffi::wxd_ScrolledWindow_ShowScrollbars(self.as_ptr(), horizontal as i32, vertical as i32) };
     }
 
+    /// Gets the number of pixels per scroll unit.
     pub fn get_scroll_pixels_per_unit(&self) -> (i32, i32) {
         let ptr = self.scrolled_window_ptr();
         if ptr.is_null() {
@@ -220,6 +212,21 @@ impl ScrolledWindow {
         let mut y_unit: i32 = 0;
         unsafe { ffi::wxd_ScrolledWindow_GetScrollPixelsPerUnit(ptr, &mut x_unit, &mut y_unit) };
         (x_unit, y_unit)
+    }
+
+    /// Gets the position of the top-left corner of the visible area, in scroll units.
+    ///
+    /// This is where the user has scrolled to, whether with the scroll bar, the mouse wheel
+    /// or `scroll_coords`. Multiply by `get_scroll_pixels_per_unit` for pixels.
+    pub fn get_view_start(&self) -> (i32, i32) {
+        let ptr = self.scrolled_window_ptr();
+        if ptr.is_null() {
+            return (0, 0);
+        }
+        let mut x: i32 = 0;
+        let mut y: i32 = 0;
+        unsafe { ffi::wxd_ScrolledWindow_GetViewStart(ptr, &mut x, &mut y) };
+        (x, y)
     }
 }
 

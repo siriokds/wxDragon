@@ -699,26 +699,28 @@ wxd_WebView_IsBackendAvailable(const char* backend)
     return wxWebView::IsBackendAvailable(backendStr);
 }
 
-WXD_EXPORTED int
-wxd_WebViewEvent_GetURL(const wxd_Event_t* event, char* buffer, size_t buffer_len)
+static const wxWebViewEvent*
+AsWebViewEvent(const wxd_Event_t* event)
 {
-    if (!event)
-        return -1;
-    wxWebViewEvent* webEvent = wxDynamicCast((wxEvent*)event, wxWebViewEvent);
-    if (!webEvent)
-        return -1;
-    return (int)wxd_cpp_utils::copy_wxstring_to_buffer(webEvent->GetURL(), buffer, buffer_len);
+    return dynamic_cast<const wxWebViewEvent*>(reinterpret_cast<const wxEvent*>(event));
 }
 
 WXD_EXPORTED int
-wxd_WebViewEvent_GetTarget(const wxd_Event_t* event, char* buffer, size_t buffer_len)
+wxd_WebViewEvent_GetURL(const wxd_Event_t* event, char* buffer, size_t len)
 {
-    if (!event)
+    const wxWebViewEvent* webview_event = AsWebViewEvent(event);
+    if (!webview_event)
         return -1;
-    wxWebViewEvent* webEvent = wxDynamicCast((wxEvent*)event, wxWebViewEvent);
-    if (!webEvent)
+    return (int)wxd_cpp_utils::copy_wxstring_to_buffer(webview_event->GetURL(), buffer, len);
+}
+
+WXD_EXPORTED int
+wxd_WebViewEvent_GetTarget(const wxd_Event_t* event, char* buffer, size_t len)
+{
+    const wxWebViewEvent* webview_event = AsWebViewEvent(event);
+    if (!webview_event)
         return -1;
-    return (int)wxd_cpp_utils::copy_wxstring_to_buffer(webEvent->GetTarget(), buffer, buffer_len);
+    return (int)wxd_cpp_utils::copy_wxstring_to_buffer(webview_event->GetTarget(), buffer, len);
 }
 
 } // extern "C"

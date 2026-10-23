@@ -39,12 +39,6 @@ WXD_EXPORTED int wxd_WebView_GetZoomType(wxd_WebView_t* self);
 WXD_EXPORTED void wxd_WebView_SetZoom(wxd_WebView_t* self, int zoom);
 WXD_EXPORTED void wxd_WebView_SetZoomType(wxd_WebView_t* self, int zoomType);
 
-// Events: the URL and the target of a wxWebViewEvent (wx keeps them in
-// GetURL()/GetTarget(), not in the command string). Returns the length, or
-// -1 if the event is not a wxWebViewEvent.
-WXD_EXPORTED int wxd_WebViewEvent_GetURL(const wxd_Event_t* event, char* buffer, size_t buffer_len);
-WXD_EXPORTED int wxd_WebViewEvent_GetTarget(const wxd_Event_t* event, char* buffer, size_t buffer_len);
-
 // Scripting
 WXD_EXPORTED int wxd_WebView_RunScript(wxd_WebView_t* self, const char* javascript, char* output, int output_len);
 
@@ -131,6 +125,11 @@ WXD_EXPORTED void wxd_WebView_RegisterHandler(wxd_WebView_t* self, const char* s
 // Native Backend
 WXD_EXPORTED void* wxd_WebView_GetNativeBackend(wxd_WebView_t* self);
 WXD_EXPORTED int wxd_WebView_GetBackend(wxd_WebView_t* self, char* buffer, int len);
+
+// Events. A wxWebViewEvent keeps its URL and target frame apart from the command string,
+// which is empty for navigation events. Both return -1 for an event that isn't one.
+WXD_EXPORTED int wxd_WebViewEvent_GetURL(const wxd_Event_t* event, char* buffer, size_t len);
+WXD_EXPORTED int wxd_WebViewEvent_GetTarget(const wxd_Event_t* event, char* buffer, size_t len);
 
 // Static utility functions
 WXD_EXPORTED bool wxd_WebView_IsBackendAvailable(const char* backend);

@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Breaking Changes
+
+- **Accessibility**: Fixed accessible states reaching screen readers as other states on Windows. The `WXD_ACC_STATE_SYSTEM_*` defines carried the `STATE_SYSTEM_*` values from `oleacc.h`, but `wxAccessible::GetState` takes wxWidgets' own `wxACC_STATE_SYSTEM_*` numbering and converts it, so no state given through `AccessibleImpl::get_state` or `set_accessibility_state` arrived as itself: `AccState::CHECKED` was reported as busy, `SELECTABLE` as read only, and `FOCUSED | SELECTED` as two alert levels. The defines now carry wxWidgets' values, and Windows builds check each one against wxWidgets. `AccState::SIZEABLE`, `MOVEABLE`, `LINKED`, `TRAVERSED` and `HASPOPUP` and their `WXD_ACC_STATE_SYSTEM_*` defines are removed: wxWidgets has no such states, so none of them ever reached a screen reader as itself, and code naming them has to drop them (#250)
+
+### New Features
+
+- **Window**: Added `on_mouse_left_double_click`, `on_mouse_right_double_click` and `on_mouse_middle_double_click`, binding `wxEVT_LEFT_DCLICK`, `wxEVT_RIGHT_DCLICK` and `wxEVT_MIDDLE_DCLICK`. A custom-drawn control had no way to tell a double-click from two clicks, short of timing `LeftDown` events against the system double-click time and distance itself. The events carry the usual `MouseButtonEvent` data, and `wxd_IsMouseButtonEvent` now accepts them
+- **ScrolledWindow**: Added `get_view_start`, wrapping `wxScrolled::GetViewStart`. Without it a scrolled window drawn by hand couldn't find out where the user had scrolled to with the scroll bar or the mouse wheel, so it couldn't tell which part of its contents to paint
+
+### Bug Fixes
+
+- **Window**: Fixed `navigate` going the wrong way. The constant extractor hard-coded `wxNAVIGATION_NEXT` as 0 and `wxNAVIGATION_PREVIOUS` as 1, but `wxWindow::Navigate` takes `wxNavigationKeyEvent` flags, where 0 is `IsBackward` and 1 is `IsForward`. So `navigate(true)` moved focus to the previous control and `navigate(false)` to the next one. A control that handles Tab itself (with `wxWANTS_CHARS`) and passes it on with `navigate(!shift_down)` sent Tab backwards and Shift+Tab forwards. The extractor now takes the values from `wxNavigationKeyEvent`, and the generated constants are corrected
+- **Printing**: Fixed `Printer::print` never starting a print job on Windows and macOS. The printout shim overrode `OnBeginDocument` and `OnEndDocument` to run the Rust callbacks and never called `wxPrintout`'s own versions, which are the only place `StartDoc` and `EndDoc` are called on the printer DC. Every page was drawn on a DC with no document open, so nothing was printed: Microsoft Print to PDF never asked where to save and wrote no file, and `print` still returned `true`. The shim now starts the document before `on_begin_document` runs and ends it after `on_end_document`. Returning `false` from `on_begin_document` now stops printing, which wxWidgets reports as an error ("Could not start printing.") without calling `on_end_document`; before, the C callback type returned nothing and the answer was dropped. A panic in `on_begin_document` now stops printing the same way instead of carrying on. Code passing its own begin-document callback to `wxd_Printout_CreateWithCallbacks` through `wxdragon-sys` must now return `bool` (#246)
+
 ## 0.9.23
 
 ### New Features

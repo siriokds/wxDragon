@@ -370,28 +370,30 @@ typedef enum {
     WXD_EVENT_TYPE_QUERY_END_SESSION = 409,     // wxEVT_QUERY_END_SESSION
     WXD_EVENT_TYPE_COMMAND_COMBOBOX_DROPDOWN = 410, // wxEVT_COMBOBOX_DROPDOWN
     WXD_EVENT_TYPE_COMMAND_COMBOBOX_CLOSEUP = 411, // wxEVT_COMBOBOX_CLOSEUP
+    WXD_EVENT_TYPE_LEFT_DCLICK = 412,               // wxEVT_LEFT_DCLICK
+    WXD_EVENT_TYPE_RIGHT_DCLICK = 413,              // wxEVT_RIGHT_DCLICK
+    WXD_EVENT_TYPE_MIDDLE_DCLICK = 414,             // wxEVT_MIDDLE_DCLICK
 
     // Window scroll events (wxScrollWinEvent), sent by scrolled windows
-    WXD_EVENT_TYPE_SCROLLWIN_TOP = 412,          // wxEVT_SCROLLWIN_TOP
-    WXD_EVENT_TYPE_SCROLLWIN_BOTTOM = 413,       // wxEVT_SCROLLWIN_BOTTOM
-    WXD_EVENT_TYPE_SCROLLWIN_LINEUP = 414,       // wxEVT_SCROLLWIN_LINEUP
-    WXD_EVENT_TYPE_SCROLLWIN_LINEDOWN = 415,     // wxEVT_SCROLLWIN_LINEDOWN
-    WXD_EVENT_TYPE_SCROLLWIN_PAGEUP = 416,       // wxEVT_SCROLLWIN_PAGEUP
-    WXD_EVENT_TYPE_SCROLLWIN_PAGEDOWN = 417,     // wxEVT_SCROLLWIN_PAGEDOWN
-    WXD_EVENT_TYPE_SCROLLWIN_THUMBTRACK = 418,   // wxEVT_SCROLLWIN_THUMBTRACK
-    WXD_EVENT_TYPE_SCROLLWIN_THUMBRELEASE = 419, // wxEVT_SCROLLWIN_THUMBRELEASE
+    WXD_EVENT_TYPE_SCROLLWIN_TOP = 415,          // wxEVT_SCROLLWIN_TOP
+    WXD_EVENT_TYPE_SCROLLWIN_BOTTOM = 416,       // wxEVT_SCROLLWIN_BOTTOM
+    WXD_EVENT_TYPE_SCROLLWIN_LINEUP = 417,       // wxEVT_SCROLLWIN_LINEUP
+    WXD_EVENT_TYPE_SCROLLWIN_LINEDOWN = 418,     // wxEVT_SCROLLWIN_LINEDOWN
+    WXD_EVENT_TYPE_SCROLLWIN_PAGEUP = 419,       // wxEVT_SCROLLWIN_PAGEUP
+    WXD_EVENT_TYPE_SCROLLWIN_PAGEDOWN = 420,     // wxEVT_SCROLLWIN_PAGEDOWN
+    WXD_EVENT_TYPE_SCROLLWIN_THUMBTRACK = 421,   // wxEVT_SCROLLWIN_THUMBTRACK
+    WXD_EVENT_TYPE_SCROLLWIN_THUMBRELEASE = 422, // wxEVT_SCROLLWIN_THUMBRELEASE
 
     // Window events
-    WXD_EVENT_TYPE_LEFT_DCLICK = 420,          // wxEVT_LEFT_DCLICK
-    WXD_EVENT_TYPE_MOUSE_CAPTURE_LOST = 421,   // wxEVT_MOUSE_CAPTURE_LOST
-    WXD_EVENT_TYPE_MAXIMIZE = 422,             // wxEVT_MAXIMIZE
-    WXD_EVENT_TYPE_DPI_CHANGED = 423,          // wxEVT_DPI_CHANGED
-    WXD_EVENT_TYPE_DISPLAY_CHANGED = 424,      // wxEVT_DISPLAY_CHANGED
-    WXD_EVENT_TYPE_ACTIVATE_APP = 425,         // wxEVT_ACTIVATE_APP
-    WXD_EVENT_TYPE_UPDATE_UI = 426,            // wxEVT_UPDATE_UI
-    WXD_EVENT_TYPE_INIT_DIALOG = 427,          // wxEVT_INIT_DIALOG
-    WXD_EVENT_TYPE_LIST_COL_DRAGGING = 428,    // wxEVT_LIST_COL_DRAGGING
-    WXD_EVENT_TYPE_LIST_COL_END_DRAG = 429,    // wxEVT_LIST_COL_END_DRAG
+    WXD_EVENT_TYPE_MOUSE_CAPTURE_LOST = 423,   // wxEVT_MOUSE_CAPTURE_LOST
+    WXD_EVENT_TYPE_MAXIMIZE = 424,             // wxEVT_MAXIMIZE
+    WXD_EVENT_TYPE_DPI_CHANGED = 425,          // wxEVT_DPI_CHANGED
+    WXD_EVENT_TYPE_DISPLAY_CHANGED = 426,      // wxEVT_DISPLAY_CHANGED
+    WXD_EVENT_TYPE_ACTIVATE_APP = 427,         // wxEVT_ACTIVATE_APP
+    WXD_EVENT_TYPE_UPDATE_UI = 428,            // wxEVT_UPDATE_UI
+    WXD_EVENT_TYPE_INIT_DIALOG = 429,          // wxEVT_INIT_DIALOG
+    WXD_EVENT_TYPE_LIST_COL_DRAGGING = 430,    // wxEVT_LIST_COL_DRAGGING
+    WXD_EVENT_TYPE_LIST_COL_END_DRAG = 431,    // wxEVT_LIST_COL_END_DRAG
 
     WXD_EVENT_TYPE_MAX // Keep this last for count if needed, or remove if not used for iteration
 } WXDEventTypeCEnum;
@@ -811,7 +813,7 @@ typedef struct wxd_PageSetupDialog_t wxd_PageSetupDialog_t;
 typedef void (*wxd_Printout_OnPreparePrinting_Callback)(void* userData);
 typedef void (*wxd_Printout_OnBeginPrinting_Callback)(void* userData);
 typedef void (*wxd_Printout_OnEndPrinting_Callback)(void* userData);
-typedef void (*wxd_Printout_OnBeginDocument_Callback)(void* userData, int startPage, int endPage);
+typedef bool (*wxd_Printout_OnBeginDocument_Callback)(void* userData, int startPage, int endPage);
 typedef void (*wxd_Printout_OnEndDocument_Callback)(void* userData);
 typedef bool (*wxd_Printout_OnPrintPage_Callback)(void* userData, int pageNum);
 typedef bool (*wxd_Printout_HasPage_Callback)(void* userData, int pageNum);

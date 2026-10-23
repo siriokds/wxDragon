@@ -157,6 +157,11 @@ IsSessionEventType(wxEventType eventType)
     return eventType == wxEVT_END_SESSION || eventType == wxEVT_QUERY_END_SESSION;
 }
 
+// wxNotifyEvent is found with dynamic_cast, not wxDynamicCast, everywhere in this file.
+// wxDynamicCast follows the class info that wxIMPLEMENT_DYNAMIC_CLASS records, and some
+// wxWidgets events record a different base there than the one they derive from.
+// wxWebViewEvent derives from wxNotifyEvent but is registered as a wxCommandEvent, so
+// wxDynamicCast found no wxNotifyEvent in it and a veto of a navigation did nothing.
 // General function to check if any wxWidgets event was vetoed
 static bool
 IsEventVetoed(wxEvent& event)
@@ -168,9 +173,6 @@ IsEventVetoed(wxEvent& event)
     }
 
     // Try wxNotifyEvent (handles most other vetable events)
-    // C++ RTTI, not wxDynamicCast: wx registers some notify events with
-    // another base in its own type system (wxWebViewEvent is declared as a
-    // wxCommandEvent there), and wxDynamicCast would not see them.
     wxNotifyEvent* notifyEvent = dynamic_cast<wxNotifyEvent*>(&event);
     if (notifyEvent) {
         return !notifyEvent->IsAllowed(); // IsAllowed() returns false if vetoed
@@ -1177,6 +1179,12 @@ get_wx_event_type_for_c_enum(WXDEventTypeCEnum c_enum_val)
         return wxEVT_MIDDLE_DOWN;
     case WXD_EVENT_TYPE_MIDDLE_UP:
         return wxEVT_MIDDLE_UP;
+    case WXD_EVENT_TYPE_LEFT_DCLICK:
+        return wxEVT_LEFT_DCLICK;
+    case WXD_EVENT_TYPE_RIGHT_DCLICK:
+        return wxEVT_RIGHT_DCLICK;
+    case WXD_EVENT_TYPE_MIDDLE_DCLICK:
+        return wxEVT_MIDDLE_DCLICK;
     case WXD_EVENT_TYPE_MOTION:
         return wxEVT_MOTION;
     case WXD_EVENT_TYPE_MOUSEWHEEL:
@@ -1329,8 +1337,6 @@ get_wx_event_type_for_c_enum(WXDEventTypeCEnum c_enum_val)
         return wxEVT_CALENDAR_WEEKDAY_CLICKED;
 
     // Window events
-    case WXD_EVENT_TYPE_LEFT_DCLICK:
-        return wxEVT_LEFT_DCLICK;
     case WXD_EVENT_TYPE_MOUSE_CAPTURE_LOST:
         return wxEVT_MOUSE_CAPTURE_LOST;
     case WXD_EVENT_TYPE_MAXIMIZE:
@@ -1707,10 +1713,10 @@ wxd_IsMouseButtonEvent(wxd_Event_t* event)
     wxEventType type = wx_event->GetEventType();
 
     // Check if it's any of the mouse button event types
-    return (type == wxEVT_LEFT_DOWN || type == wxEVT_LEFT_UP || type == wxEVT_LEFT_DCLICK ||
-            type == wxEVT_RIGHT_DOWN ||
+    return (type == wxEVT_LEFT_DOWN || type == wxEVT_LEFT_UP || type == wxEVT_RIGHT_DOWN ||
             type == wxEVT_RIGHT_UP || type == wxEVT_MIDDLE_DOWN || type == wxEVT_MIDDLE_UP ||
-            type == wxEVT_MOUSEWHEEL) ?
+            type == wxEVT_LEFT_DCLICK || type == wxEVT_RIGHT_DCLICK ||
+            type == wxEVT_MIDDLE_DCLICK || type == wxEVT_MOUSEWHEEL) ?
                1 :
                0;
 }
@@ -2104,7 +2110,6 @@ wxd_Event_CanVeto(wxd_Event_t* event)
     }
 
     // Try wxNotifyEvent (most other vetable events derive from this)
-    // C++ RTTI: see IsEventVetoed (wxWebViewEvent).
     wxNotifyEvent* notify_event = dynamic_cast<wxNotifyEvent*>(wx_event);
     if (notify_event) {
         return true; // wxNotifyEvent always supports veto
@@ -2128,7 +2133,6 @@ wxd_Event_Veto(wxd_Event_t* event)
     }
 
     // Try wxNotifyEvent
-    // C++ RTTI: see IsEventVetoed (wxWebViewEvent).
     wxNotifyEvent* notify_event = dynamic_cast<wxNotifyEvent*>(wx_event);
     if (notify_event) {
         notify_event->Veto();
@@ -2162,7 +2166,6 @@ wxd_Event_SetCanVeto(wxd_Event_t* event, bool can_veto)
 
     // Try wxNotifyEvent - note that wxNotifyEvent doesn't have SetCanVeto
     // but it's always vetable, so we don't need to do anything for it
-    // C++ RTTI: see IsEventVetoed (wxWebViewEvent).
     wxNotifyEvent* notify_event = dynamic_cast<wxNotifyEvent*>(wx_event);
     if (notify_event) {
         // wxNotifyEvent doesn't have SetCanVeto method, it's always vetable
