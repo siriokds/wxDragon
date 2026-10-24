@@ -1541,6 +1541,22 @@ pub trait WxWidget: std::any::Any {
         }
     }
 
+    // --- Transparency ---
+
+    /// Whether [`set_transparent`](Self::set_transparent) works on this
+    /// window (top-level windows on most platforms).
+    fn can_set_transparent(&self) -> bool {
+        let handle = self.handle_ptr();
+        !handle.is_null() && unsafe { ffi::wxd_Window_CanSetTransparent(handle) }
+    }
+
+    /// Sets the window's opacity: 0 is invisible, 255 opaque (wxWidgets
+    /// `SetTransparent`). Returns `false` if the platform cannot do it.
+    fn set_transparent(&self, alpha: u8) -> bool {
+        let handle = self.handle_ptr();
+        !handle.is_null() && unsafe { ffi::wxd_Window_SetTransparent(handle, alpha) }
+    }
+
     // --- Mouse Capture ---
 
     /// Directs all mouse input to this window.

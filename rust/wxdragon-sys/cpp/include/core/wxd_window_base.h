@@ -180,6 +180,12 @@ wxd_Window_Raise(wxd_Window_t* window);
 WXD_EXPORTED void
 wxd_Window_Lower(wxd_Window_t* window);
 
+// --- Transparency Functions ---
+WXD_EXPORTED bool
+wxd_Window_CanSetTransparent(wxd_Window_t* window);
+WXD_EXPORTED bool
+wxd_Window_SetTransparent(wxd_Window_t* window, unsigned char alpha);
+
 // --- Mouse Capture Functions ---
 WXD_EXPORTED void
 wxd_Window_CaptureMouse(wxd_Window_t* window);

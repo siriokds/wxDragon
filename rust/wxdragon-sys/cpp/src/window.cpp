@@ -750,6 +750,21 @@ wxd_Window_Lower(wxd_Window_t* window)
     }
 }
 
+// --- Transparency Functions ---
+WXD_EXPORTED bool
+wxd_Window_CanSetTransparent(wxd_Window_t* window)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    return wx_window && wx_window->CanSetTransparent();
+}
+
+WXD_EXPORTED bool
+wxd_Window_SetTransparent(wxd_Window_t* window, unsigned char alpha)
+{
+    wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
+    return wx_window && wx_window->SetTransparent(alpha);
+}
+
 // --- Mouse Capture Functions ---
 WXD_EXPORTED void
 wxd_Window_CaptureMouse(wxd_Window_t* window)
