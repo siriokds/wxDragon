@@ -17,6 +17,10 @@ wxd_Dialog_ShowModal(wxd_Dialog_t* self);
 WXD_EXPORTED void
 wxd_Dialog_EndModal(wxd_Dialog_t* self, int retCode);
 
+// Window-modal: modal for its parent only (on macOS a sheet); returns at once.
+WXD_EXPORTED void
+wxd_Dialog_ShowWindowModal(wxd_Dialog_t* self);
+
 // Escape ID handling - controls which button is triggered by ESC key
 // Special values: wxID_ANY (default) = use CANCEL if present, else affirmative
 //                 wxID_NONE = disable ESC handling

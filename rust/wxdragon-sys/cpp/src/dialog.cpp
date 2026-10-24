@@ -61,6 +61,14 @@ wxd_Dialog_EndModal(wxd_Dialog* self, int retCode)
 }
 
 void
+wxd_Dialog_ShowWindowModal(wxd_Dialog* self)
+{
+    if (!self)
+        return;
+    ((wxDialog*)self)->ShowWindowModal();
+}
+
+void
 wxd_Dialog_SetEscapeId(wxd_Dialog* self, int id)
 {
     if (!self)

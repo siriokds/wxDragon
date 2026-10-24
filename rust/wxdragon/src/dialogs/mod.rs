@@ -125,6 +125,18 @@ impl Dialog {
         unsafe { ffi::wxd_Dialog_ShowModal(ptr) }
     }
 
+    /// Shows the dialog modal for its parent only (on macOS a sheet attached
+    /// to the parent); returns at once. Other windows stay usable. Ended
+    /// with [`end_modal`](Self::end_modal), which hides it.
+    /// No-op if the dialog has been destroyed.
+    pub fn show_window_modal(&self) {
+        let ptr = self.dialog_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        unsafe { ffi::wxd_Dialog_ShowWindowModal(ptr) }
+    }
+
     /// Ends the modal dialog with the given return code.
     /// This method should be called from event handlers to close the dialog.
     /// The return code is what will be returned by show_modal().
