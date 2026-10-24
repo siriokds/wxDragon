@@ -90,41 +90,34 @@ where
 ///
 /// Returns true if any callbacks were processed, false if the queue was empty.
 pub fn process_main_thread_queue() -> bool {
-    // Callbacks queued with `call_after_local` before this pass; any queued
-    // while they run wait for the next pass.
-    let local: Vec<_> = LOCAL_QUEUE.with(|queue| queue.borrow_mut().drain(..).collect());
-    let ran_local = !local.is_empty();
-    for callback in local {
+    // Each callback leaves its queue only when it runs: one that runs a nested
+    // event loop (a modal dialog) leaves the others queued, and the nested
+    // loop's passes run them; taken all together first, they waited for the
+    // dialog to close, and one queued to close it never could. The callbacks
+    // queued with `call_after_local` before this pass; any queued while they
+    // run wait for the next pass.
+    let pending = LOCAL_QUEUE.with(|queue| queue.borrow().len());
+    let mut ran = false;
+    for _ in 0..pending {
+        let Some(callback) = LOCAL_QUEUE.with(|queue| queue.borrow_mut().pop_front()) else {
+            break;
+        };
+        ran = true;
         // A panic stays with its own callback: the others queued with it still run.
         crate::utils::guard_ffi_callback("call_after_local callback", (), callback);
     }
 
-    let mut callbacks = Vec::new();
-
-    // Move callbacks from the queue to our local vector to minimize lock time
-    {
-        let mut queue = main_thread_queue();
-        if queue.is_empty() {
-            return ran_local;
-        }
-
-        // Move up to 10 callbacks at a time to prevent UI freezes
-        // if there are many callbacks pending
-        for _ in 0..10 {
-            if let Some(callback) = queue.pop_front() {
-                callbacks.push(callback);
-            } else {
-                break;
-            }
-        }
-    }
-
-    // Execute callbacks outside of the lock
-    for callback in callbacks {
+    // Up to 10 callbacks of `call_after` per pass, to prevent UI freezes if
+    // there are many pending; the lock is released before each runs.
+    for _ in 0..10 {
+        let Some(callback) = main_thread_queue().pop_front() else {
+            break;
+        };
+        ran = true;
         crate::utils::guard_ffi_callback("call_after callback", (), callback);
     }
 
-    true // We processed some callbacks
+    ran
 }
 
 // This function is called from C++ to process pending callbacks
