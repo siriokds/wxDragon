@@ -29,7 +29,9 @@ widget_style_enum!(
         MaximizeBox: ffi::WXD_MAXIMIZE_BOX, "Show a maximize box on the dialog.",
         MinimizeBox: ffi::WXD_MINIMIZE_BOX, "Show a minimize box on the dialog.",
         StayOnTop: ffi::WXD_STAY_ON_TOP, "Keep the dialog on top of other windows.",
-        NoParent: ffi::WXD_DIALOG_NO_PARENT, "Create the dialog without a parent rather than the application's top-level window, so it is a top-level window of its own."
+        NoParent: ffi::WXD_DIALOG_NO_PARENT, "Create the dialog without a parent rather than the application's top-level window, so it is a top-level window of its own.",
+        ToolWindow: ffi::WXD_FRAME_TOOL_WINDOW as i64, "A tool window: a small title bar (on macOS a utility panel), not in the taskbar.",
+        FloatOnParent: ffi::WXD_FRAME_FLOAT_ON_PARENT as i64, "Stay above the parent window, and only above it."
     },
     default_variant: DefaultDialogStyle
 );
