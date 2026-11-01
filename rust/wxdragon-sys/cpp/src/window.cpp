@@ -868,7 +868,7 @@ wxd_Window_GetCharHeight(wxd_Window_t* window)
 {
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     if (wx_window) {
-        return wx_window->GetCharHeight();
+        return wxd_dip::out(wx_window, wx_window->GetCharHeight());
     }
     return 0;
 }
@@ -880,7 +880,7 @@ wxd_Window_GetCharWidth(wxd_Window_t* window)
     if (!wx_window) {
         return 0;
     }
-    return wx_window->GetCharWidth();
+    return wxd_dip::out(wx_window, wx_window->GetCharWidth());
 }
 
 // Window style functions
