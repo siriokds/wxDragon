@@ -228,6 +228,22 @@ wxd_Font_SetPointSize(wxd_Font_t* self, int point_size)
     font->SetPointSize(point_size);
 }
 
+double
+wxd_Font_GetFractionalPointSize(wxd_Font_t* self)
+{
+    if (!self)
+        return 0.0;
+    return reinterpret_cast<wxFont*>(self)->GetFractionalPointSize();
+}
+
+void
+wxd_Font_SetFractionalPointSize(wxd_Font_t* self, double point_size)
+{
+    if (!self)
+        return;
+    reinterpret_cast<wxFont*>(self)->SetFractionalPointSize(point_size);
+}
+
 void
 wxd_Font_SetFamily(wxd_Font_t* self, int family)
 {

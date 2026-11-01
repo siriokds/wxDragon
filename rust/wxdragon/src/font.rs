@@ -240,6 +240,16 @@ impl Font {
         }
     }
 
+    /// Get the point size with its fraction (`wxFont::GetFractionalPointSize`).
+    pub fn get_fractional_point_size(&self) -> f64 {
+        unsafe { ffi::wxd_Font_GetFractionalPointSize(self.ptr) }
+    }
+
+    /// Set a point size with a fraction, e.g. 5.14 (`wxFont::SetFractionalPointSize`).
+    pub fn set_fractional_point_size(&mut self, point_size: f64) {
+        unsafe { ffi::wxd_Font_SetFractionalPointSize(self.ptr, point_size) }
+    }
+
     /// Sets the font family.
     pub fn set_family(&mut self, family: FontFamily) {
         unsafe {

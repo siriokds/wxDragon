@@ -182,6 +182,12 @@ wxd_Font_GetPointSize(wxd_Font_t* self);
 WXD_EXPORTED void
 wxd_Font_SetPointSize(wxd_Font_t* self, int point_size);
 
+WXD_EXPORTED double
+wxd_Font_GetFractionalPointSize(wxd_Font_t* self);
+
+WXD_EXPORTED void
+wxd_Font_SetFractionalPointSize(wxd_Font_t* self, double point_size);
+
 WXD_EXPORTED int
 wxd_Font_GetFamily(wxd_Font_t* self);
 
