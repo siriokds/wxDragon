@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
@@ -23,7 +24,7 @@ wxd_StaticBox_Create(wxd_Window_t* parent, wxd_Id id, const char* label, wxd_Poi
     wxStaticBox* box =
         new wxStaticBox(parentWin, id,
                         wxString::FromUTF8(label ? label : ""), // Ensure non-null label
-                        wxPoint(pos.x, pos.y), wxSize(size.width, size.height), style);
+                        wxd_cpp_utils::to_wx(pos), wxd_cpp_utils::to_wx(size), style);
 
     return (wxd_StaticBox_t*)box;
 }

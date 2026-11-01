@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "wxdragon.h"
@@ -26,8 +27,8 @@ wxd_DatePickerCtrl_Create(wxd_Window_t* parent, int id, const wxd_DateTime_t* dt
                           int64_t style)
 {
     wxWindow* wx_parent = (wxWindow*)parent;
-    wxPoint wx_pos = wxPoint(pos.x, pos.y);           // Use directly
-    wxSize wx_size = wxSize(size.width, size.height); // Use directly
+    wxPoint wx_pos = wxd_cpp_utils::to_wx(pos);           // Use directly
+    wxSize wx_size = wxd_cpp_utils::to_wx(size); // Use directly
     wxDateTime wx_dt_val = dt ? wxd_to_wx_datetime(dt) : wxDefaultDateTime;
 
     // Ensure default style if none provided, or if style is 0 and it's not intended

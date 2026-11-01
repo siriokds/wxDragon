@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -11,8 +12,8 @@ wxd_SpinButton_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Size s
                       wxd_Style_t style)
 {
     wxWindow* parentWin = reinterpret_cast<wxWindow*>(parent);
-    wxSpinButton* spinButton = new wxSpinButton(parentWin, id, wxPoint(pos.x, pos.y),
-                                                wxSize(size.width, size.height), style);
+    wxSpinButton* spinButton = new wxSpinButton(parentWin, id, wxd_cpp_utils::to_wx(pos),
+                                                wxd_cpp_utils::to_wx(size), style);
     // Default range is 0-100
     return reinterpret_cast<wxd_SpinButton_t*>(spinButton);
 }

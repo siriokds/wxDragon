@@ -25,8 +25,8 @@ wxd_DirPickerCtrl_Create(wxd_Window_t* parent, wxd_Id id,
     return (wxd_DirPickerCtrl_t*)new wxDirPickerCtrl((wxWindow*)parent, id,
                                                      wx_path,    // path
                                                      wx_message, // message for dialog
-                                                     wxPoint(pos.x, pos.y),
-                                                     wxSize(size.width, size.height), style,
+                                                     wxd_cpp_utils::to_wx(pos),
+                                                     wxd_cpp_utils::to_wx(size), style,
                                                      wxDefaultValidator, wxDirPickerCtrlNameStr);
 }
 

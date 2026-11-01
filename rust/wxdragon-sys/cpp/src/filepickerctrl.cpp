@@ -15,7 +15,7 @@ wxd_FilePickerCtrl_Create(wxd_Window_t* parent, wxd_Id id, const char* message,
     return (wxd_FilePickerCtrl_t*)new wxFilePickerCtrl(
         (wxWindow*)parent, id, WXD_STR_TO_WX_STRING_UTF8_NULL_OK(path),
         WXD_STR_TO_WX_STRING_UTF8_NULL_OK(message), WXD_STR_TO_WX_STRING_UTF8_NULL_OK(wildcard),
-        wxPoint(pos.x, pos.y), wxSize(size.width, size.height), style, wxDefaultValidator,
+        wxd_cpp_utils::to_wx(pos), wxd_cpp_utils::to_wx(size), style, wxDefaultValidator,
         wxFilePickerCtrlNameStr // Default name, can be overridden by parent class methods if exposed
     );
 }

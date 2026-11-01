@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "wxdragon.h"
@@ -42,7 +43,7 @@ wxd_CalendarCtrl_Create(
     }
 
     wxCalendarCtrl* ctrl = new wxCalendarCtrl(
-        wx_parent, id, initialDate, wxPoint(pos.x, pos.y), wxSize(size.width, size.height), style
+        wx_parent, id, initialDate, wxd_cpp_utils::to_wx(pos), wxd_cpp_utils::to_wx(size), style
         // Consider adding wxCAL_SHOW_HOLIDAYS or other defaults if desired, or leave to style
     );
     return (wxd_CalendarCtrl_t*)ctrl;

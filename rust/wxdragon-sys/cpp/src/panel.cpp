@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "wx/panel.h"
@@ -51,7 +52,7 @@ wxd_Panel_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Size size, 
 
     // Create wxWidgets objects for position and size
     wxPoint wxPos(pos.x, pos.y);
-    wxSize wxSize(size.width, size.height);
+    wxSize wxSize = wxd_cpp_utils::to_wx(size);
 
     // Create the wxPanel instance
     // Note: wxPanel inherits from wxWindow, so the wxd_Window_t* parent is appropriate.

@@ -12,8 +12,8 @@ wxd_AuiNotebook_Create(wxd_Window_t* parent, int id, wxd_Point pos, wxd_Size siz
 {
     wxWindow* parentPtr = (wxWindow*)parent;
 
-    wxPoint wxPos = wxPoint(pos.x, pos.y);
-    wxSize wxSizeInstance = wxSize(size.width, size.height);
+    wxPoint wxPos = wxd_cpp_utils::to_wx(pos);
+    wxSize wxSizeInstance = wxd_cpp_utils::to_wx(size);
 
     // Default style for wxAuiNotebook is wxAUI_NB_DEFAULT_STYLE
     // If style is 0 or some sentinel indicating default, wxAUI_NB_DEFAULT_STYLE should be used.

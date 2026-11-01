@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"

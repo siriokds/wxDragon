@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include <wx/grid.h>
@@ -69,8 +70,8 @@ wxd_Grid_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Size size,
 {
     if (!parent) return nullptr;
     wxWindow* p = reinterpret_cast<wxWindow*>(parent);
-    wxGrid* grid = new wxGrid(p, id, wxPoint(pos.x, pos.y),
-                              wxSize(size.width, size.height), style);
+    wxGrid* grid = new wxGrid(p, id, wxd_cpp_utils::to_wx(pos),
+                              wxd_cpp_utils::to_wx(size), style);
     return reinterpret_cast<wxd_Grid_t*>(grid);
 }
 

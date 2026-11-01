@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -33,7 +34,7 @@ wxd_ToolBar_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Size size
         return nullptr;
 
     wxToolBar* tb =
-        new wxToolBar(parentWin, id, wxPoint(pos.x, pos.y), wxSize(size.width, size.height), style);
+        new wxToolBar(parentWin, id, wxd_cpp_utils::to_wx(pos), wxd_cpp_utils::to_wx(size), style);
     // wxToolBar is a wxWindow, cleanup is handled by parent like other controls.
     return reinterpret_cast<wxd_ToolBar_t*>(tb);
 }

@@ -19,7 +19,7 @@ wxd_CheckListBox_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Size
 {
     wxWindow* parentWin = reinterpret_cast<wxWindow*>(parent);
     wxPoint wxPos(pos.x, pos.y);
-    wxSize wxSize(size.width, size.height);
+    wxSize wxSize = wxd_cpp_utils::to_wx(size);
 
     // For simplicity, we start with an empty choices array.
     // The wxCheckListBox constructor requires wxArrayString, but it can be empty.

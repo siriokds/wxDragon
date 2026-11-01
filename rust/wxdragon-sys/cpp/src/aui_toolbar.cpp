@@ -15,8 +15,8 @@ WXD_EXPORTED wxd_AuiToolBar_t*
 wxd_AuiToolBar_Create(wxd_Window_t* parent, int id, wxd_Point pos, wxd_Size size, int64_t style)
 {
     wxWindow* wx_parent = (wxWindow*)parent;
-    wxAuiToolBar* toolbar = new wxAuiToolBar(wx_parent, id, wxPoint(pos.x, pos.y),
-                                             wxSize(size.width, size.height), style);
+    wxAuiToolBar* toolbar = new wxAuiToolBar(wx_parent, id, wxd_cpp_utils::to_wx(pos),
+                                             wxd_cpp_utils::to_wx(size), style);
     return (wxd_AuiToolBar_t*)toolbar;
 }
 
@@ -121,7 +121,7 @@ wxd_AuiToolBar_SetToolBitmapSize(wxd_AuiToolBar_t* self, wxd_Size size)
     if (!self)
         return;
     wxAuiToolBar* toolbar = (wxAuiToolBar*)self;
-    toolbar->SetToolBitmapSize(wxSize(size.width, size.height));
+    toolbar->SetToolBitmapSize(wxd_cpp_utils::to_wx(size));
 }
 
 WXD_EXPORTED wxd_Size

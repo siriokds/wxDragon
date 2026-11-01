@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -13,8 +14,8 @@ wxd_AuiMDIParentFrame_Create(wxd_Window_t* parent, int id, const char* title, wx
                              wxd_Size size, int64_t style, const char* name)
 {
     wxWindow* parentPtr = (wxWindow*)parent;
-    wxPoint wxPos = wxPoint(pos.x, pos.y);
-    wxSize wxSizeInstance = wxSize(size.width, size.height);
+    wxPoint wxPos = wxd_cpp_utils::to_wx(pos);
+    wxSize wxSizeInstance = wxd_cpp_utils::to_wx(size);
     wxString wxTitle = WXD_STR_TO_WX_STRING_UTF8_NULL_OK(title);
     wxString wxName = WXD_STR_TO_WX_STRING_UTF8_NULL_OK(name);
 

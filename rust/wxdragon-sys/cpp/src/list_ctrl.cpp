@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
@@ -90,7 +91,7 @@ wxd_ListCtrl_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Size siz
 {
     wxWindow* p = (wxWindow*)parent;
     wxListCtrl* lc =
-        new WxdListCtrl(p, id, wxPoint(pos.x, pos.y), wxSize(size.width, size.height), style);
+        new WxdListCtrl(p, id, wxd_cpp_utils::to_wx(pos), wxd_cpp_utils::to_wx(size), style);
     return (wxd_ListCtrl_t*)lc;
 }
 

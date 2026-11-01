@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -22,8 +23,8 @@ wxd_SpinCtrl_Create(wxd_Window_t* parent, wxd_Id id,
     wxSpinCtrl* spinCtrl = new wxSpinCtrl(
         parentWin, id,
         wxString::FromUTF8(value ? value : ""), // Use initial string value if provided
-        wxPoint(pos.x, pos.y),                  // Use helpers if available
-        wxSize(size.width, size.height),        // Use helpers if available
+        wxd_cpp_utils::to_wx(pos),                  // Use helpers if available
+        wxd_cpp_utils::to_wx(size),        // Use helpers if available
         style, min_val, max_val,
         initial_val // Set initial numeric value
     );

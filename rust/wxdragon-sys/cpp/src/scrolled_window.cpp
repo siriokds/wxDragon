@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
@@ -14,7 +15,7 @@ wxd_ScrolledWindow_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Si
 {
     wxWindow* parentWin = (wxWindow*)parent;
     wxPoint wxPos(pos.x, pos.y);
-    wxSize wxSize(size.width, size.height);
+    wxSize wxSize = wxd_cpp_utils::to_wx(size);
     // wxScrolledWindow name parameter is not usually needed
     wxScrolledWindow* scrolledWin = new wxScrolledWindow(parentWin, id, wxPos, wxSize, style);
     return (wxd_ScrolledWindow_t*)scrolledWin;

@@ -18,8 +18,8 @@ wxd_CollapsiblePane_Create(wxd_Window_t* parent, wxd_Id id, const char* label, w
     wxString wxName = WXD_STR_TO_WX_STRING_UTF8_NULL_OK(name);
 
     wxCollapsiblePane* pane =
-        new wxCollapsiblePane(parentWindow, id, wxLabel, wxPoint(pos.x, pos.y),
-                              wxSize(size.width, size.height), style, wxDefaultValidator, wxName);
+        new wxCollapsiblePane(parentWindow, id, wxLabel, wxd_cpp_utils::to_wx(pos),
+                              wxd_cpp_utils::to_wx(size), style, wxDefaultValidator, wxName);
 
     return reinterpret_cast<wxd_CollapsiblePane_t*>(pane);
 }

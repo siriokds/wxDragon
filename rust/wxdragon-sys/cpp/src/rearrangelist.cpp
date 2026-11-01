@@ -52,8 +52,8 @@ wxd_RearrangeList_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Siz
     }
 
     // Create the RearrangeList
-    wxRearrangeList* list = new wxRearrangeList(wxParent, id, wxPoint(pos.x, pos.y),
-                                                wxSize(size.width, size.height), wxOrder, wxItems,
+    wxRearrangeList* list = new wxRearrangeList(wxParent, id, wxd_cpp_utils::to_wx(pos),
+                                                wxd_cpp_utils::to_wx(size), wxOrder, wxItems,
                                                 style);
 
     return (wxd_RearrangeList_t*)list;

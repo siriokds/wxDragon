@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include <wx/commandlinkbutton.h>
@@ -13,8 +14,8 @@ wxd_CommandLinkButton_Create(wxd_Window_t* parent, wxd_Id id, const char* mainLa
     wxWindow* wx_parent = (wxWindow*)parent;
     wxCommandLinkButton* wx_button =
         new wxCommandLinkButton(wx_parent, id, wxString::FromUTF8(mainLabel ? mainLabel : ""),
-                                wxString::FromUTF8(note ? note : ""), wxPoint(pos.x, pos.y),
-                                wxSize(size.width, size.height), style);
+                                wxString::FromUTF8(note ? note : ""), wxd_cpp_utils::to_wx(pos),
+                                wxd_cpp_utils::to_wx(size), style);
     return (wxd_CommandLinkButton_t*)wx_button;
 }
 

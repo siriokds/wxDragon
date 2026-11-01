@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 
@@ -178,8 +179,8 @@ wxd_PropertyGrid_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Size
         return nullptr;
 
     wxPropertyGrid* grid = new (std::nothrow)
-        wxPropertyGrid(reinterpret_cast<wxWindow*>(parent), id, wxPoint(pos.x, pos.y),
-                       wxSize(size.width, size.height), static_cast<long>(style));
+        wxPropertyGrid(reinterpret_cast<wxWindow*>(parent), id, wxd_cpp_utils::to_wx(pos),
+                       wxd_cpp_utils::to_wx(size), static_cast<long>(style));
     return reinterpret_cast<wxd_PropertyGrid_t*>(grid);
 }
 

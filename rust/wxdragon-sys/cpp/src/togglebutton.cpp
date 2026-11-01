@@ -21,7 +21,7 @@ wxd_ToggleButton_Create(wxd_Window_t* parent, wxd_Id id, const char* label, wxd_
 {
     wxWindow* parentWin = reinterpret_cast<wxWindow*>(parent);
     wxPoint wxPos(pos.x, pos.y);
-    wxSize wxSize(size.width, size.height);
+    wxSize wxSize = wxd_cpp_utils::to_wx(size);
     wxString wxLabel = wxString::FromUTF8(label ? label : "");
 
     wxToggleButton* tglbtn = new wxToggleButton(parentWin, id, wxLabel, wxPos, wxSize, style);

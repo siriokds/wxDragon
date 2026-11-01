@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "wx/radiobut.h" // Include wxRadioButton header
@@ -17,7 +18,7 @@ wxd_RadioButton_Create(wxd_Window_t* parent, wxd_Id id, const char* label, wxd_P
 
     wxString wxLabel = wxString::FromUTF8(label ? label : "");
     wxPoint wxPos(pos.x, pos.y);
-    wxSize wxSize(size.width, size.height);
+    wxSize wxSize = wxd_cpp_utils::to_wx(size);
 
     // Create the wxRadioButton instance
     wxRadioButton* radio = new wxRadioButton(parentWin, id, wxLabel, wxPos, wxSize, style);

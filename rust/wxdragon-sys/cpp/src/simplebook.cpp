@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "wxdragon.h"
@@ -9,8 +10,8 @@ wxd_SimpleBook_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Size s
                       wxd_Style_t style)
 {
     wxWindow* parentWin = reinterpret_cast<wxWindow*>(parent);
-    wxSimplebook* simplebook = new wxSimplebook(parentWin, id, wxPoint(pos.x, pos.y),
-                                                wxSize(size.width, size.height), style);
+    wxSimplebook* simplebook = new wxSimplebook(parentWin, id, wxd_cpp_utils::to_wx(pos),
+                                                wxd_cpp_utils::to_wx(size), style);
 
     return reinterpret_cast<wxd_SimpleBook_t*>(simplebook);
 }

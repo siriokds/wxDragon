@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include "wx/wxprec.h"
 
 #ifndef WX_PRECOMP
@@ -16,7 +17,7 @@ wxd_CheckBox_Create(wxd_Window_t* parent, wxd_Id id, const char* label, wxd_Poin
 {
     wxWindow* parentWin = (wxWindow*)parent;
     wxCheckBox* ctrl = new wxCheckBox(parentWin, id, wxString::FromUTF8(label),
-                                      wxPoint(pos.x, pos.y), wxSize(size.width, size.height),
+                                      wxd_cpp_utils::to_wx(pos), wxd_cpp_utils::to_wx(size),
                                       style);
     return (wxd_CheckBox_t*)ctrl;
 }

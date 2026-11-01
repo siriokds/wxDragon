@@ -1,3 +1,4 @@
+#include "wxd_utils.h"
 #include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
@@ -82,8 +83,8 @@ wxd_SplitterWindow_Create(wxd_Window_t* parent, wxd_Id id, wxd_Point pos, wxd_Si
     wxWindow* parentWin = reinterpret_cast<wxWindow*>(parent);
     // Need to ensure style includes wxSP_NOBORDER if parent is already providing border
     // or manage borders appropriately.
-    wxSplitterWindow* splitter = new WxdSplitterWindow(parentWin, id, wxPoint(pos.x, pos.y),
-                                                       wxSize(size.width, size.height), style);
+    wxSplitterWindow* splitter = new WxdSplitterWindow(parentWin, id, wxd_cpp_utils::to_wx(pos),
+                                                       wxd_cpp_utils::to_wx(size), style);
     // Note: wxSplitterWindow manages its children, so attaching cleanup notifiers
     // to the *child panes* might be necessary if they aren't otherwise owned by Rust.
     // The splitter itself will be cleaned up by its parent.

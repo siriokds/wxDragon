@@ -19,8 +19,8 @@ wxd_FontPickerCtrl_Create(wxd_Window_t* parent, wxd_Id id,
     wxFont font_to_use = initial_font ? *((wxFont*)initial_font) : wxNullFont;
 
     return (wxd_FontPickerCtrl_t*)new wxFontPickerCtrl((wxWindow*)parent, id, font_to_use,
-                                                       wxPoint(pos.x, pos.y),
-                                                       wxSize(size.width, size.height), style,
+                                                       wxd_cpp_utils::to_wx(pos),
+                                                       wxd_cpp_utils::to_wx(size), style,
                                                        wxDefaultValidator, wxFontPickerCtrlNameStr);
 }
 
