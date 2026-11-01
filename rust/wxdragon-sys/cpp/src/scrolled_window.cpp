@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "wx/scrolwin.h"
@@ -24,7 +25,7 @@ wxd_ScrolledWindow_SetScrollRate(wxd_ScrolledWindow_t* self, int xstep, int yste
 {
     wxScrolledWindow* scrolledWin = (wxScrolledWindow*)self;
     if (scrolledWin) {
-        scrolledWin->SetScrollRate(xstep, ystep);
+        scrolledWin->SetScrollRate(wxd_dip::in(scrolledWin, xstep), wxd_dip::in(scrolledWin, ystep));
     }
 }
 
@@ -34,8 +35,9 @@ wxd_ScrolledWindow_SetScrollbars(wxd_ScrolledWindow_t* self, int pixelsPerUnitX,
 {
     wxScrolledWindow* scrolledWin = (wxScrolledWindow*)self;
     if (scrolledWin) {
-        scrolledWin->SetScrollbars(pixelsPerUnitX, pixelsPerUnitY, noUnitsX, noUnitsY, xPos, yPos,
-                                   noRefresh);
+        // Pixels per unit are lengths; units and positions (in units) are not.
+        scrolledWin->SetScrollbars(wxd_dip::in(scrolledWin, pixelsPerUnitX), wxd_dip::in(scrolledWin, pixelsPerUnitY),
+                                   noUnitsX, noUnitsY, xPos, yPos, noRefresh);
     }
 }
 
@@ -73,8 +75,8 @@ wxd_ScrolledWindow_GetVirtualSize(wxd_ScrolledWindow_t* self, int* w, int* h)
     if (scrolledWin && w && h) {
         int width, height;
         scrolledWin->GetVirtualSize(&width, &height);
-        *w = width;
-        *h = height;
+        *w = wxd_dip::out(scrolledWin, width);
+        *h = wxd_dip::out(scrolledWin, height);
     }
     else if (w) {
         *w = 0;
@@ -91,8 +93,8 @@ wxd_ScrolledWindow_GetScrollPixelsPerUnit(wxd_ScrolledWindow_t* self, int* xUnit
     if (scrolledWin && xUnit && yUnit) {
         int xppu, yppu;
         scrolledWin->GetScrollPixelsPerUnit(&xppu, &yppu);
-        *xUnit = xppu;
-        *yUnit = yppu;
+        *xUnit = wxd_dip::out(scrolledWin, xppu);
+        *yUnit = wxd_dip::out(scrolledWin, yppu);
     }
     else if (xUnit) {
         *xUnit = 0;
@@ -126,7 +128,7 @@ wxd_ScrolledWindow_SetVirtualSize(wxd_ScrolledWindow_t* self, int w, int h)
 {
     wxScrolledWindow* scrolledWin = (wxScrolledWindow*)self;
     if (scrolledWin) {
-        scrolledWin->SetVirtualSize(w, h);
+        scrolledWin->SetVirtualSize(wxd_dip::in(scrolledWin, w), wxd_dip::in(scrolledWin, h));
     }
 }
 

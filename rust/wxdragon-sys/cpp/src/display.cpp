@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -30,13 +31,15 @@ wxd_Display_GetCount(void)
 WXD_EXPORTED int
 wxd_Display_GetFromPoint(wxd_Point pt)
 {
-    return wxDisplay::GetFromPoint(wxPoint(pt.x, pt.y));
+    return wxDisplay::GetFromPoint(wxd_dip::screen_in(pt));
 }
 
 WXD_EXPORTED int
 wxd_Display_GetFromRect(wxd_Rect rect)
 {
-    return wxDisplay::GetFromRect(wxRect(rect.x, rect.y, rect.width, rect.height));
+    wxPoint a = wxd_dip::screen_in({ rect.x, rect.y });
+    wxPoint b = wxd_dip::screen_in({ rect.x + rect.width, rect.y + rect.height });
+    return wxDisplay::GetFromRect(wxRect(a, b));
 }
 
 WXD_EXPORTED int
@@ -56,8 +59,8 @@ wxd_Display_GetGeometry(unsigned int index)
 {
     if (!is_valid_index(index))
         return { 0, 0, 0, 0 };
-    wxRect rect = wxDisplay(index).GetGeometry();
-    return { rect.x, rect.y, rect.width, rect.height };
+    wxDisplay d(index);
+    return wxd_dip::display_out(d, d.GetGeometry());
 }
 
 WXD_EXPORTED wxd_Rect
@@ -65,8 +68,8 @@ wxd_Display_GetClientArea(unsigned int index)
 {
     if (!is_valid_index(index))
         return { 0, 0, 0, 0 };
-    wxRect rect = wxDisplay(index).GetClientArea();
-    return { rect.x, rect.y, rect.width, rect.height };
+    wxDisplay d(index);
+    return wxd_dip::display_out(d, d.GetClientArea());
 }
 
 WXD_EXPORTED int

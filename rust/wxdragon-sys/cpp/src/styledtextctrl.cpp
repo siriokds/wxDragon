@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include "wx/wxprec.h"
 
 #ifndef WX_PRECOMP
@@ -590,7 +591,7 @@ wxd_StyledTextCtrl_SetMarginWidth(wxd_StyledTextCtrl_t* self, int margin, int pi
 {
     wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
     if (ctrl) {
-        ctrl->SetMarginWidth(margin, pixel_width);
+        ctrl->SetMarginWidth(margin, wxd_dip::in(ctrl, pixel_width));
     }
 }
 
@@ -1470,7 +1471,7 @@ WXD_EXPORTED int
 wxd_StyledTextCtrl_GetMarginWidth(wxd_StyledTextCtrl_t* self, int margin)
 {
     wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
-    return ctrl ? ctrl->GetMarginWidth(margin) : 0;
+    return ctrl ? wxd_dip::out(ctrl, ctrl->GetMarginWidth(margin)) : 0;
 }
 
 }

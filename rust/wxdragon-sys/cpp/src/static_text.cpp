@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -58,7 +59,7 @@ wxd_StaticText_Wrap(wxd_StaticText_t* stext, int width)
     if (!stext)
         return;
     wxStaticText* wx_stext = reinterpret_cast<wxStaticText*>(stext);
-    wx_stext->Wrap(width);
+    wx_stext->Wrap(wxd_dip::in(wx_stext, width));
 }
 
 } // extern "C"

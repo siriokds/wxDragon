@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -994,9 +995,8 @@ wxd_MouseEvent_GetPosition(wxd_Event_t* event)
     if (!mouseEvent)
         return defaultPos; // Not a mouse event or derived
 
-    wxPoint wxPos = mouseEvent->GetPosition();
-    wxd_Point pos = { wxPos.x, wxPos.y };
-    return pos;
+    // In DIPs of the window under the mouse (wxd_dip.h).
+    return wxd_dip::out(wxDynamicCast(mouseEvent->GetEventObject(), wxWindow), mouseEvent->GetPosition());
 }
 
 WXD_EXPORTED int
@@ -2292,9 +2292,15 @@ wxd_ContextMenuEvent_GetPosition(wxd_Event_t* event)
 
     wxContextMenuEvent* ctx_event = wxDynamicCast(wx_event, wxContextMenuEvent);
     if (ctx_event) {
+        // Screen coordinates (or wxDefaultPosition from the keyboard).
         wxPoint pos = ctx_event->GetPosition();
-        result.x = pos.x;
-        result.y = pos.y;
+        if (pos == wxDefaultPosition) {
+            result.x = pos.x;
+            result.y = pos.y;
+        }
+        else {
+            result = wxd_dip::screen_out(pos);
+        }
     }
 
     return result;
@@ -2352,10 +2358,7 @@ wxd_SizeEvent_GetSize(wxd_Event_t* event)
     if (!size_event)
         return result;
 
-    wxSize size = size_event->GetSize();
-    result.width = size.GetWidth();
-    result.height = size.GetHeight();
-    return result;
+    return wxd_dip::out(wxDynamicCast(size_event->GetEventObject(), wxWindow), size_event->GetSize());
 }
 
 // --- CollapsiblePaneEvent specific ---

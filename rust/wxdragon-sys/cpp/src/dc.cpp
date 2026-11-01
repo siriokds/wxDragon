@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -237,7 +238,7 @@ wxd_DC_SetPen(wxd_DC_t* dc, wxd_Colour_t colour, int width, int style)
 
         wxPenStyle wx_style = static_cast<wxPenStyle>(style);
 
-        wx_dc->SetPen(wxPen(wx_color, width, wx_style));
+        wx_dc->SetPen(wxPen(wx_color, wxd_dip::pen_in(wx_dc, width), wx_style));
     }
 }
 
@@ -260,7 +261,7 @@ wxd_DC_DrawRoundedRectangle(wxd_DC_t* dc, int x, int y, int width, int height, d
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->DrawRoundedRectangle(x, y, width, height, radius);
+        wx_dc->DrawRoundedRectangle(wxd_dip::rect_in(wx_dc, x, y, width, height), radius * wxd_dip::scale(wx_dc));
     }
 }
 
@@ -269,7 +270,8 @@ wxd_DC_DrawArc(wxd_DC_t* dc, int x1, int y1, int x2, int y2, int xc, int yc)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->DrawArc(x1, y1, x2, y2, xc, yc);
+        wx_dc->DrawArc(wxd_dip::in(wx_dc, x1), wxd_dip::in(wx_dc, y1), wxd_dip::in(wx_dc, x2), wxd_dip::in(wx_dc, y2),
+                       wxd_dip::in(wx_dc, xc), wxd_dip::in(wx_dc, yc));
     }
 }
 
@@ -278,7 +280,8 @@ wxd_DC_DrawEllipticArc(wxd_DC_t* dc, int x, int y, int width, int height, double
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->DrawEllipticArc(x, y, width, height, start, end);
+        wxRect r = wxd_dip::rect_in(wx_dc, x, y, width, height);
+        wx_dc->DrawEllipticArc(r.x, r.y, r.width, r.height, start, end);
     }
 }
 
@@ -287,9 +290,9 @@ wxd_DC_DrawPolygon(wxd_DC_t* dc, int n, wxd_Point* points, int xoffset, int yoff
 {
     if (dc && points) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wxPoint* wx_points = reinterpret_cast<wxPoint*>(points);
+        std::vector<wxPoint> wx_points = wxd_dip::points_in(wx_dc, n, points);
         wxPolygonFillMode wx_fill_style = static_cast<wxPolygonFillMode>(fill_style);
-        wx_dc->DrawPolygon(n, wx_points, xoffset, yoffset, wx_fill_style);
+        wx_dc->DrawPolygon(n, wx_points.data(), wxd_dip::in(wx_dc, xoffset), wxd_dip::in(wx_dc, yoffset), wx_fill_style);
     }
 }
 
@@ -298,8 +301,8 @@ wxd_DC_DrawLines(wxd_DC_t* dc, int n, wxd_Point* points, int xoffset, int yoffse
 {
     if (dc && points) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wxPoint* wx_points = reinterpret_cast<wxPoint*>(points);
-        wx_dc->DrawLines(n, wx_points, xoffset, yoffset);
+        std::vector<wxPoint> wx_points = wxd_dip::points_in(wx_dc, n, points);
+        wx_dc->DrawLines(n, wx_points.data(), wxd_dip::in(wx_dc, xoffset), wxd_dip::in(wx_dc, yoffset));
     }
 }
 
@@ -308,8 +311,8 @@ wxd_DC_DrawSpline(wxd_DC_t* dc, int n, wxd_Point* points)
 {
     if (dc && points) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wxPoint* wx_points = reinterpret_cast<wxPoint*>(points);
-        wx_dc->DrawSpline(n, wx_points);
+        std::vector<wxPoint> wx_points = wxd_dip::points_in(wx_dc, n, points);
+        wx_dc->DrawSpline(n, wx_points.data());
     }
 }
 
@@ -320,7 +323,7 @@ wxd_DC_DrawRotatedText(wxd_DC_t* dc, const char* text, int x, int y, double angl
     if (dc && text) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
         wxString wx_text = wxString::FromUTF8(text);
-        wx_dc->DrawRotatedText(wx_text, x, y, angle);
+        wx_dc->DrawRotatedText(wx_text, wxd_dip::in(wx_dc, x), wxd_dip::in(wx_dc, y), angle);
     }
 }
 
@@ -330,7 +333,7 @@ wxd_DC_DrawLabel(wxd_DC_t* dc, const char* text, wxd_Rect rect, int alignment, i
     if (dc && text) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
         wxString wx_text = wxString::FromUTF8(text);
-        wxRect wx_rect(rect.x, rect.y, rect.width, rect.height);
+        wxRect wx_rect = wxd_dip::rect_in(wx_dc, rect.x, rect.y, rect.width, rect.height);
         int wx_alignment = alignment;
 
         wx_dc->DrawLabel(wx_text, wx_rect, wx_alignment, indexAccel);
@@ -378,7 +381,7 @@ wxd_DC_SetClippingRegion(wxd_DC_t* dc, int x, int y, int width, int height)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->SetClippingRegion(x, y, width, height);
+        wx_dc->SetClippingRegion(wxd_dip::rect_in(wx_dc, x, y, width, height));
     }
 }
 
@@ -387,9 +390,9 @@ wxd_DC_SetClippingRegionFromPoints(wxd_DC_t* dc, int n, wxd_Point* points)
 {
     if (dc && points) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wxPoint* wx_points = reinterpret_cast<wxPoint*>(points);
+        std::vector<wxPoint> wx_points = wxd_dip::points_in(wx_dc, n, points);
         // Create region and get its bounding box to use the non-deprecated method
-        wxRegion region(n, wx_points);
+        wxRegion region(n, wx_points.data());
         wxRect rect = region.GetBox();
         wx_dc->SetClippingRegion(rect.x, rect.y, rect.width, rect.height);
     }
@@ -412,13 +415,13 @@ wxd_DC_GetClippingBox(wxd_DC_t* dc, int* x, int* y, int* width, int* height)
         wxCoord wx_x, wx_y, wx_width, wx_height;
         wx_dc->GetClippingBox(&wx_x, &wx_y, &wx_width, &wx_height);
         if (x)
-            *x = wx_x;
+            *x = wxd_dip::out(wx_dc, wx_x);
         if (y)
-            *y = wx_y;
+            *y = wxd_dip::out(wx_dc, wx_y);
         if (width)
-            *width = wx_width;
+            *width = wxd_dip::out(wx_dc, wx_width);
         if (height)
-            *height = wx_height;
+            *height = wxd_dip::out(wx_dc, wx_height);
     }
 }
 
@@ -428,7 +431,7 @@ wxd_DC_SetDeviceOrigin(wxd_DC_t* dc, int x, int y)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->SetDeviceOrigin(x, y);
+        wx_dc->SetDeviceOrigin(wxd_dip::in(wx_dc, x), wxd_dip::in(wx_dc, y));
     }
 }
 
@@ -437,7 +440,7 @@ wxd_DC_SetLogicalOrigin(wxd_DC_t* dc, int x, int y)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->SetLogicalOrigin(x, y);
+        wx_dc->SetLogicalOrigin(wxd_dip::in(wx_dc, x), wxd_dip::in(wx_dc, y));
     }
 }
 
@@ -475,7 +478,7 @@ wxd_DC_DrawPoint(wxd_DC_t* dc, int x, int y)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->DrawPoint(x, y);
+        wx_dc->DrawPoint(wxd_dip::in(wx_dc, x), wxd_dip::in(wx_dc, y));
     }
 }
 
@@ -484,7 +487,7 @@ wxd_DC_DrawLine(wxd_DC_t* dc, int x1, int y1, int x2, int y2)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->DrawLine(x1, y1, x2, y2);
+        wx_dc->DrawLine(wxd_dip::in(wx_dc, x1), wxd_dip::in(wx_dc, y1), wxd_dip::in(wx_dc, x2), wxd_dip::in(wx_dc, y2));
     }
 }
 
@@ -493,7 +496,7 @@ wxd_DC_DrawRectangle(wxd_DC_t* dc, int x, int y, int width, int height)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->DrawRectangle(x, y, width, height);
+        wx_dc->DrawRectangle(wxd_dip::rect_in(wx_dc, x, y, width, height));
     }
 }
 
@@ -502,7 +505,7 @@ wxd_DC_DrawCircle(wxd_DC_t* dc, int x, int y, int radius)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->DrawCircle(x, y, radius);
+        wx_dc->DrawCircle(wxd_dip::in(wx_dc, x), wxd_dip::in(wx_dc, y), wxd_dip::in(wx_dc, radius));
     }
 }
 
@@ -511,7 +514,7 @@ wxd_DC_DrawEllipse(wxd_DC_t* dc, int x, int y, int width, int height)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wx_dc->DrawEllipse(x, y, width, height);
+        wx_dc->DrawEllipse(wxd_dip::rect_in(wx_dc, x, y, width, height));
     }
 }
 
@@ -521,7 +524,7 @@ wxd_DC_DrawText(wxd_DC_t* dc, const char* text, int x, int y)
     if (dc && text) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
         wxString wx_text = wxString::FromUTF8(text ? text : "");
-        wx_dc->DrawText(wx_text, x, y);
+        wx_dc->DrawText(wx_text, wxd_dip::in(wx_dc, x), wxd_dip::in(wx_dc, y));
     }
 }
 
@@ -531,7 +534,7 @@ wxd_DC_DrawBitmap(wxd_DC_t* dc, const wxd_Bitmap_t* bitmap, int x, int y, bool t
     if (dc && bitmap) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
         wxBitmap* wx_bitmap = reinterpret_cast<wxBitmap*>(const_cast<wxd_Bitmap_t*>(bitmap));
-        wx_dc->DrawBitmap(*wx_bitmap, x, y, transparent);
+        wx_dc->DrawBitmap(*wx_bitmap, wxd_dip::in(wx_dc, x), wxd_dip::in(wx_dc, y), transparent);
     }
 }
 
@@ -543,8 +546,8 @@ wxd_DC_GetSize(wxd_DC_t* dc)
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
         wxSize wx_size = wx_dc->GetSize();
-        size.width = wx_size.x;
-        size.height = wx_size.y;
+        size.width = wxd_dip::out(wx_dc, wx_size.x);
+        size.height = wxd_dip::out(wx_dc, wx_size.y);
     }
     return size;
 }
@@ -557,8 +560,8 @@ wxd_DC_GetTextExtent(wxd_DC_t* dc, const char* string, int* w, int* h)
         wxString wx_text = wxString::FromUTF8(string);
         int width, height;
         wx_dc->GetTextExtent(wx_text, &width, &height);
-        *w = width;
-        *h = height;
+        *w = wxd_dip::out(wx_dc, width);
+        *h = wxd_dip::out(wx_dc, height);
     }
 }
 
@@ -592,8 +595,8 @@ wxd_DC_GetDeviceOrigin(wxd_DC_t* dc)
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
         wxPoint wx_origin = wx_dc->GetDeviceOrigin();
-        origin.x = wx_origin.x;
-        origin.y = wx_origin.y;
+        origin.x = wxd_dip::out(wx_dc, wx_origin.x);
+        origin.y = wxd_dip::out(wx_dc, wx_origin.y);
     }
     return origin;
 }
@@ -605,8 +608,8 @@ wxd_DC_GetLogicalOrigin(wxd_DC_t* dc)
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
         wxPoint wx_origin = wx_dc->GetLogicalOrigin();
-        origin.x = wx_origin.x;
-        origin.y = wx_origin.y;
+        origin.x = wxd_dip::out(wx_dc, wx_origin.x);
+        origin.y = wxd_dip::out(wx_dc, wx_origin.y);
     }
     return origin;
 }
@@ -722,13 +725,13 @@ wxd_DC_GetFullTextExtent(wxd_DC_t* dc, const char* string, int* w, int* h, int* 
         }
 
         if (w)
-            *w = wx_w;
+            *w = wxd_dip::out(wx_dc, wx_w);
         if (h)
-            *h = wx_h;
+            *h = wxd_dip::out(wx_dc, wx_h);
         if (descent)
-            *descent = wx_descent;
+            *descent = wxd_dip::out(wx_dc, wx_descent);
         if (externalLeading)
-            *externalLeading = wx_externalLeading;
+            *externalLeading = wxd_dip::out(wx_dc, wx_externalLeading);
     }
 }
 
@@ -750,11 +753,11 @@ wxd_DC_GetMultiLineTextExtent(wxd_DC_t* dc, const char* string, int* w, int* h, 
         }
 
         if (w)
-            *w = wx_w;
+            *w = wxd_dip::out(wx_dc, wx_w);
         if (h)
-            *h = wx_h;
+            *h = wxd_dip::out(wx_dc, wx_h);
         if (heightLine)
-            *heightLine = wx_heightLine;
+            *heightLine = wxd_dip::out(wx_dc, wx_heightLine);
     }
 }
 
@@ -763,7 +766,7 @@ wxd_DC_GetCharHeight(wxd_DC_t* dc)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        return wx_dc->GetCharHeight();
+        return wxd_dip::out(wx_dc, wx_dc->GetCharHeight());
     }
     return 0;
 }
@@ -773,7 +776,7 @@ wxd_DC_GetCharWidth(wxd_DC_t* dc)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        return wx_dc->GetCharWidth();
+        return wxd_dip::out(wx_dc, wx_dc->GetCharWidth());
     }
     return 0;
 }
@@ -853,6 +856,11 @@ wxd_DC_GetContentScaleFactor(wxd_DC_t* dc)
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
+#ifdef __WXMSW__
+        // As wxd_Window_GetContentScaleFactor: physical pixels per DIP.
+        if (wxWindow* w = wx_dc->GetWindow())
+            return w->GetDPIScaleFactor();
+#endif
         return wx_dc->GetContentScaleFactor();
     }
     return 1.0;
@@ -865,7 +873,7 @@ wxd_DC_GradientFillLinear(wxd_DC_t* dc, wxd_Rect rect, wxd_Colour_t initialColou
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wxRect wx_rect(rect.x, rect.y, rect.width, rect.height);
+        wxRect wx_rect = wxd_dip::rect_in(wx_dc, rect.x, rect.y, rect.width, rect.height);
         wxColour wx_initial(initialColour.r, initialColour.g, initialColour.b, initialColour.a);
         wxColour wx_dest(destColour.r, destColour.g, destColour.b, destColour.a);
 
@@ -881,10 +889,10 @@ wxd_DC_GradientFillConcentric(wxd_DC_t* dc, wxd_Rect rect, wxd_Colour_t initialC
 {
     if (dc) {
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
-        wxRect wx_rect(rect.x, rect.y, rect.width, rect.height);
+        wxRect wx_rect = wxd_dip::rect_in(wx_dc, rect.x, rect.y, rect.width, rect.height);
         wxColour wx_initial(initialColour.r, initialColour.g, initialColour.b, initialColour.a);
         wxColour wx_dest(destColour.r, destColour.g, destColour.b, destColour.a);
-        wxPoint wx_center(circleCenter.x, circleCenter.y);
+        wxPoint wx_center(wxd_dip::in(wx_dc, circleCenter.x), wxd_dip::in(wx_dc, circleCenter.y));
 
         wx_dc->GradientFillConcentric(wx_rect, wx_initial, wx_dest, wx_center);
     }
@@ -898,7 +906,7 @@ wxd_DC_FloodFill(wxd_DC_t* dc, int x, int y, wxd_Colour_t colour, int style)
         wxDC* wx_dc = reinterpret_cast<wxDC*>(dc);
         wxColour wx_colour(colour.r, colour.g, colour.b, colour.a);
         wxFloodFillStyle wx_style = static_cast<wxFloodFillStyle>(style);
-        return wx_dc->FloodFill(x, y, wx_colour, wx_style);
+        return wx_dc->FloodFill(wxd_dip::in(wx_dc, x), wxd_dip::in(wx_dc, y), wx_colour, wx_style);
     }
     return false;
 }

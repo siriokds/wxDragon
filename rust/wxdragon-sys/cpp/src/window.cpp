@@ -2,6 +2,7 @@
 #include <wx/wx.h>
 #include "../include/wxdragon.h" // Needed for WXD_EXPORTED, wxd_* types, WXD_ID_ANY
 #include "wxd_dispatch.h"
+#include "wxd_dip.h"
 #include <wx/window.h>           // Needed for wxWindow
 #include <wx/sizer.h>            // Needed for wxSizer
 #include "wx/gdicmn.h"           // For wxSize, wxPoint
@@ -109,7 +110,7 @@ wxd_Window_SetMinSize(wxd_Window_t* window, wxd_Size size)
 {
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     if (wx_window) {
-        wx_window->SetMinSize(wxSize(size.width, size.height));
+        wx_window->SetMinSize(wxd_dip::in(wx_window, size));
     }
 }
 
@@ -119,8 +120,7 @@ wxd_Window_Refresh(wxd_Window_t* window, int eraseBackground, const wxd_Rect* re
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     if (wx_window) {
         if (rect) {
-            wx_window->RefreshRect(wxRect(rect->x, rect->y, rect->width, rect->height),
-                                   eraseBackground);
+            wx_window->RefreshRect(wxd_dip::in(wx_window, *rect), eraseBackground);
         }
         else {
             wx_window->Refresh(eraseBackground);
@@ -161,9 +161,7 @@ wxd_Window_GetBestSize(wxd_Window_t* window)
     wxWindow* win = (wxWindow*)window;
     wxd_Size result = { -1, -1 }; // Default invalid size
     if (win) {
-        wxSize bestSize = win->GetBestSize();
-        result.width = bestSize.GetWidth();
-        result.height = bestSize.GetHeight();
+        result = wxd_dip::out(win, win->GetBestSize());
     }
     return result;
 }
@@ -281,8 +279,7 @@ wxd_Window_GetPosition(wxd_Window_t* self)
     if (!wx_window) {
         return { -1, -1 }; // Default invalid position
     }
-    wxPoint wx_position = wx_window->GetPosition();
-    return { wx_position.x, wx_position.y };
+    return wxd_dip::out(wx_window, wx_window->GetPosition());
 }
 
 WXD_EXPORTED wxd_Window_t*
@@ -319,8 +316,7 @@ wxd_Window_GetSize(wxd_Window_t* window)
     if (!wx_window) {
         return { -1, -1 }; // Default invalid size
     }
-    wxSize wx_size = wx_window->GetSize();
-    return { wx_size.GetWidth(), wx_size.GetHeight() };
+    return wxd_dip::out(wx_window, wx_window->GetSize());
 }
 
 WXD_EXPORTED void
@@ -328,7 +324,7 @@ wxd_Window_SetSize(wxd_Window_t* window, wxd_Size size)
 {
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     if (wx_window) {
-        wx_window->SetSize(wxSize(size.width, size.height));
+        wx_window->SetSize(wxd_dip::in(wx_window, size));
     }
 }
 
@@ -337,7 +333,8 @@ wxd_Window_SetSizeWithPos(wxd_Window_t* window, int x, int y, int width, int hei
 {
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     if (wx_window) {
-        wx_window->SetSize(x, y, width, height, sizeFlags);
+        wx_window->SetSize(wxd_dip::in(wx_window, x), wxd_dip::in(wx_window, y),
+                           wxd_dip::in(wx_window, width), wxd_dip::in(wx_window, height), sizeFlags);
     }
 }
 
@@ -348,8 +345,7 @@ wxd_Window_GetClientSize(wxd_Window_t* window)
     if (!wx_window) {
         return { -1, -1 }; // Default invalid size
     }
-    wxSize wx_size = wx_window->GetClientSize();
-    return { wx_size.GetWidth(), wx_size.GetHeight() };
+    return wxd_dip::out(wx_window, wx_window->GetClientSize());
 }
 
 WXD_EXPORTED void
@@ -357,7 +353,7 @@ wxd_Window_SetClientSize(wxd_Window_t* window, wxd_Size size)
 {
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     if (wx_window) {
-        wx_window->SetClientSize(wxSize(size.width, size.height));
+        wx_window->SetClientSize(wxd_dip::in(wx_window, size));
     }
 }
 
@@ -368,8 +364,7 @@ wxd_Window_GetMinSize(wxd_Window_t* window)
     if (!wx_window) {
         return { -1, -1 }; // Default invalid size
     }
-    wxSize wx_size = wx_window->GetMinSize();
-    return { wx_size.GetWidth(), wx_size.GetHeight() };
+    return wxd_dip::out(wx_window, wx_window->GetMinSize());
 }
 
 WXD_EXPORTED void
@@ -377,7 +372,7 @@ wxd_Window_Move(wxd_Window_t* window, int x, int y)
 {
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     if (wx_window) {
-        wx_window->Move(x, y);
+        wx_window->Move(wxd_dip::in(wx_window, x), wxd_dip::in(wx_window, y));
     }
 }
 
@@ -418,9 +413,7 @@ wxd_Window_ClientToScreen(wxd_Window_t* window, wxd_Point pt)
     if (!wx_window) {
         return pt; // Return the input point if window is null
     }
-    wxPoint wx_pt(pt.x, pt.y);
-    wxPoint wx_result = wx_window->ClientToScreen(wx_pt);
-    return { wx_result.x, wx_result.y };
+    return wxd_dip::out(wx_window, wx_window->ClientToScreen(wxd_dip::in(wx_window, pt)));
 }
 
 WXD_EXPORTED wxd_Point
@@ -430,9 +423,7 @@ wxd_Window_ScreenToClient(wxd_Window_t* window, wxd_Point pt)
     if (!wx_window) {
         return pt; // Return the input point if window is null
     }
-    wxPoint wx_pt(pt.x, pt.y);
-    wxPoint wx_result = wx_window->ScreenToClient(wx_pt);
-    return { wx_result.x, wx_result.y };
+    return wxd_dip::out(wx_window, wx_window->ScreenToClient(wxd_dip::in(wx_window, pt)));
 }
 
 // DPI scaling conversions. A null window leaves the value unchanged rather than falling back
@@ -637,7 +628,7 @@ wxd_Window_SetMaxSize(wxd_Window_t* window, wxd_Size size)
 {
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     if (wx_window) {
-        wx_window->SetMaxSize(wxSize(size.width, size.height));
+        wx_window->SetMaxSize(wxd_dip::in(wx_window, size));
     }
 }
 
@@ -648,8 +639,7 @@ wxd_Window_GetMaxSize(wxd_Window_t* window)
     if (!wx_window) {
         return { -1, -1 }; // Default invalid size
     }
-    wxSize wx_size = wx_window->GetMaxSize();
-    return { wx_size.GetWidth(), wx_size.GetHeight() };
+    return wxd_dip::out(wx_window, wx_window->GetMaxSize());
 }
 
 // Window properties functions
@@ -837,8 +827,7 @@ wxd_Window_GetTextExtent(wxd_Window_t* window, const char* text)
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     if (wx_window && text) {
         wxString wx_text = wxString::FromUTF8(text);
-        wxSize size = wx_window->GetTextExtent(wx_text);
-        return { size.GetWidth(), size.GetHeight() };
+        return wxd_dip::out(wx_window, wx_window->GetTextExtent(wx_text));
     }
     return { 0, 0 }; // Default size if window is null or text is null
 }
@@ -866,12 +855,12 @@ wxd_Window_GetFullTextExtent(wxd_Window_t* window, const char* text, wxd_Size* s
     int w, h, desc, ext_lead;
     wx_window->GetTextExtent(wx_text, &w, &h, &desc, &ext_lead, wx_font);
 
-    size->width = w;
-    size->height = h;
+    size->width = wxd_dip::out(wx_window, w);
+    size->height = wxd_dip::out(wx_window, h);
     if (descent)
-        *descent = desc;
+        *descent = wxd_dip::out(wx_window, desc);
     if (external_leading)
-        *external_leading = ext_lead;
+        *external_leading = wxd_dip::out(wx_window, ext_lead);
 }
 
 WXD_EXPORTED int
@@ -1171,7 +1160,7 @@ wxd_Window_PopupMenu(wxd_Window_t* window, wxd_Menu_t* menu, const wxd_Point* po
 
     if (pos) {
         // Use provided position
-        return wx_window->PopupMenu(wx_menu, pos->x, pos->y);
+        return wx_window->PopupMenu(wx_menu, wxd_dip::in(wx_window, *pos));
     }
     else {
         // Use default position (current mouse position)
@@ -1232,8 +1221,7 @@ wxd_Window_GetClientRect(wxd_Window_t* window)
     if (!wx_window) {
         return { 0, 0, -1, -1 };
     }
-    wxRect r = wx_window->GetClientRect();
-    return { r.x, r.y, r.width, r.height };
+    return wxd_dip::out(wx_window, wx_window->GetClientRect());
 }
 
 WXD_EXPORTED wxd_Point
@@ -1243,8 +1231,7 @@ wxd_Window_GetScreenPosition(wxd_Window_t* window)
     if (!wx_window) {
         return { -1, -1 };
     }
-    wxPoint p = wx_window->GetScreenPosition();
-    return { p.x, p.y };
+    return wxd_dip::out(wx_window, wx_window->GetScreenPosition());
 }
 
 WXD_EXPORTED wxd_Rect
@@ -1254,8 +1241,7 @@ wxd_Window_GetScreenRect(wxd_Window_t* window)
     if (!wx_window) {
         return { 0, 0, -1, -1 };
     }
-    wxRect r = wx_window->GetScreenRect();
-    return { r.x, r.y, r.width, r.height };
+    return wxd_dip::out(wx_window, wx_window->GetScreenRect());
 }
 
 WXD_EXPORTED void
@@ -1309,7 +1295,15 @@ WXD_EXPORTED double
 wxd_Window_GetContentScaleFactor(wxd_Window_t* window)
 {
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
-    return wx_window ? wx_window->GetContentScaleFactor() : 1.0;
+    if (!wx_window)
+        return 1.0;
+#ifdef __WXMSW__
+    // Physical pixels per DIP: what a bitmap needs to stay sharp when wxDragon
+    // speaks DIPs (wxd_dip.h). wx returns 1 here on MSW.
+    return wx_window->GetDPIScaleFactor();
+#else
+    return wx_window->GetContentScaleFactor();
+#endif
 }
 
 } // extern "C"

@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -29,7 +30,7 @@ wxd_Sizer_AddWindow(wxd_Sizer_t* sizer, wxd_Window_t* window, int proportion, wx
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
 
     // Ensure flag is treated as an int for wxWidgets flags (safe due to typedef)
-    wx_sizer->Add(wx_window, proportion, flag, border);
+    wx_sizer->Add(wx_window, proportion, flag, wxd_dip::any(border));
 }
 
 WXD_EXPORTED void
@@ -38,7 +39,7 @@ wxd_Sizer_AddSpacer(wxd_Sizer_t* sizer, int size)
     if (!sizer)
         return;
     wxSizer* wx_sizer = reinterpret_cast<wxSizer*>(sizer);
-    wx_sizer->AddSpacer(size);
+    wx_sizer->AddSpacer(wxd_dip::any(size));
 }
 
 WXD_EXPORTED void
@@ -53,7 +54,7 @@ wxd_Sizer_AddSizer(wxd_Sizer_t* sizer, wxd_Sizer_t* childSizer, int proportion,
     // The parent sizer takes ownership of the child sizer pointer
     // when added. The Rust side should `std::mem::forget` the wrapper
     // for the child sizer to prevent a double free.
-    wx_sizer->Add(wx_child_sizer, proportion, flag, border);
+    wx_sizer->Add(wx_child_sizer, proportion, flag, wxd_dip::any(border));
 }
 
 WXD_EXPORTED void
@@ -104,14 +105,14 @@ wxd_StaticBoxSizer_GetStaticBox(wxd_StaticBoxSizer_t* self)
 wxd_GridSizer_t*
 wxd_GridSizer_Create(int rows, int cols, int vgap, int hgap)
 {
-    wxGridSizer* sizer = new wxGridSizer(rows, cols, vgap, hgap);
+    wxGridSizer* sizer = new wxGridSizer(rows, cols, wxd_dip::any(vgap), wxd_dip::any(hgap));
     return reinterpret_cast<wxd_GridSizer_t*>(sizer);
 }
 
 wxd_GridSizer_t*
 wxd_GridSizer_CreateWithGap(int rows, int cols, int gap_width, int gap_height)
 {
-    wxGridSizer* sizer = new wxGridSizer(rows, cols, wxSize(gap_width, gap_height));
+    wxGridSizer* sizer = new wxGridSizer(rows, cols, wxSize(wxd_dip::any(gap_width), wxd_dip::any(gap_height)));
     return reinterpret_cast<wxd_GridSizer_t*>(sizer);
 }
 
@@ -138,7 +139,7 @@ wxd_GridSizer_SetVGap(wxd_GridSizer_t* self, int gap)
 {
     if (self) {
         wxGridSizer* wx_sizer = reinterpret_cast<wxGridSizer*>(self);
-        wx_sizer->SetVGap(gap);
+        wx_sizer->SetVGap(wxd_dip::any(gap));
     }
 }
 
@@ -147,7 +148,7 @@ wxd_GridSizer_SetHGap(wxd_GridSizer_t* self, int gap)
 {
     if (self) {
         wxGridSizer* wx_sizer = reinterpret_cast<wxGridSizer*>(self);
-        wx_sizer->SetHGap(gap);
+        wx_sizer->SetHGap(wxd_dip::any(gap));
     }
 }
 
@@ -195,14 +196,14 @@ wxd_GridSizer_GetHGap(wxd_GridSizer_t* self)
 wxd_FlexGridSizer_t*
 wxd_FlexGridSizer_Create(int rows, int cols, int vgap, int hgap)
 {
-    wxFlexGridSizer* sizer = new wxFlexGridSizer(rows, cols, vgap, hgap);
+    wxFlexGridSizer* sizer = new wxFlexGridSizer(rows, cols, wxd_dip::any(vgap), wxd_dip::any(hgap));
     return reinterpret_cast<wxd_FlexGridSizer_t*>(sizer);
 }
 
 wxd_FlexGridSizer_t*
 wxd_FlexGridSizer_CreateWithGap(int rows, int cols, int gap_width, int gap_height)
 {
-    wxFlexGridSizer* sizer = new wxFlexGridSizer(rows, cols, wxSize(gap_width, gap_height));
+    wxFlexGridSizer* sizer = new wxFlexGridSizer(rows, cols, wxSize(wxd_dip::any(gap_width), wxd_dip::any(gap_height)));
     return reinterpret_cast<wxd_FlexGridSizer_t*>(sizer);
 }
 
@@ -255,7 +256,7 @@ wxd_WrapSizer_Create(wxd_Orientation_t orient, int flags)
 WXD_EXPORTED wxd_GridBagSizer_t*
 wxd_GridBagSizer_Create(int vgap, int hgap)
 {
-    wxGridBagSizer* sizer = new wxGridBagSizer(vgap, hgap);
+    wxGridBagSizer* sizer = new wxGridBagSizer(wxd_dip::any(vgap), wxd_dip::any(hgap));
     return reinterpret_cast<wxd_GridBagSizer_t*>(sizer);
 }
 
@@ -269,7 +270,7 @@ wxd_GridBagSizer_AddWindow(wxd_GridBagSizer_t* sizer, wxd_Window_t* window, wxd_
     wxWindow* wx_window = reinterpret_cast<wxWindow*>(window);
     wxGBPosition wx_pos(pos.row, pos.col);
     wxGBSpan wx_span(span.rowspan, span.colspan);
-    wx_sizer->Add(wx_window, wx_pos, wx_span, flag, border);
+    wx_sizer->Add(wx_window, wx_pos, wx_span, flag, wxd_dip::any(border));
 }
 
 WXD_EXPORTED void
@@ -282,7 +283,7 @@ wxd_GridBagSizer_AddSizer(wxd_GridBagSizer_t* sizer, wxd_Sizer_t* child_sizer, w
     wxSizer* wx_child_sizer = reinterpret_cast<wxSizer*>(child_sizer);
     wxGBPosition wx_pos(pos.row, pos.col);
     wxGBSpan wx_span(span.rowspan, span.colspan);
-    wx_sizer->Add(wx_child_sizer, wx_pos, wx_span, flag, border);
+    wx_sizer->Add(wx_child_sizer, wx_pos, wx_span, flag, wxd_dip::any(border));
 }
 
 WXD_EXPORTED void
@@ -294,7 +295,7 @@ wxd_GridBagSizer_AddSpacer(wxd_GridBagSizer_t* sizer, int width, int height, wxd
     wxGridBagSizer* wx_sizer = reinterpret_cast<wxGridBagSizer*>(sizer);
     wxGBPosition wx_pos(pos.row, pos.col);
     wxGBSpan wx_span(span.rowspan, span.colspan);
-    wx_sizer->Add(width, height, wx_pos, wx_span, flag, border);
+    wx_sizer->Add(wxd_dip::any(width), wxd_dip::any(height), wx_pos, wx_span, flag, wxd_dip::any(border));
 }
 
 WXD_EXPORTED wxd_GBPosition

@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -40,7 +41,7 @@ wxd_GetMousePosition(void)
 {
     int x = 0, y = 0;
     wxGetMousePosition(&x, &y);
-    return { x, y };
+    return wxd_dip::screen_out(wxPoint(x, y));
 }
 
 // Returns true if the given key is currently pressed down

@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -100,7 +101,7 @@ wxd_ListCtrl_InsertColumn(wxd_ListCtrl_t* self, int64_t col, const char* heading
     if (!self)
         return -1;
     return static_cast<int32_t>(reinterpret_cast<wxListCtrl*>(self)->InsertColumn(
-        col, wxString::FromUTF8(heading), format, width));
+        col, wxString::FromUTF8(heading), format, width >= 0 ? wxd_dip::in(reinterpret_cast<wxListCtrl*>(self), width) : width));
 }
 
 WXD_EXPORTED bool
@@ -108,7 +109,9 @@ wxd_ListCtrl_SetColumnWidth(wxd_ListCtrl_t* self, int64_t col, int width)
 {
     if (!self)
         return false;
-    return reinterpret_cast<wxListCtrl*>(self)->SetColumnWidth(col, width);
+    wxListCtrl* list = reinterpret_cast<wxListCtrl*>(self);
+    // wxLIST_AUTOSIZE (-1) and wxLIST_AUTOSIZE_USEHEADER (-2) are not lengths.
+    return list->SetColumnWidth(col, width >= 0 ? wxd_dip::in(list, width) : width);
 }
 
 WXD_EXPORTED int
@@ -116,7 +119,9 @@ wxd_ListCtrl_GetColumnWidth(wxd_ListCtrl_t* self, int64_t col)
 {
     if (!self)
         return -1; // wxLIST_AUTOSIZE_USEHEADER or actual width
-    return reinterpret_cast<wxListCtrl*>(self)->GetColumnWidth(col);
+    wxListCtrl* list = reinterpret_cast<wxListCtrl*>(self);
+    int width = list->GetColumnWidth(col);
+    return width >= 0 ? wxd_dip::out(list, width) : width;
 }
 
 WXD_EXPORTED int

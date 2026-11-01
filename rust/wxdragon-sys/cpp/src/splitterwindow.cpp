@@ -1,3 +1,4 @@
+#include "wxd_dip.h"
 #include <wx/wxprec.h>
 #include <wx/wx.h>
 #include "../include/wxdragon.h"
@@ -45,8 +46,9 @@ public:
         const int position = GetSashPosition();
         const int size = GetSashSize();
         const bool vertical = GetSplitMode() == wxSPLIT_VERTICAL;
-        wxd_Rect sash = vertical ? wxd_Rect{ position, 0, size, client.y }
-                                 : wxd_Rect{ 0, position, client.x, size };
+        // In DIPs, like everything handed to Rust (wxd_dip.h).
+        wxd_Rect sash = wxd_dip::out(this, vertical ? wxRect(position, 0, size, client.y)
+                                                    : wxRect(0, position, client.x, size));
         m_drawSash(m_userData, reinterpret_cast<wxd_DC_t*>(&dc), sash, vertical);
     }
 
@@ -98,7 +100,7 @@ wxd_SplitterWindow_SplitVertically(wxd_SplitterWindow_t* self, wxd_Window_t* win
     wxWindow* win2 = reinterpret_cast<wxWindow*>(window2);
     if (!splitter || !win1 || !win2)
         return false;
-    return splitter->SplitVertically(win1, win2, sashPosition);
+    return splitter->SplitVertically(win1, win2, wxd_dip::in(splitter, sashPosition));
 }
 
 // Implementation for wxd_SplitterWindow_SplitHorizontally
@@ -111,7 +113,7 @@ wxd_SplitterWindow_SplitHorizontally(wxd_SplitterWindow_t* self, wxd_Window_t* w
     wxWindow* win2 = reinterpret_cast<wxWindow*>(window2);
     if (!splitter || !win1 || !win2)
         return false;
-    return splitter->SplitHorizontally(win1, win2, sashPosition);
+    return splitter->SplitHorizontally(win1, win2, wxd_dip::in(splitter, sashPosition));
 }
 
 // Implementation for wxd_SplitterWindow_Unsplit
@@ -144,7 +146,7 @@ wxd_SplitterWindow_SetSashPosition(wxd_SplitterWindow_t* self, int position, boo
     wxSplitterWindow* splitter = reinterpret_cast<wxSplitterWindow*>(self);
     if (!splitter)
         return;
-    splitter->SetSashPosition(position, redraw);
+    splitter->SetSashPosition(wxd_dip::in(splitter, position), redraw);
 }
 
 // Implementation for wxd_SplitterWindow_GetSashPosition
@@ -154,7 +156,7 @@ wxd_SplitterWindow_GetSashPosition(wxd_SplitterWindow_t* self)
     wxSplitterWindow* splitter = reinterpret_cast<wxSplitterWindow*>(self);
     if (!splitter)
         return 0;
-    return splitter->GetSashPosition();
+    return wxd_dip::out(splitter, splitter->GetSashPosition());
 }
 
 // Implementation for wxd_SplitterWindow_SetMinimumPaneSize
@@ -164,7 +166,7 @@ wxd_SplitterWindow_SetMinimumPaneSize(wxd_SplitterWindow_t* self, int paneSize)
     wxSplitterWindow* splitter = reinterpret_cast<wxSplitterWindow*>(self);
     if (!splitter)
         return;
-    splitter->SetMinimumPaneSize(paneSize);
+    splitter->SetMinimumPaneSize(wxd_dip::in(splitter, paneSize));
 }
 
 // Implementation for wxd_SplitterEvent_GetSashPosition
@@ -198,7 +200,7 @@ WXD_EXPORTED int
 wxd_SplitterWindow_GetSashSize(wxd_SplitterWindow_t* self)
 {
     wxSplitterWindow* splitter = reinterpret_cast<wxSplitterWindow*>(self);
-    return splitter ? splitter->GetSashSize() : 0;
+    return splitter ? wxd_dip::out(splitter, splitter->GetSashSize()) : 0;
 }
 
 WXD_EXPORTED void
