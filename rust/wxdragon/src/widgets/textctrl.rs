@@ -42,7 +42,8 @@ widget_style_enum!(
         CharWrap: ffi::WXD_TE_CHARWRAP, "Wrap at any position, splitting words if necessary.",
         WordWrap: ffi::WXD_TE_WORDWRAP, "Wrap at word boundaries.",
         NoVScroll: ffi::WXD_TE_NO_VSCROLL, "No vertical scrollbar (multiline only).",
-        DontWrap: ffi::WXD_TE_DONTWRAP, "Don't wrap at all, show horizontal scrollbar instead."
+        DontWrap: ffi::WXD_TE_DONTWRAP, "Don't wrap at all, show horizontal scrollbar instead.",
+        BorderNone: ffi::WXD_BORDER_NONE, "No border (on macOS: a field without the bezel, to sit inside a bar)."
     },
     default_variant: Default
 );
