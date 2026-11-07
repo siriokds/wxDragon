@@ -142,6 +142,17 @@ impl MenuBar {
         }
     }
 
+    /// macOS: makes this menu bar the one wxWidgets installs whenever no
+    /// window has a menu bar of its own (`wxMenuBar::MacSetCommonMenuBar`),
+    /// e.g. after the last window with its own bar closes while the main
+    /// window is not active. Without it wx installs an empty fallback bar
+    /// whose Quit item nobody handles, and wx then ends the main loop
+    /// (`ExitMainLoop`) instead of asking `applicationShouldTerminate:`.
+    /// Does nothing on other platforms.
+    pub fn osx_set_common(&self) {
+        unsafe { ffi::wxd_MenuBar_OSXSetCommon(self.ptr) };
+    }
+
     /// Returns the number of menus in the menu bar.
     pub fn get_menu_count(&self) -> usize {
         unsafe { ffi::wxd_MenuBar_GetMenuCount(self.ptr) }

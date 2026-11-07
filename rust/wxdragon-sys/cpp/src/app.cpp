@@ -138,6 +138,13 @@ WxdApp::OnIdle(wxIdleEvent& event)
     if (callbacks_processed > 0) {
         event.RequestMore();
     }
+
+    // Let wxApp's own idle handler run too: a Bind()-ed handler that does not
+    // skip consumes the event, and the static EVT_IDLE entry of wxApp never
+    // runs. On macOS that handler installs the common menu bar when no window
+    // has its own (wxMenuBar::MacSetCommonMenuBar) and empties the
+    // autorelease array.
+    event.Skip();
 }
 
 bool

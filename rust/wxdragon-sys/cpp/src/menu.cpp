@@ -416,6 +416,21 @@ wxd_MenuBar_OSXGetAppleMenu(const wxd_MenuBar_t* menubar)
 #endif
 }
 
+WXD_EXPORTED void
+wxd_MenuBar_OSXSetCommon(wxd_MenuBar_t* menubar)
+{
+#ifdef __WXOSX__
+    // Without it, closing the last window that owns a menu bar leaves wx's
+    // empty fallback bar installed, whose Quit item nobody handles: wx then
+    // calls ExitMainLoop() instead of going through
+    // applicationShouldTerminate:. wxApp::OnIdle installs the common bar
+    // whenever no other bar is installed.
+    wxMenuBar::MacSetCommonMenuBar(reinterpret_cast<wxMenuBar*>(menubar));
+#else
+    (void)menubar;
+#endif
+}
+
 WXD_EXPORTED size_t
 wxd_MenuBar_GetMenuCount(const wxd_MenuBar_t* menubar)
 {

@@ -234,6 +234,14 @@ WXD_EXPORTED wxd_Menu_t*
 wxd_MenuBar_OSXGetAppleMenu(const wxd_MenuBar_t* menubar);
 
 /**
+ * @brief macOS: make this menu bar the one wxWidgets installs when no window
+ * has a menu bar of its own (wxMenuBar::MacSetCommonMenuBar); NULL clears it.
+ * Does nothing on other platforms.
+ */
+WXD_EXPORTED void
+wxd_MenuBar_OSXSetCommon(wxd_MenuBar_t* menubar);
+
+/**
  * @brief Get the number of menus in the menubar.
  */
 WXD_EXPORTED size_t
