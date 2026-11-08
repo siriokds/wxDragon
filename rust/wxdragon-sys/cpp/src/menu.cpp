@@ -417,6 +417,19 @@ wxd_MenuBar_OSXGetAppleMenu(const wxd_MenuBar_t* menubar)
 }
 
 WXD_EXPORTED void
+wxd_MenuBar_OSXSetAutoWindowMenu(bool enable)
+{
+#ifdef __WXOSX__
+    // wx adds a "Window" menu of its own to every menu bar that has none
+    // titled "&Window" (in English, or its wx translation): an app with a
+    // window menu under another title gets two.
+    wxMenuBar::SetAutoWindowMenu(enable);
+#else
+    (void)enable;
+#endif
+}
+
+WXD_EXPORTED void
 wxd_MenuBar_OSXSetCommon(wxd_MenuBar_t* menubar)
 {
 #ifdef __WXOSX__

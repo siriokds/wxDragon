@@ -153,6 +153,15 @@ impl MenuBar {
         unsafe { ffi::wxd_MenuBar_OSXSetCommon(self.ptr) };
     }
 
+    /// macOS: whether wx adds its own "Window" menu to menu bars without one
+    /// titled "&Window" (`wxMenuBar::SetAutoWindowMenu`, on by default). An
+    /// app whose window menu has another title (another language) turns it
+    /// off, before creating its menu bars, and tells macOS which menu is the
+    /// window menu itself. Does nothing on other platforms.
+    pub fn osx_set_auto_window_menu(enable: bool) {
+        unsafe { ffi::wxd_MenuBar_OSXSetAutoWindowMenu(enable) };
+    }
+
     /// Returns the number of menus in the menu bar.
     pub fn get_menu_count(&self) -> usize {
         unsafe { ffi::wxd_MenuBar_GetMenuCount(self.ptr) }

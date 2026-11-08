@@ -242,6 +242,14 @@ WXD_EXPORTED void
 wxd_MenuBar_OSXSetCommon(wxd_MenuBar_t* menubar);
 
 /**
+ * @brief macOS: whether wx adds its own "Window" menu to menu bars without one
+ * titled "&Window" (wxMenuBar::SetAutoWindowMenu, on by default). Call before
+ * creating the menu bars. Does nothing on other platforms.
+ */
+WXD_EXPORTED void
+wxd_MenuBar_OSXSetAutoWindowMenu(bool enable);
+
+/**
  * @brief Get the number of menus in the menubar.
  */
 WXD_EXPORTED size_t
