@@ -15,6 +15,8 @@ wxd_ToolBar_AddTool(wxd_ToolBar_t* self, wxd_Id toolId, const char* label,
 
 WXD_EXPORTED void
 wxd_ToolBar_AddSeparator(wxd_ToolBar_t* self);
+WXD_EXPORTED void
+wxd_ToolBar_AddStretchableSpace(wxd_ToolBar_t* self);
 
 WXD_EXPORTED void
 wxd_ToolBar_AddControl(wxd_ToolBar_t* self, wxd_Window_t* control);

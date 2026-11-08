@@ -77,6 +77,15 @@ wxd_ToolBar_AddSeparator(wxd_ToolBar_t* self)
 }
 
 WXD_EXPORTED void
+wxd_ToolBar_AddStretchableSpace(wxd_ToolBar_t* self)
+{
+    wxToolBar* tb = reinterpret_cast<wxToolBar*>(self);
+    if (!tb)
+        return;
+    tb->AddStretchableSpace();
+}
+
+WXD_EXPORTED void
 wxd_ToolBar_AddControl(wxd_ToolBar_t* self, wxd_Window_t* control)
 {
     wxToolBar* tb = reinterpret_cast<wxToolBar*>(self);

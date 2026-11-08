@@ -204,6 +204,20 @@ impl ToolBar {
         }
     }
 
+    /// Adds a space that takes what is left, pushing the next tools to the
+    /// far side (`wxToolBar::AddStretchableSpace`; a flexible space in the
+    /// native toolbar of macOS).
+    /// No-op if the toolbar has been destroyed.
+    pub fn add_stretchable_space(&self) {
+        let ptr = self.toolbar_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        unsafe {
+            ffi::wxd_ToolBar_AddStretchableSpace(ptr);
+        }
+    }
+
     /// Adds an arbitrary control (like a `Choice` or `TextCtrl`) to the toolbar.
     /// The control should have the toolbar as its parent.
     /// No-op if the toolbar has been destroyed.
