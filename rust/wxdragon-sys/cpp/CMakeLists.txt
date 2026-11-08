@@ -250,6 +250,10 @@ if(PLATFORM_NAME STREQUAL "macos")
     list(APPEND WXDRAGON_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/window_osx.mm)
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/window_osx.mm
         PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+    # The native toolbar (NSToolbar with its own delegate): mac_toolbar.rs.
+    list(APPEND WXDRAGON_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/mac_toolbar_osx.mm)
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/mac_toolbar_osx.mm
+        PROPERTIES COMPILE_FLAGS "-fobjc-arc")
 endif()
 
 # Add Linux compatibility layer for older systems

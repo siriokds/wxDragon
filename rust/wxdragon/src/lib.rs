@@ -32,6 +32,8 @@ pub mod ipc;
 pub mod keycode;
 pub mod language;
 pub mod main_thread;
+#[cfg(target_os = "macos")]
+pub mod mac_toolbar;
 pub mod menus;
 pub mod prelude;
 #[cfg(feature = "wx-printing")]
