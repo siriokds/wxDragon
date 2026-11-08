@@ -256,6 +256,14 @@ wxd_DataViewTextRenderer_Create(const char* varianttype, int64_t mode, int64_t a
     return reinterpret_cast<wxd_DataViewRenderer_t*>(renderer);
 }
 
+WXD_EXPORTED void
+wxd_DataViewTextRenderer_EnableMarkup(wxd_DataViewRenderer_t* renderer, bool enable)
+{
+    wxDataViewTextRenderer* r = dynamic_cast<wxDataViewTextRenderer*>(reinterpret_cast<wxDataViewRenderer*>(renderer));
+    if (r)
+        r->EnableMarkup(enable);
+}
+
 WXD_EXPORTED wxd_DataViewRenderer_t*
 wxd_DataViewIconTextRenderer_Create(const char* varianttype, int64_t mode, int64_t align)
 {

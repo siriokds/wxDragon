@@ -119,6 +119,10 @@ wxd_DataViewCtrl_EnsureVisible(wxd_Window_t* self, const wxd_DataViewItem_t* ite
 // Renderer creation functions
 WXD_EXPORTED wxd_DataViewRenderer_t*
 wxd_DataViewTextRenderer_Create(const char* varianttype, int64_t mode, int64_t align);
+// Values of the renderer's column may contain markup (<b>, <i>, <span>...):
+// wxDataViewTextRenderer::EnableMarkup (native attributed text on macOS).
+WXD_EXPORTED void
+wxd_DataViewTextRenderer_EnableMarkup(wxd_DataViewRenderer_t* renderer, bool enable);
 
 WXD_EXPORTED wxd_DataViewRenderer_t*
 wxd_DataViewIconTextRenderer_Create(const char* varianttype, int64_t mode, int64_t align);

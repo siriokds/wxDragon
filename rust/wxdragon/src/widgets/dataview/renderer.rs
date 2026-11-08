@@ -61,6 +61,14 @@ impl DataViewTextRenderer {
         let handle = unsafe { ffi::wxd_DataViewTextRenderer_Create(variant_type_cstr.as_ptr(), mode.bits(), align.bits()) };
         Self { handle }
     }
+
+    /// Lets the column's values contain markup: `<b>`, `<i>`, `<span
+    /// foreground="…">`… (`wxDataViewTextRenderer::EnableMarkup`; on macOS
+    /// native attributed text). Text that is not markup must be escaped
+    /// (`&amp;`, `&lt;`, `&gt;`).
+    pub fn enable_markup(&self, enable: bool) {
+        unsafe { ffi::wxd_DataViewTextRenderer_EnableMarkup(self.handle, enable) }
+    }
 }
 
 impl DataViewRenderer for DataViewTextRenderer {
