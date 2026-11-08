@@ -12,8 +12,22 @@ widget_style_enum!(
     name: AuiNotebookStyle,
     doc: "Style flags for AuiNotebook.",
     variants: {
-        Default: 0x00000001 | 0x00000002 | 0x00000004 | 0x00000010 | 0x00000040 | 0x00000200, "Default AuiNotebook style."
-        // Add any specific AuiNotebook styles here once available via ffi constants
+        Default: 0x00000001 | 0x00000002 | 0x00000004 | 0x00000010 | 0x00000040 | 0x00000200, "Default AuiNotebook style.",
+        Top: 1 << 0, "Tabs along the top (wxAUI_NB_TOP).",
+        Bottom: 1 << 3, "Tabs along the bottom (wxAUI_NB_BOTTOM).",
+        TabSplit: 1 << 4, "The tab control can be split by dragging a tab (wxAUI_NB_TAB_SPLIT).",
+        TabMove: 1 << 5, "A tab can be moved horizontally by dragging (wxAUI_NB_TAB_MOVE).",
+        TabExternalMove: 1 << 6, "A tab can be moved to another tab control (wxAUI_NB_TAB_EXTERNAL_MOVE).",
+        TabFixedWidth: 1 << 7, "All tabs have the same width (wxAUI_NB_TAB_FIXED_WIDTH).",
+        ScrollButtons: 1 << 8, "Left and right scroll buttons; ignored with Multiline (wxAUI_NB_SCROLL_BUTTONS).",
+        WindowListButton: 1 << 9, "A drop-down list of all the pages (wxAUI_NB_WINDOWLIST_BUTTON).",
+        CloseButton: 1 << 10, "A close button on the tab bar (wxAUI_NB_CLOSE_BUTTON).",
+        CloseOnActiveTab: 1 << 11, "The close button on the active tab (wxAUI_NB_CLOSE_ON_ACTIVE_TAB).",
+        CloseOnAllTabs: 1 << 12, "The close button on every tab (wxAUI_NB_CLOSE_ON_ALL_TABS).",
+        MiddleClickClose: 1 << 13, "Middle click on a tab closes it (wxAUI_NB_MIDDLE_CLICK_CLOSE).",
+        Multiline: 1 << 14, "Tabs that do not fit wrap onto more rows instead of scrolling; wxWidgets 3.3 (wxAUI_NB_MULTILINE).",
+        PinOnActiveTab: 1 << 15, "The active tab shows a pin to pin or unpin it; wxWidgets 3.3 (wxAUI_NB_PIN_ON_ACTIVE_TAB).",
+        UnpinOnAllPinned: 1 << 16, "An unpin button on every pinned tab; wxWidgets 3.3 (wxAUI_NB_UNPIN_ON_ALL_PINNED)."
     },
     default_variant: Default
 );
@@ -229,6 +243,103 @@ impl WxEvtHandler for AuiNotebook {
 
 // Implement common event traits that all Window-based widgets support
 impl crate::event::WindowEvents for AuiNotebook {}
+
+impl AuiNotebook {
+    /// The tooltip of a page's tab (`wxAuiNotebook::SetPageToolTip`).
+    pub fn set_page_tooltip(&self, page_idx: usize, text: &str) -> bool {
+        let ptr = self.notebook_ptr();
+        if ptr.is_null() {
+            return false;
+        }
+        let c_text = std::ffi::CString::new(text).unwrap_or_default();
+        unsafe { ffi::wxd_AuiNotebook_SetPageToolTip(ptr, page_idx, c_text.as_ptr()) }
+    }
+
+    /// The tabs' text colours: the other tabs and the current one (the art
+    /// provider's `SetColour` / `SetActiveColour`; the flat art, the default
+    /// since wxWidgets 3.3, takes the tabs' backgrounds from the system).
+    pub fn set_tab_text_colours(&self, normal: crate::color::Colour, active: crate::color::Colour) {
+        let ptr = self.notebook_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_AuiNotebook_SetTabTextColours(ptr, normal.into(), active.into()) }
+        }
+    }
+
+    /// The tabs' font (normal, selected and measuring).
+    pub fn set_tab_font(&self, font: &crate::font::Font) {
+        let ptr = self.notebook_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_AuiNotebook_SetTabFont(ptr, font.as_ptr()) }
+        }
+    }
+
+    /// Change the style flags after creation (`SetWindowStyleFlag`).
+    pub fn set_notebook_style(&self, style: AuiNotebookStyle) {
+        let ptr = self.notebook_ptr();
+        if !ptr.is_null() {
+            unsafe { ffi::wxd_AuiNotebook_SetWindowStyleFlag(ptr, style.bits()) }
+        }
+    }
+}
+
+/// Events of the notebook's tabs.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AuiNotebookEvent {
+    /// The selected page changed.
+    PageChanged,
+    /// The selected page is about to change (can be vetoed).
+    PageChanging,
+    /// A page is about to be closed by its close button or a middle click
+    /// (can be vetoed: "Save changes?").
+    PageClose,
+    /// A page was closed.
+    PageClosed,
+    /// Right button released on a tab (a context menu).
+    TabRightUp,
+    /// Double click on the empty tab bar (a new page).
+    BgDclick,
+    /// A tab drag ended (the order may have changed).
+    DragDone,
+}
+
+/// The data of a notebook event.
+#[derive(Debug)]
+pub struct AuiNotebookEventData {
+    pub event: crate::event::Event,
+}
+
+impl AuiNotebookEventData {
+    pub fn new(event: crate::event::Event) -> Self {
+        Self { event }
+    }
+
+    /// The page concerned (the new one for a change).
+    pub fn get_selection(&self) -> Option<i32> {
+        if self.event.is_null() {
+            return None;
+        }
+        // wxAuiNotebookEvent is a wxBookCtrlEvent, as a notebook's.
+        let val = unsafe { ffi::wxd_NotebookEvent_GetSelection(self.event.0) };
+        if val == ffi::WXD_NOT_FOUND as i32 { None } else { Some(val) }
+    }
+
+    /// Stop it (PageChanging, PageClose).
+    pub fn veto(&self) {
+        self.event.veto();
+    }
+}
+
+crate::implement_widget_local_event_handlers!(
+    AuiNotebook, AuiNotebookEvent, AuiNotebookEventData,
+    PageChanged => page_changed, crate::event::EventType::AUINOTEBOOK_PAGE_CHANGED,
+    PageChanging => page_changing, crate::event::EventType::AUINOTEBOOK_PAGE_CHANGING,
+    PageClose => page_close, crate::event::EventType::AUINOTEBOOK_PAGE_CLOSE,
+    PageClosed => page_closed, crate::event::EventType::AUINOTEBOOK_PAGE_CLOSED,
+    TabRightUp => tab_right_up, crate::event::EventType::AUINOTEBOOK_TAB_RIGHT_UP,
+    BgDclick => bg_dclick, crate::event::EventType::AUINOTEBOOK_BG_DCLICK,
+    DragDone => drag_done, crate::event::EventType::AUINOTEBOOK_DRAG_DONE
+);
+
 
 // Use widget_builder macro to create the builder
 widget_builder!(

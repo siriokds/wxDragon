@@ -211,6 +211,23 @@ wxd_AuiNotebook_GetPageText(wxd_AuiNotebook_t* self, size_t page_idx, char* buff
 WXD_EXPORTED bool
 wxd_AuiNotebook_SetPageText(wxd_AuiNotebook_t* self, size_t page_idx, const char* text);
 
+/** The tooltip of a page's tab (wxAuiNotebook::SetPageToolTip). */
+WXD_EXPORTED bool
+wxd_AuiNotebook_SetPageToolTip(wxd_AuiNotebook_t* self, size_t page_idx, const char* text);
+
+/** The tabs' text colours: the other tabs and the current one (the art
+ * provider's SetColour / SetActiveColour). */
+WXD_EXPORTED void
+wxd_AuiNotebook_SetTabTextColours(wxd_AuiNotebook_t* self, wxd_Colour_t normal, wxd_Colour_t active);
+
+/** The tabs' font (normal, selected and measuring). */
+WXD_EXPORTED void
+wxd_AuiNotebook_SetTabFont(wxd_AuiNotebook_t* self, const wxd_Font_t* font);
+
+/** Change the notebook's style flags (wxAUI_NB_*) after creation. */
+WXD_EXPORTED void
+wxd_AuiNotebook_SetWindowStyleFlag(wxd_AuiNotebook_t* self, int64_t style);
+
 
 // --- wxAuiToolBar ---
 WXD_EXPORTED wxd_AuiToolBar_t*

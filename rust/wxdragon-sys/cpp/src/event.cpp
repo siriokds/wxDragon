@@ -51,6 +51,7 @@
 #include "wxd_dispatch.h"
 #if wxdUSE_AUI && wxUSE_AUI
 #include <wx/aui/framemanager.h>
+#include <wx/aui/auibook.h>
 #endif
 #include <wx/dynarray.h>
 #include <wx/log.h>
@@ -1355,6 +1356,22 @@ get_wx_event_type_for_c_enum(WXDEventTypeCEnum c_enum_val)
         return wxEVT_LIST_COL_DRAGGING;
     case WXD_EVENT_TYPE_LIST_COL_END_DRAG:
         return wxEVT_LIST_COL_END_DRAG;
+#if wxdUSE_AUI && wxUSE_AUI
+    case WXD_EVENT_TYPE_AUINOTEBOOK_PAGE_CHANGED:
+        return wxEVT_AUINOTEBOOK_PAGE_CHANGED;
+    case WXD_EVENT_TYPE_AUINOTEBOOK_PAGE_CHANGING:
+        return wxEVT_AUINOTEBOOK_PAGE_CHANGING;
+    case WXD_EVENT_TYPE_AUINOTEBOOK_PAGE_CLOSE:
+        return wxEVT_AUINOTEBOOK_PAGE_CLOSE;
+    case WXD_EVENT_TYPE_AUINOTEBOOK_PAGE_CLOSED:
+        return wxEVT_AUINOTEBOOK_PAGE_CLOSED;
+    case WXD_EVENT_TYPE_AUINOTEBOOK_TAB_RIGHT_UP:
+        return wxEVT_AUINOTEBOOK_TAB_RIGHT_UP;
+    case WXD_EVENT_TYPE_AUINOTEBOOK_BG_DCLICK:
+        return wxEVT_AUINOTEBOOK_BG_DCLICK;
+    case WXD_EVENT_TYPE_AUINOTEBOOK_DRAG_DONE:
+        return wxEVT_AUINOTEBOOK_DRAG_DONE;
+#endif
 
     // Window scroll events
     case WXD_EVENT_TYPE_SCROLLWIN_TOP:

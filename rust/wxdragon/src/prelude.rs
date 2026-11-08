@@ -69,7 +69,9 @@ pub use crate::widgets::aui_mdi_child_frame::{AuiMdiChildFrame, AuiMdiChildFrame
 #[cfg(feature = "aui")]
 pub use crate::widgets::aui_mdi_parent_frame::{AuiMdiParentFrame, AuiMdiParentFrameBuilder};
 #[cfg(feature = "aui")]
-pub use crate::widgets::aui_notebook::{AuiNotebook, AuiNotebookBuilder, AuiNotebookStyle}; // Added Style
+pub use crate::widgets::aui_notebook::{
+    AuiNotebook, AuiNotebookBuilder, AuiNotebookEvent, AuiNotebookEventData, AuiNotebookStyle,
+};
 #[cfg(feature = "aui")]
 pub use crate::widgets::aui_toolbar::{AuiToolBar, AuiToolBarBuilder, AuiToolBarStyle}; // Added Style
 pub use crate::widgets::bitmap_button::{BitmapButton, BitmapButtonBuilder, BitmapButtonStyle}; // Added Style

@@ -155,6 +155,50 @@ wxd_AuiNotebook_SetPageText(wxd_AuiNotebook_t* self, size_t page_idx, const char
     return notebook->SetPageText(page_idx, wxText);
 }
 
+WXD_EXPORTED bool
+wxd_AuiNotebook_SetPageToolTip(wxd_AuiNotebook_t* self, size_t page_idx, const char* text)
+{
+    wxAuiNotebook* notebook = reinterpret_cast<wxAuiNotebook*>(self);
+    if (!notebook)
+        return false;
+    return notebook->SetPageToolTip(page_idx, WXD_STR_TO_WX_STRING_UTF8_NULL_OK(text));
+}
+
+WXD_EXPORTED void
+wxd_AuiNotebook_SetTabTextColours(wxd_AuiNotebook_t* self, wxd_Colour_t normal, wxd_Colour_t active)
+{
+    wxAuiNotebook* notebook = reinterpret_cast<wxAuiNotebook*>(self);
+    if (!notebook || !notebook->GetArtProvider())
+        return;
+    // The art provider's "colour" and "active colour": the text of the other
+    // tabs and of the current one (the flat art takes the backgrounds from the
+    // system, so they follow light and dark).
+    notebook->GetArtProvider()->SetColour(wxColour(normal.r, normal.g, normal.b, normal.a));
+    notebook->GetArtProvider()->SetActiveColour(wxColour(active.r, active.g, active.b, active.a));
+    notebook->Refresh();
+}
+
+WXD_EXPORTED void
+wxd_AuiNotebook_SetTabFont(wxd_AuiNotebook_t* self, const wxd_Font_t* font)
+{
+    wxAuiNotebook* notebook = reinterpret_cast<wxAuiNotebook*>(self);
+    if (!notebook || !font)
+        return;
+    const wxFont& f = *reinterpret_cast<const wxFont*>(font);
+    notebook->SetNormalFont(f);
+    notebook->SetSelectedFont(f);
+    notebook->SetMeasuringFont(f);
+    notebook->Refresh();
+}
+
+WXD_EXPORTED void
+wxd_AuiNotebook_SetWindowStyleFlag(wxd_AuiNotebook_t* self, int64_t style)
+{
+    wxAuiNotebook* notebook = reinterpret_cast<wxAuiNotebook*>(self);
+    if (notebook)
+        notebook->SetWindowStyleFlag(static_cast<long>(style));
+}
+
 }
 
 #endif
