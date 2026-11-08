@@ -197,6 +197,19 @@ wxd_Font_AddPrivateFont(const char* font_file_path)
 #endif
 }
 
+#ifndef __WXOSX__
+WXD_EXPORTED wxd_Font_t*
+wxd_Font_CreateSystemMonospaced(int point_size)
+{
+    wxFont* font = new wxFont(wxFontInfo(point_size).Family(wxFONTFAMILY_TELETYPE));
+    if (font->IsOk()) {
+        return reinterpret_cast<wxd_Font_t*>(font);
+    }
+    delete font;
+    return nullptr;
+}
+#endif
+
 WXD_EXPORTED wxd_Font_t*
 wxd_Font_CreateEx(int point_size, int family, int style, int weight, bool underlined,
                   const char* face_name)

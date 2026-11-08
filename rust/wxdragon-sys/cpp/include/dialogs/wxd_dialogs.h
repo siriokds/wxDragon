@@ -173,6 +173,12 @@ wxd_Font_CreateEx(int point_size, int family, int style, int weight, bool underl
 WXD_EXPORTED bool
 wxd_Font_AddPrivateFont(const char* font_file_path);
 
+// The system's monospaced font at `point_size`: on macOS NSFont's
+// monospacedSystemFont (SF Mono, the font a browser's ui-monospace gives; it
+// cannot be found by name), elsewhere the teletype family. NULL on failure.
+WXD_EXPORTED wxd_Font_t*
+wxd_Font_CreateSystemMonospaced(int point_size);
+
 WXD_EXPORTED void
 wxd_Font_Destroy(wxd_Font_t* font);
 

@@ -5,6 +5,7 @@
 #include <wx/menuitem.h>
 // wxMenuItemImpl (and GetHMenuItem) live in this internal header.
 #include <wx/osx/core/private.h>
+#include <wx/font.h>
 
 void
 wxd_Window_SetAccessibilityLabel(wxd_Window_t* window, const char* label)
@@ -110,4 +111,17 @@ wxd_MenuItem_GetNativeHandle(wxd_MenuItem_t* item)
     wxMenuItem* wx_item = reinterpret_cast<wxMenuItem*>(item);
     wxMenuItemImpl* peer = wx_item->GetPeer();
     return peer ? peer->GetHMenuItem() : nullptr;
+}
+
+wxd_Font_t*
+wxd_Font_CreateSystemMonospaced(int point_size)
+{
+    NSFont* ns = [NSFont monospacedSystemFontOfSize:(CGFloat)point_size weight:NSFontWeightRegular];
+    if (!ns) return nullptr;
+    wxFont* font = new wxFont(ns);
+    if (font->IsOk()) {
+        return reinterpret_cast<wxd_Font_t*>(font);
+    }
+    delete font;
+    return nullptr;
 }

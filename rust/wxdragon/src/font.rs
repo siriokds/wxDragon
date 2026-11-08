@@ -318,6 +318,18 @@ impl Font {
         font
     }
 
+    /// The system's monospaced font at `point_size`: on macOS SF Mono as
+    /// `NSFont.monospacedSystemFont` gives it (it has no public name, so it
+    /// cannot be built by face name), elsewhere the teletype family.
+    pub fn system_monospaced(point_size: i32) -> Option<Font> {
+        let ptr = unsafe { ffi::wxd_Font_CreateSystemMonospaced(point_size) };
+        if ptr.is_null() {
+            None
+        } else {
+            Some(unsafe { Font::from_ptr(ptr, true) })
+        }
+    }
+
     pub fn builder() -> FontBuilder {
         FontBuilder::default()
     }
