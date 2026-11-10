@@ -1686,6 +1686,16 @@ impl StyledTextCtrl {
         unsafe { ffi::wxd_StyledTextCtrl_GetCaretPeriod(ptr) }
     }
 
+    /// Send any Scintilla message (`SCI_*`), for the ones without a method of their own
+    /// (`wxStyledTextCtrl::SendMsg`). `lp` may carry a pointer, as Scintilla's API wants.
+    pub fn send_msg(&self, msg: i32, wp: u64, lp: i64) -> i64 {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return 0;
+        }
+        unsafe { ffi::wxd_StyledTextCtrl_SendMsg(ptr, msg, wp, lp) }
+    }
+
     /// Set the width of the caret in pixels
     pub fn set_caret_width(&self, pixel_width: i32) {
         let ptr = self.stc_ptr();

@@ -241,6 +241,10 @@ WXD_EXPORTED void
 wxd_StyledTextCtrl_SetCaretWidth(wxd_StyledTextCtrl_t* self, int pixel_width);
 WXD_EXPORTED int
 wxd_StyledTextCtrl_GetCaretWidth(wxd_StyledTextCtrl_t* self);
+
+// Any Scintilla message (wxStyledTextCtrl::SendMsg): the ones without a wrapper of their own.
+WXD_EXPORTED int64_t
+wxd_StyledTextCtrl_SendMsg(wxd_StyledTextCtrl_t* self, int msg, uint64_t wp, int64_t lp);
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetCaretLineVisible(wxd_StyledTextCtrl_t* self, bool show);
 WXD_EXPORTED bool

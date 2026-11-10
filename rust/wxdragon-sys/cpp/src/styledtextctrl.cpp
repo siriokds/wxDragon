@@ -939,6 +939,16 @@ wxd_StyledTextCtrl_SetCaretWidth(wxd_StyledTextCtrl_t* self, int pixel_width)
     }
 }
 
+WXD_EXPORTED int64_t
+wxd_StyledTextCtrl_SendMsg(wxd_StyledTextCtrl_t* self, int msg, uint64_t wp, int64_t lp)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (!ctrl) {
+        return 0;
+    }
+    return (int64_t)ctrl->SendMsg(msg, (wxUIntPtr)wp, (wxIntPtr)lp);
+}
+
 WXD_EXPORTED int
 wxd_StyledTextCtrl_GetCaretWidth(wxd_StyledTextCtrl_t* self)
 {
