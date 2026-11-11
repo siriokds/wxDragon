@@ -1686,6 +1686,18 @@ impl StyledTextCtrl {
         unsafe { ffi::wxd_StyledTextCtrl_GetCaretPeriod(ptr) }
     }
 
+    /// The mark of a tab (View > Show Whitespace) as a line with a small head, instead of
+    /// Scintilla's arrow, as tall as the line and up to the next letter: `head` pixels high (0: the
+    /// line alone), from `gap_start` pixels inside the tab's left edge to `gap_end` before its right
+    /// edge. Shared by all the editors of the program.
+    pub fn set_tab_arrow(&self, head: i32, gap_start: i32, gap_end: i32) {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        unsafe { ffi::wxd_StyledTextCtrl_SetTabArrow(ptr, head, gap_start, gap_end) }
+    }
+
     /// Send any Scintilla message (`SCI_*`), for the ones without a method of their own
     /// (`wxStyledTextCtrl::SendMsg`). `lp` may carry a pointer, as Scintilla's API wants.
     pub fn send_msg(&self, msg: i32, wp: u64, lp: i64) -> i64 {

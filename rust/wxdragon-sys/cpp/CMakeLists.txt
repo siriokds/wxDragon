@@ -279,6 +279,13 @@ endif()
 
 if (wxdUSE_STC)
     list(APPEND WXDRAGON_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/styledtextctrl.cpp)
+    # What Scintilla's messages do not reach (its own editor view, for the mark of a tab): built
+    # against the sources of the wxWidgets being built, with the definitions of its Scintilla.
+    list(APPEND WXDRAGON_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/styledtextctrl_internal.cpp)
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/styledtextctrl_internal.cpp
+        PROPERTIES
+            COMPILE_DEFINITIONS "__WX__"
+            INCLUDE_DIRECTORIES "${WXWIDGETS_LIB_DIR}/src/stc;${WXWIDGETS_LIB_DIR}/src/stc/scintilla/include;${WXWIDGETS_LIB_DIR}/src/stc/scintilla/src")
 endif()
 
 if (wxdUSE_XRC)

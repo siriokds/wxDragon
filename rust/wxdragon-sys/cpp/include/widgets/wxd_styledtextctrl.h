@@ -245,6 +245,10 @@ wxd_StyledTextCtrl_GetCaretWidth(wxd_StyledTextCtrl_t* self);
 // Any Scintilla message (wxStyledTextCtrl::SendMsg): the ones without a wrapper of their own.
 WXD_EXPORTED int64_t
 wxd_StyledTextCtrl_SendMsg(wxd_StyledTextCtrl_t* self, int msg, uint64_t wp, int64_t lp);
+// The mark of a tab (View > Show Whitespace): a line with a head `head` pixels high, from `gap_start`
+// pixels inside the tab's left edge to `gap_end` before its right edge. Shared by all editors.
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetTabArrow(wxd_StyledTextCtrl_t* self, int head, int gap_start, int gap_end);
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetCaretLineVisible(wxd_StyledTextCtrl_t* self, bool show);
 WXD_EXPORTED bool
