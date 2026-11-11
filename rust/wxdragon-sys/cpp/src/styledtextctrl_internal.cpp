@@ -24,6 +24,7 @@ using namespace Scintilla;
 extern "C" {
 extern int wxd_selection_radius;
 extern int wxd_selection_inset;
+extern int wxd_selection_eol;
 }
 
 namespace
@@ -91,9 +92,12 @@ wxd_StyledTextCtrl_SetTabArrow(wxd_StyledTextCtrl_t* self, int head, int gap_sta
 // The shape of the selection: its corners `radius` pixels round, and, with `inset_leading`, as high
 // as the text: without the extra space above and below the lines (`SCI_SETEXTRAASCENT` and
 // `SCI_SETEXTRADESCENT`). Used with a translucent selection (`SCI_SETSELALPHA`); a column
-// selection stays a plain rectangle. Shared by all the editors of the program.
+// selection stays a plain rectangle. With `whole_lines` a line selected to its break is selected
+// across the whole column (as WhyNote and CotEditor); without, the selection ends at the last
+// character and the breaks are skipped. Shared by all the editors of the program.
 WXD_EXPORTED void
-wxd_StyledTextCtrl_SetSelectionShape(wxd_StyledTextCtrl_t* self, int radius, bool inset_leading)
+wxd_StyledTextCtrl_SetSelectionShape(wxd_StyledTextCtrl_t* self, int radius, bool inset_leading,
+                                     bool whole_lines)
 {
     wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
     if (!ctrl) {
@@ -101,6 +105,7 @@ wxd_StyledTextCtrl_SetSelectionShape(wxd_StyledTextCtrl_t* self, int radius, boo
     }
     wxd_selection_radius = radius < 0 ? 0 : radius;
     wxd_selection_inset = inset_leading ? 1 : 0;
+    wxd_selection_eol = whole_lines ? 1 : 0;
     ctrl->Refresh();
 }
 

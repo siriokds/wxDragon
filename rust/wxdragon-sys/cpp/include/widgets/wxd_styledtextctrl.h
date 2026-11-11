@@ -250,9 +250,11 @@ wxd_StyledTextCtrl_SendMsg(wxd_StyledTextCtrl_t* self, int msg, uint64_t wp, int
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetTabArrow(wxd_StyledTextCtrl_t* self, int head, int gap_start, int gap_end);
 // The shape of the translucent selection: corners `radius` pixels round, and with `inset_leading` as high
-// as the text (without the extra space above and below the lines). Shared by all editors.
+// as the text (without the extra space above and below the lines). With `whole_lines` a line selected
+// to its break is selected across the whole column; without, up to its last character. Shared by all.
 WXD_EXPORTED void
-wxd_StyledTextCtrl_SetSelectionShape(wxd_StyledTextCtrl_t* self, int radius, bool inset_leading);
+wxd_StyledTextCtrl_SetSelectionShape(wxd_StyledTextCtrl_t* self, int radius, bool inset_leading,
+                                     bool whole_lines);
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetCaretLineVisible(wxd_StyledTextCtrl_t* self, bool show);
 WXD_EXPORTED bool

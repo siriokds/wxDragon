@@ -62,7 +62,7 @@ function(wxd_patch_scintilla_selection wx_dir)
         return()
     endif()
     file(READ "${file}" current)
-    string(FIND "${current}" "wxDragon: rounded selection v3" done)
+    string(FIND "${current}" "wxDragon: rounded selection v4" done)
     if(NOT done EQUAL -1)
         return()
     endif()
@@ -79,10 +79,11 @@ function(wxd_patch_scintilla_selection wx_dir)
     if(found EQUAL -1)
         message(FATAL_ERROR "wxDragon: this Scintilla has no DrawEOL as expected: the rounded selection patch (cmake/patch_scintilla_selection.cmake) needs to be looked at")
     endif()
-    set(declarations [=[// wxDragon: rounded selection v3. Set from wxStyledTextCtrl::SetSelectionShape.
+    set(declarations [=[// wxDragon: rounded selection v4. Set from wxStyledTextCtrl::SetSelectionShape.
 extern "C" {
 extern int wxd_selection_radius;
 extern int wxd_selection_inset;
+extern int wxd_selection_eol;
 }
 
 static void WxdSelectionRectangle(Surface *surface, const EditModel &model, const ViewStyle &vsDraw,
@@ -102,6 +103,9 @@ static void WxdEolSelection(Surface *surface, const EditModel &model, const View
     endif()
     set(helpers [=[int wxd_selection_radius = 0;
 int wxd_selection_inset = 0;
+// 1: a line selected to its break is selected across the whole column; 0: the selection ends at
+// the last character and the breaks are skipped.
+int wxd_selection_eol = 1;
 
 // Shaped selection on: set, and not a column selection (which stays a plain rectangle).
 static bool WxdSelectionShaped(const EditModel &model) {
@@ -139,6 +143,9 @@ static void WxdEolSelection(Surface *surface, const EditModel &model, const View
 		SimpleAlphaRectangle(surface, rcSegment, fill, alpha);
 		return;
 	}
+	if (!wxd_selection_eol) {
+		return;
+	}
 	const bool textSelected = (ll->numCharsBeforeEOL > 0) &&
 		(model.sel.CharacterInSelection(posLineStart + ll->numCharsBeforeEOL - 1) != 0);
 	if (!textSelected) {
@@ -152,7 +159,7 @@ static void WxdEolSelection(Surface *surface, const EditModel &model, const View
 static void WxdSelectionText(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
 	Sci::Line line, int subLine, Sci::Position posLineStart, Range lineRange, const SelectionSegment &portion,
 	PRectangle rcSegment, PRectangle rcLine, ColourDesired fill, int alpha) {
-	if (WxdSelectionShaped(model) && subLine == (ll->lines - 1) && line < model.pdoc->LinesTotal() - 1 &&
+	if (WxdSelectionShaped(model) && wxd_selection_eol && subLine == (ll->lines - 1) && line < model.pdoc->LinesTotal() - 1 &&
 		portion.end.Position() == posLineStart + lineRange.end && !portion.end.VirtualSpace() &&
 		model.sel.InSelectionForEOL(model.pdoc->LineStart(line + 1))) {
 		const XYPOSITION right = WxdColumnRight(vsDraw, rcLine);

@@ -1701,14 +1701,16 @@ impl StyledTextCtrl {
     /// The shape of the translucent selection (`SCI_SETSELALPHA`): corners `radius` pixels round,
     /// and with `inset_leading` as high as the text, without the extra space above and below the
     /// lines (`SCI_SETEXTRAASCENT`, `SCI_SETEXTRADESCENT`). A column selection stays a plain
-    /// rectangle. Shared by all the editors of the program. Needs the Scintilla patch of
+    /// rectangle. With `whole_lines` a line selected to its break is selected across the whole
+    /// column (as WhyNote and CotEditor); without, the selection ends at the last character and the
+    /// breaks are skipped. Shared by all the editors of the program. Needs the Scintilla patch of
     /// `cmake/patch_scintilla_selection.cmake`, applied when the library is built.
-    pub fn set_selection_shape(&self, radius: i32, inset_leading: bool) {
+    pub fn set_selection_shape(&self, radius: i32, inset_leading: bool, whole_lines: bool) {
         let ptr = self.stc_ptr();
         if ptr.is_null() {
             return;
         }
-        unsafe { ffi::wxd_StyledTextCtrl_SetSelectionShape(ptr, radius, inset_leading) }
+        unsafe { ffi::wxd_StyledTextCtrl_SetSelectionShape(ptr, radius, inset_leading, whole_lines) }
     }
 
     /// Send any Scintilla message (`SCI_*`), for the ones without a method of their own
