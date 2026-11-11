@@ -1,8 +1,13 @@
-# The selection of wxStyledTextCtrl with rounded corners and without the leading (the extra
-# space above and below the lines), drawn by Scintilla itself where it fills the translucent
-# selection. Scintilla has no setting for it. Applied to the wxWidgets sources before they are
-# configured, in place and once (the marker is the comment it adds); a version of Scintilla where
-# the text to replace is not found stops the build with a message, never a silent half patch.
+# The selection of wxStyledTextCtrl as a line is drawn in a text editor of today: round corners,
+# as high as the text (without the leading, the extra space above and below the lines), and a
+# line that is selected to its break selected across the whole column, as WhyNote's. Scintilla
+# has no setting for it: it is drawn by Scintilla itself, where it fills the translucent
+# selection, by a change to its sources.
+#
+# Applied to the wxWidgets sources before they are configured, in place and once. The first time
+# the original `EditView.cxx` is kept beside it (`EditView.cxx.orig`) and every later version of
+# the patch starts again from that one. A version of Scintilla where the text to replace is not
+# found stops the build with a message, never a silent half patch.
 #
 #   wxd_patch_scintilla_selection(<wxWidgets source dir>)
 #
@@ -10,41 +15,71 @@
 #  - the pieces of the translucent selection are drawn by `WxdSelectionRectangle`: inside the
 #    height of the text, with round corners; a column selection (rectangular) stays a plain
 #    rectangle, so that its lines run into each other;
-#  - when a line's break is selected too, the block of the text goes on over it (one block, not a
-#    block and a separate small one for the break); a line with nothing selected but its break
-#    (an empty one) gets its own block there.
+#  - when the break of a line is selected too, the block goes on over it to the right edge of the
+#    column (one block for the line); a line with nothing selected but its break (an empty one)
+#    gets the block from where its text would start.
+
+# The sources as they were before any version of the patch (v1, v2: no `.orig` was kept).
+function(wxd_scintilla_pristine text out)
+    set(t "${text}")
+    string(FIND "${t}" "// wxDragon: rounded selection" at)
+    if(at EQUAL -1)
+        set(${out} "${t}" PARENT_SCOPE)
+        return()
+    endif()
+    # The block of declarations (before DrawEOL) and of helpers (before DrawTranslucentSelection).
+    string(FIND "${t}" "// wxDragon: rounded selection v2." start)
+    if(NOT start EQUAL -1)
+        string(FIND "${t}" "void EditView::DrawEOL(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll," stop)
+        math(EXPR length "${stop} - ${start}")
+        string(SUBSTRING "${t}" ${start} ${length} block)
+        string(REPLACE "${block}" "" t "${t}")
+        string(FIND "${t}" "int wxd_selection_radius = 0;" start)
+        string(FIND "${t}" "static void DrawTranslucentSelection(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll," stop)
+        math(EXPR length "${stop} - ${start}")
+        string(SUBSTRING "${t}" ${start} ${length} block)
+        string(REPLACE "${block}" "" t "${t}")
+        string(REPLACE "WxdEolSelection(surface, model, vsDraw, ll, model.pdoc->LineStart(line), rcSegment, SelectionBackground(vsDraw, eolInSelection == 1, model.primarySelection), alpha);" "SimpleAlphaRectangle(surface, rcSegment, SelectionBackground(vsDraw, eolInSelection == 1, model.primarySelection), alpha);" t "${t}")
+        string(REPLACE "WxdSelectionText(surface, model, vsDraw, ll, line, subLine, posLineStart, lineRange, portion, rcSegment, rcLine, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);" "SimpleAlphaRectangle(surface, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);" t "${t}")
+    else()
+        # v1: one helper before DrawTranslucentSelection, three calls.
+        string(FIND "${t}" "// wxDragon: rounded selection." start)
+        string(FIND "${t}" "static void DrawTranslucentSelection(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll," stop)
+        math(EXPR length "${stop} - ${start}")
+        string(SUBSTRING "${t}" ${start} ${length} block)
+        string(REPLACE "${block}" "" t "${t}")
+        string(REPLACE "WxdSelectionRectangle(surface, model, vsDraw, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);" "SimpleAlphaRectangle(surface, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);" t "${t}")
+    endif()
+    string(REPLACE "WxdSelectionRectangle(surface, model, vsDraw, rcSelection, background, alpha);" "SimpleAlphaRectangle(surface, rcSelection, background, alpha);" t "${t}")
+    string(REPLACE "WxdSelectionRectangle(surface, model, vsDraw, rcSegment, background, alpha);" "SimpleAlphaRectangle(surface, rcSegment, background, alpha);" t "${t}")
+    set(${out} "${t}" PARENT_SCOPE)
+endfunction()
 
 function(wxd_patch_scintilla_selection wx_dir)
     set(file "${wx_dir}/src/stc/scintilla/src/EditView.cxx")
+    set(orig "${file}.orig")
     if(NOT EXISTS "${file}")
         return()
     endif()
-    file(READ "${file}" text)
-    string(FIND "${text}" "wxDragon: rounded selection v2" done)
+    file(READ "${file}" current)
+    string(FIND "${current}" "wxDragon: rounded selection v3" done)
     if(NOT done EQUAL -1)
         return()
     endif()
-
-    # A first version of this patch (v1) may be in the sources already: taken back first.
-    string(FIND "${text}" "wxDragon: rounded selection." old)
-    if(NOT old EQUAL -1)
-        string(FIND "${text}" "// wxDragon: rounded selection." start)
-        string(FIND "${text}" "static void DrawTranslucentSelection(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll," stop)
-        math(EXPR length "${stop} - ${start}")
-        string(SUBSTRING "${text}" ${start} ${length} v1)
-        string(REPLACE "${v1}" "" text "${text}")
-        string(REPLACE "WxdSelectionRectangle(surface, model, vsDraw, rcSelection, background, alpha);" "SimpleAlphaRectangle(surface, rcSelection, background, alpha);" text "${text}")
-        string(REPLACE "WxdSelectionRectangle(surface, model, vsDraw, rcSegment, background, alpha);" "SimpleAlphaRectangle(surface, rcSegment, background, alpha);" text "${text}")
-        string(REPLACE "WxdSelectionRectangle(surface, model, vsDraw, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);" "SimpleAlphaRectangle(surface, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);" text "${text}")
+    if(EXISTS "${orig}")
+        file(READ "${orig}" text)
+    else()
+        wxd_scintilla_pristine("${current}" text)
+        file(WRITE "${orig}" "${text}")
     endif()
 
-    # 1. What Scintilla's code before the helpers needs to know: the two settings.
+    # 1. What the code before the helpers needs to know: the two settings, and the helpers.
     set(anchor_eol [=[void EditView::DrawEOL(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,]=])
     string(FIND "${text}" "${anchor_eol}" found)
     if(found EQUAL -1)
         message(FATAL_ERROR "wxDragon: this Scintilla has no DrawEOL as expected: the rounded selection patch (cmake/patch_scintilla_selection.cmake) needs to be looked at")
     endif()
-    set(declarations [=[// wxDragon: rounded selection v2. Set from wxStyledTextCtrl::SetSelectionShape.
+    set(declarations [=[// wxDragon: rounded selection v3. Set from wxStyledTextCtrl::SetSelectionShape.
 extern "C" {
 extern int wxd_selection_radius;
 extern int wxd_selection_inset;
@@ -54,7 +89,7 @@ static void WxdSelectionRectangle(Surface *surface, const EditModel &model, cons
 	PRectangle rc, ColourDesired fill, int alpha);
 static bool WxdSelectionShaped(const EditModel &model);
 static void WxdEolSelection(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
-	Sci::Position posLineStart, PRectangle rcSegment, ColourDesired fill, int alpha);
+	Sci::Position posLineStart, PRectangle rcLine, PRectangle rcSegment, ColourDesired fill, int alpha);
 
 ]=])
     string(REPLACE "${anchor_eol}" "${declarations}${anchor_eol}" text "${text}")
@@ -89,10 +124,17 @@ static void WxdSelectionRectangle(Surface *surface, const EditModel &model, cons
 	surface->AlphaRectangle(rc, wxd_selection_radius, fill, alpha, fill, 0, 0);
 }
 
-// The selected break of a line: with the shape on, it is part of the block of the text when
-// there is selected text before it (see WxdSelectionText), and its own block when there is not.
+// The right edge of the column of text: where the block of a line selected to its break ends.
+static XYPOSITION WxdColumnRight(const ViewStyle &vsDraw, PRectangle rcLine) {
+	const XYPOSITION right = rcLine.right - vsDraw.rightMarginWidth;
+	return (right > rcLine.left) ? right : rcLine.right;
+}
+
+// The selected break of a line. With the shape on, when there is selected text before it, the
+// block of the text already goes over it (see WxdSelectionText); when there is not (an empty
+// line, or the selection starts at the break), the block is drawn here, to the right edge.
 static void WxdEolSelection(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
-	Sci::Position posLineStart, PRectangle rcSegment, ColourDesired fill, int alpha) {
+	Sci::Position posLineStart, PRectangle rcLine, PRectangle rcSegment, ColourDesired fill, int alpha) {
 	if (!WxdSelectionShaped(model)) {
 		SimpleAlphaRectangle(surface, rcSegment, fill, alpha);
 		return;
@@ -100,21 +142,22 @@ static void WxdEolSelection(Surface *surface, const EditModel &model, const View
 	const bool textSelected = (ll->numCharsBeforeEOL > 0) &&
 		(model.sel.CharacterInSelection(posLineStart + ll->numCharsBeforeEOL - 1) != 0);
 	if (!textSelected) {
+		rcSegment.right = WxdColumnRight(vsDraw, rcLine);
 		WxdSelectionRectangle(surface, model, vsDraw, rcSegment, fill, alpha);
 	}
 }
 
 // The block of the selected text of a row: when the break of its line is selected too (and this is
-// the last row of the line), it goes on over the break.
+// the last row of the line), it goes on over the break to the right edge of the column.
 static void WxdSelectionText(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
 	Sci::Line line, int subLine, Sci::Position posLineStart, Range lineRange, const SelectionSegment &portion,
 	PRectangle rcSegment, PRectangle rcLine, ColourDesired fill, int alpha) {
 	if (WxdSelectionShaped(model) && subLine == (ll->lines - 1) && line < model.pdoc->LinesTotal() - 1 &&
 		portion.end.Position() == posLineStart + lineRange.end && !portion.end.VirtualSpace() &&
 		model.sel.InSelectionForEOL(model.pdoc->LineStart(line + 1))) {
-		rcSegment.right += vsDraw.aveCharWidth;
-		if (rcSegment.right > rcLine.right) {
-			rcSegment.right = rcLine.right;
+		const XYPOSITION right = WxdColumnRight(vsDraw, rcLine);
+		if (right > rcSegment.right) {
+			rcSegment.right = right;
 		}
 	}
 	WxdSelectionRectangle(surface, model, vsDraw, rcSegment, fill, alpha);
@@ -132,7 +175,7 @@ static void WxdSelectionText(Surface *surface, const EditModel &model, const Vie
     set(from3 [=[SimpleAlphaRectangle(surface, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);]=])
     set(to3   [=[WxdSelectionText(surface, model, vsDraw, ll, line, subLine, posLineStart, lineRange, portion, rcSegment, rcLine, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);]=])
     set(from4 [=[SimpleAlphaRectangle(surface, rcSegment, SelectionBackground(vsDraw, eolInSelection == 1, model.primarySelection), alpha);]=])
-    set(to4   [=[WxdEolSelection(surface, model, vsDraw, ll, model.pdoc->LineStart(line), rcSegment, SelectionBackground(vsDraw, eolInSelection == 1, model.primarySelection), alpha);]=])
+    set(to4   [=[WxdEolSelection(surface, model, vsDraw, ll, model.pdoc->LineStart(line), rcLine, rcSegment, SelectionBackground(vsDraw, eolInSelection == 1, model.primarySelection), alpha);]=])
     foreach(n 1 2 3 4)
         string(FIND "${text}" "${from${n}}" found)
         if(found EQUAL -1)
