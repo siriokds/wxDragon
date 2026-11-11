@@ -62,7 +62,7 @@ function(wxd_patch_scintilla_selection wx_dir)
         return()
     endif()
     file(READ "${file}" current)
-    string(FIND "${current}" "wxDragon: rounded selection v4" done)
+    string(FIND "${current}" "wxDragon: rounded selection v5" done)
     if(NOT done EQUAL -1)
         return()
     endif()
@@ -79,7 +79,7 @@ function(wxd_patch_scintilla_selection wx_dir)
     if(found EQUAL -1)
         message(FATAL_ERROR "wxDragon: this Scintilla has no DrawEOL as expected: the rounded selection patch (cmake/patch_scintilla_selection.cmake) needs to be looked at")
     endif()
-    set(declarations [=[// wxDragon: rounded selection v4. Set from wxStyledTextCtrl::SetSelectionShape.
+    set(declarations [=[// wxDragon: rounded selection v5. Set from wxStyledTextCtrl::SetSelectionShape.
 extern "C" {
 extern int wxd_selection_radius;
 extern int wxd_selection_inset;
@@ -134,23 +134,42 @@ static XYPOSITION WxdColumnRight(const ViewStyle &vsDraw, PRectangle rcLine) {
 	return (right > rcLine.left) ? right : rcLine.right;
 }
 
-// The selected break of a line. With the shape on, when there is selected text before it, the
-// block of the text already goes over it (see WxdSelectionText); when there is not (an empty
-// line, or the selection starts at the break), the block is drawn here, to the right edge.
+// The selected break of a line, drawn by DrawEOL. With the shape on it is not drawn here: the
+// translucent selection is drawn after the text and the rest of the line has been filled
+// (FillLineRemainder would paint over a block that goes to the edge of the column), so the block
+// of a break is part of the block of the text (WxdSelectionText), or comes from
+// WxdSelectionEolOnly when no text of the line is selected (an empty line).
 static void WxdEolSelection(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
 	Sci::Position posLineStart, PRectangle rcLine, PRectangle rcSegment, ColourDesired fill, int alpha) {
 	if (!WxdSelectionShaped(model)) {
 		SimpleAlphaRectangle(surface, rcSegment, fill, alpha);
+	}
+}
+
+// A line whose break is selected and none of whose text is: its block, from where the text starts
+// to the right edge of the column.
+static void WxdSelectionEolOnly(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
+	Sci::Line line, int subLine, Sci::Position posLineStart, Range lineRange, PRectangle rcLine, int xStart,
+	XYACCUMULATOR subLineStart) {
+	if (!WxdSelectionShaped(model) || !wxd_selection_eol || subLine != (ll->lines - 1) ||
+		line >= model.pdoc->LinesTotal() - 1) {
 		return;
 	}
-	if (!wxd_selection_eol) {
+	const int eol = model.sel.InSelectionForEOL(model.pdoc->LineStart(line + 1));
+	if (!eol) {
 		return;
 	}
 	const bool textSelected = (ll->numCharsBeforeEOL > 0) &&
 		(model.sel.CharacterInSelection(posLineStart + ll->numCharsBeforeEOL - 1) != 0);
-	if (!textSelected) {
-		rcSegment.right = WxdColumnRight(vsDraw, rcLine);
-		WxdSelectionRectangle(surface, model, vsDraw, rcSegment, fill, alpha);
+	if (textSelected) {
+		return;
+	}
+	const int alpha = (eol == 1) ? vsDraw.selAlpha : vsDraw.selAdditionalAlpha;
+	PRectangle rc = rcLine;
+	rc.left = xStart + ll->positions[lineRange.end] - static_cast<XYPOSITION>(subLineStart);
+	rc.right = WxdColumnRight(vsDraw, rcLine);
+	if (rc.right > rc.left) {
+		WxdSelectionRectangle(surface, model, vsDraw, rc, SelectionBackground(vsDraw, eol == 1, model.primarySelection), alpha);
 	}
 }
 
@@ -183,7 +202,10 @@ static void WxdSelectionText(Surface *surface, const EditModel &model, const Vie
     set(to3   [=[WxdSelectionText(surface, model, vsDraw, ll, line, subLine, posLineStart, lineRange, portion, rcSegment, rcLine, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);]=])
     set(from4 [=[SimpleAlphaRectangle(surface, rcSegment, SelectionBackground(vsDraw, eolInSelection == 1, model.primarySelection), alpha);]=])
     set(to4   [=[WxdEolSelection(surface, model, vsDraw, ll, model.pdoc->LineStart(line), rcLine, rcSegment, SelectionBackground(vsDraw, eolInSelection == 1, model.primarySelection), alpha);]=])
-    foreach(n 1 2 3 4)
+    set(from5 [=[const SelectionSegment virtualSpaceRange(posStart, posEnd);]=])
+    set(to5   [=[const SelectionSegment virtualSpaceRange(posStart, posEnd);
+		WxdSelectionEolOnly(surface, model, vsDraw, ll, line, subLine, posLineStart, lineRange, rcLine, xStart, subLineStart);]=])
+    foreach(n 1 2 3 4 5)
         string(FIND "${text}" "${from${n}}" found)
         if(found EQUAL -1)
             message(FATAL_ERROR "wxDragon: the rounded selection patch did not find: ${from${n}}")
