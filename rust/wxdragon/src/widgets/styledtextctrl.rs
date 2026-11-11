@@ -1698,6 +1698,19 @@ impl StyledTextCtrl {
         unsafe { ffi::wxd_StyledTextCtrl_SetTabArrow(ptr, head, gap_start, gap_end) }
     }
 
+    /// The shape of the translucent selection (`SCI_SETSELALPHA`): corners `radius` pixels round,
+    /// and with `inset_leading` as high as the text, without the extra space above and below the
+    /// lines (`SCI_SETEXTRAASCENT`, `SCI_SETEXTRADESCENT`). A column selection stays a plain
+    /// rectangle. Shared by all the editors of the program. Needs the Scintilla patch of
+    /// `cmake/patch_scintilla_selection.cmake`, applied when the library is built.
+    pub fn set_selection_shape(&self, radius: i32, inset_leading: bool) {
+        let ptr = self.stc_ptr();
+        if ptr.is_null() {
+            return;
+        }
+        unsafe { ffi::wxd_StyledTextCtrl_SetSelectionShape(ptr, radius, inset_leading) }
+    }
+
     /// Send any Scintilla message (`SCI_*`), for the ones without a method of their own
     /// (`wxStyledTextCtrl::SendMsg`). `lp` may carry a pointer, as Scintilla's API wants.
     pub fn send_msg(&self, msg: i32, wp: u64, lp: i64) -> i64 {

@@ -20,6 +20,12 @@
 
 using namespace Scintilla;
 
+// Set in the patched EditView.cxx (cmake/patch_scintilla_selection.cmake).
+extern "C" {
+extern int wxd_selection_radius;
+extern int wxd_selection_inset;
+}
+
 namespace
 {
 struct TabArrowStyle
@@ -80,6 +86,22 @@ wxd_StyledTextCtrl_SetTabArrow(wxd_StyledTextCtrl_t* self, int head, int gap_sta
         Peek::ViewOf(editor).customDrawTabArrow = DrawTab;
         ctrl->Refresh();
     }
+}
+
+// The shape of the selection: its corners `radius` pixels round, and, with `inset_leading`, as high
+// as the text: without the extra space above and below the lines (`SCI_SETEXTRAASCENT` and
+// `SCI_SETEXTRADESCENT`). Used with a translucent selection (`SCI_SETSELALPHA`); a column
+// selection stays a plain rectangle. Shared by all the editors of the program.
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetSelectionShape(wxd_StyledTextCtrl_t* self, int radius, bool inset_leading)
+{
+    wxStyledTextCtrl* ctrl = (wxStyledTextCtrl*)self;
+    if (!ctrl) {
+        return;
+    }
+    wxd_selection_radius = radius < 0 ? 0 : radius;
+    wxd_selection_inset = inset_leading ? 1 : 0;
+    ctrl->Refresh();
 }
 
 } // extern "C"

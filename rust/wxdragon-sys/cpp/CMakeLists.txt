@@ -85,6 +85,13 @@ if(DEFINED ENV{CMAKE_TLS_VERIFY})
     set(CMAKE_TLS_VERIFY $ENV{CMAKE_TLS_VERIFY})
 endif()
 
+# Changes to Scintilla that its settings do not reach (the rounded selection): the sources are
+# patched in place, before wxWidgets is configured.
+if(wxdUSE_STC)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/patch_scintilla_selection.cmake)
+    wxd_patch_scintilla_selection(${WXWIDGETS_LIB_DIR})
+endif()
+
 add_subdirectory(${WXWIDGETS_LIB_DIR} ${WXWIDGETS_BUILD_DIR})
 
 # --- Platform Detection ---

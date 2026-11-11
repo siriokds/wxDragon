@@ -249,6 +249,10 @@ wxd_StyledTextCtrl_SendMsg(wxd_StyledTextCtrl_t* self, int msg, uint64_t wp, int
 // pixels inside the tab's left edge to `gap_end` before its right edge. Shared by all editors.
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetTabArrow(wxd_StyledTextCtrl_t* self, int head, int gap_start, int gap_end);
+// The shape of the translucent selection: corners `radius` pixels round, and with `inset_leading` as high
+// as the text (without the extra space above and below the lines). Shared by all editors.
+WXD_EXPORTED void
+wxd_StyledTextCtrl_SetSelectionShape(wxd_StyledTextCtrl_t* self, int radius, bool inset_leading);
 WXD_EXPORTED void
 wxd_StyledTextCtrl_SetCaretLineVisible(wxd_StyledTextCtrl_t* self, bool show);
 WXD_EXPORTED bool
