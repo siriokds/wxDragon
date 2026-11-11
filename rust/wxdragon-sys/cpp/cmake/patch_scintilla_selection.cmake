@@ -49,19 +49,20 @@ static void WxdSelectionRectangle(Surface *surface, const EditModel &model, cons
 ]=])
     string(REPLACE "${anchor}" "${helper}${anchor}" text "${text}")
 
-    # The three places that fill a piece of the translucent selection.
-    foreach(pair
-        "SimpleAlphaRectangle(surface, rcSelection, background, alpha);|WxdSelectionRectangle(surface, model, vsDraw, rcSelection, background, alpha);"
-        "SimpleAlphaRectangle(surface, rcSegment, background, alpha);|WxdSelectionRectangle(surface, model, vsDraw, rcSegment, background, alpha);"
-        "SimpleAlphaRectangle(surface, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);|WxdSelectionRectangle(surface, model, vsDraw, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);")
-        string(REPLACE "|" ";" parts "${pair}")
-        list(GET parts 0 from)
-        list(GET parts 1 to)
-        string(FIND "${text}" "${from}" found)
+    # The three places that fill a piece of the translucent selection. Each pair is written out
+    # (the texts hold semicolons, so they cannot travel in a list).
+    set(from1 [=[SimpleAlphaRectangle(surface, rcSelection, background, alpha);]=])
+    set(to1   [=[WxdSelectionRectangle(surface, model, vsDraw, rcSelection, background, alpha);]=])
+    set(from2 [=[SimpleAlphaRectangle(surface, rcSegment, background, alpha);]=])
+    set(to2   [=[WxdSelectionRectangle(surface, model, vsDraw, rcSegment, background, alpha);]=])
+    set(from3 [=[SimpleAlphaRectangle(surface, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);]=])
+    set(to3   [=[WxdSelectionRectangle(surface, model, vsDraw, rcSegment, SelectionBackground(vsDraw, r == model.sel.Main(), model.primarySelection), alpha);]=])
+    foreach(n 1 2 3)
+        string(FIND "${text}" "${from${n}}" found)
         if(found EQUAL -1)
-            message(FATAL_ERROR "wxDragon: the rounded selection patch did not find: ${from}")
+            message(FATAL_ERROR "wxDragon: the rounded selection patch did not find: ${from${n}}")
         endif()
-        string(REPLACE "${from}" "${to}" text "${text}")
+        string(REPLACE "${from${n}}" "${to${n}}" text "${text}")
     endforeach()
 
     file(WRITE "${file}" "${text}")
