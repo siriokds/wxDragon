@@ -1713,6 +1713,17 @@ impl StyledTextCtrl {
         unsafe { ffi::wxd_StyledTextCtrl_SetSelectionShape(ptr, radius, inset_leading, whole_lines) }
     }
 
+    /// Add an edge line (`SCI_MULTIEDGEADDLINE`, shown with edge mode `EDGE_MULTILINE`) `pixels`
+    /// after the start of the text, instead of a number of columns: Scintilla counts the columns
+    /// in spaces, whose width wx rounds, so the line would not sit where a column of characters
+    /// ends. `colour` is 0xBBGGRR. Needs the Scintilla patch of
+    /// `cmake/patch_scintilla_selection.cmake`, applied when the library is built.
+    pub fn multi_edge_add_line_at(&self, pixels: i32, colour: i64) {
+        const SCI_MULTIEDGEADDLINE: i32 = 2694;
+        const EDGE_PIXELS: u64 = 1_000_000;
+        self.send_msg(SCI_MULTIEDGEADDLINE, EDGE_PIXELS + pixels.max(0) as u64, colour);
+    }
+
     /// Send any Scintilla message (`SCI_*`), for the ones without a method of their own
     /// (`wxStyledTextCtrl::SendMsg`). `lp` may carry a pointer, as Scintilla's API wants.
     pub fn send_msg(&self, msg: i32, wp: u64, lp: i64) -> i64 {

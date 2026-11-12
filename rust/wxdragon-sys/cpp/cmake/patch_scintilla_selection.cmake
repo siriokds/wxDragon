@@ -62,7 +62,7 @@ function(wxd_patch_scintilla_selection wx_dir)
         return()
     endif()
     file(READ "${file}" current)
-    string(FIND "${current}" "wxDragon: rounded selection v5" done)
+    string(FIND "${current}" "wxDragon: rounded selection v6" done)
     if(NOT done EQUAL -1)
         return()
     endif()
@@ -79,7 +79,7 @@ function(wxd_patch_scintilla_selection wx_dir)
     if(found EQUAL -1)
         message(FATAL_ERROR "wxDragon: this Scintilla has no DrawEOL as expected: the rounded selection patch (cmake/patch_scintilla_selection.cmake) needs to be looked at")
     endif()
-    set(declarations [=[// wxDragon: rounded selection v5. Set from wxStyledTextCtrl::SetSelectionShape.
+    set(declarations [=[// wxDragon: rounded selection v6. Set from wxStyledTextCtrl::SetSelectionShape.
 extern "C" {
 extern int wxd_selection_radius;
 extern int wxd_selection_inset;
@@ -89,6 +89,13 @@ extern int wxd_selection_eol;
 static void WxdSelectionRectangle(Surface *surface, const EditModel &model, const ViewStyle &vsDraw,
 	PRectangle rc, ColourDesired fill, int alpha);
 static bool WxdSelectionShaped(const EditModel &model);
+// An edge line (EDGE_MULTILINE) placed in pixels: a column of WXD_EDGE_PIXELS or more is the
+// distance from the start of the text less WXD_EDGE_PIXELS, not a number of spaces (the width of
+// a space is rounded by wx, so a column of characters does not end where the spaces say).
+#define WXD_EDGE_PIXELS 1000000
+static inline int WxdEdgeX(int column, XYPOSITION spaceWidth) {
+	return (column >= WXD_EDGE_PIXELS) ? (column - WXD_EDGE_PIXELS) : static_cast<int>(column * spaceWidth);
+}
 static void WxdEolSelection(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
 	Sci::Position posLineStart, PRectangle rcLine, PRectangle rcSegment, ColourDesired fill, int alpha);
 
@@ -205,7 +212,9 @@ static void WxdSelectionText(Surface *surface, const EditModel &model, const Vie
     set(from5 [=[const SelectionSegment virtualSpaceRange(posStart, posEnd);]=])
     set(to5   [=[const SelectionSegment virtualSpaceRange(posStart, posEnd);
 		WxdSelectionEolOnly(surface, model, vsDraw, ll, line, subLine, posLineStart, lineRange, rcLine, xStart, subLineStart);]=])
-    foreach(n 1 2 3 4 5)
+    set(from6 [=[static_cast<int>(vsDraw.theMultiEdge[edge].column * vsDraw.spaceWidth)]=])
+    set(to6   [=[WxdEdgeX(vsDraw.theMultiEdge[edge].column, vsDraw.spaceWidth)]=])
+    foreach(n 1 2 3 4 5 6)
         string(FIND "${text}" "${from${n}}" found)
         if(found EQUAL -1)
             message(FATAL_ERROR "wxDragon: the rounded selection patch did not find: ${from${n}}")
