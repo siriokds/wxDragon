@@ -771,6 +771,54 @@ impl StyledTextCtrl {
         }
     }
 
+    /// The whole text as Scintilla holds it (UTF-8 bytes), copied once from its buffer
+    /// (`SCI_GETCHARACTERPOINTER`): no conversion through `wxString`, which for a long text
+    /// costs several times the copy. Empty if the control has been destroyed.
+    pub fn text_bytes(&self) -> Vec<u8> {
+        const SCI_GETLENGTH: i32 = 2006;
+        const SCI_GETCHARACTERPOINTER: i32 = 2520;
+        if self.stc_ptr().is_null() {
+            return Vec::new();
+        }
+        let len = self.send_msg(SCI_GETLENGTH, 0, 0).max(0) as usize;
+        let at = self.send_msg(SCI_GETCHARACTERPOINTER, 0, 0) as *const u8;
+        if at.is_null() || len == 0 {
+            return Vec::new();
+        }
+        // The pointer is to `len` bytes of the document (Scintilla closes the gap of its buffer
+        // and ends it with a zero); valid until the next call that changes the document.
+        unsafe { std::slice::from_raw_parts(at, len) }.to_vec()
+    }
+
+    /// The whole text replaced with `data` (UTF-8 bytes) as it is, with no conversion
+    /// (`SCI_CLEARALL`, `SCI_APPENDTEXT`): the caret and the selection go to the start.
+    pub fn set_text_bytes(&self, data: &[u8]) {
+        const SCI_CLEARALL: i32 = 2004;
+        const SCI_BEGINUNDOACTION: i32 = 2078;
+        const SCI_ENDUNDOACTION: i32 = 2079;
+        if self.stc_ptr().is_null() {
+            return;
+        }
+        // One step for Undo, as `SetText`.
+        self.send_msg(SCI_BEGINUNDOACTION, 0, 0);
+        self.send_msg(SCI_CLEARALL, 0, 0);
+        self.append_text_bytes(data);
+        self.send_msg(SCI_ENDUNDOACTION, 0, 0);
+    }
+
+    /// `data` (UTF-8 bytes) added at the end as it is, with no conversion (`SCI_APPENDTEXT`):
+    /// the caret, the selection and the view stay where they are.
+    pub fn append_text_bytes(&self, data: &[u8]) {
+        const SCI_APPENDTEXT: i32 = 2282;
+        if self.stc_ptr().is_null() {
+            return;
+        }
+        // Scintilla takes an int length.
+        for chunk in data.chunks(1 << 30) {
+            self.send_msg(SCI_APPENDTEXT, chunk.len() as u64, chunk.as_ptr() as i64);
+        }
+    }
+
     /// Adds raw bytes at the caret, without any conversion (invalid UTF-8 is
     /// shown by Scintilla as byte blobs).
     pub fn add_text_raw(&self, data: &[u8]) {
