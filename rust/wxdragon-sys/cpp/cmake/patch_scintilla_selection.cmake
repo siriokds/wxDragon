@@ -62,7 +62,7 @@ function(wxd_patch_scintilla_selection wx_dir)
         return()
     endif()
     file(READ "${file}" current)
-    string(FIND "${current}" "wxDragon: rounded selection v6" done)
+    string(FIND "${current}" "wxDragon: rounded selection v7" done)
     if(NOT done EQUAL -1)
         return()
     endif()
@@ -79,7 +79,7 @@ function(wxd_patch_scintilla_selection wx_dir)
     if(found EQUAL -1)
         message(FATAL_ERROR "wxDragon: this Scintilla has no DrawEOL as expected: the rounded selection patch (cmake/patch_scintilla_selection.cmake) needs to be looked at")
     endif()
-    set(declarations [=[// wxDragon: rounded selection v6. Set from wxStyledTextCtrl::SetSelectionShape.
+    set(declarations [=[// wxDragon: rounded selection v7. Set from wxStyledTextCtrl::SetSelectionShape.
 extern "C" {
 extern int wxd_selection_radius;
 extern int wxd_selection_inset;
@@ -136,9 +136,10 @@ static void WxdSelectionRectangle(Surface *surface, const EditModel &model, cons
 }
 
 // The right edge of the column of text: where the block of a line selected to its break ends.
-static XYPOSITION WxdColumnRight(const ViewStyle &vsDraw, PRectangle rcLine) {
-	const XYPOSITION right = rcLine.right - vsDraw.rightMarginWidth;
-	return (right > rcLine.left) ? right : rcLine.right;
+// (The line's rectangle is the text area, the right margin already taken off: taken off again,
+// with a wide margin the blocks ended well before the edge.)
+static XYPOSITION WxdColumnRight(const ViewStyle &, PRectangle rcLine) {
+	return rcLine.right;
 }
 
 // The selected break of a line, drawn by DrawEOL. With the shape on it is not drawn here: the
@@ -180,14 +181,21 @@ static void WxdSelectionEolOnly(Surface *surface, const EditModel &model, const 
 	}
 }
 
-// The block of the selected text of a row: when the break of its line is selected too (and this is
-// the last row of the line), it goes on over the break to the right edge of the column.
+// The block of the selected text of a row: when the selection goes on past the end of the row (to
+// the break of the line, or to the next row of a wrapped line), it goes on to the right edge of
+// the column.
 static void WxdSelectionText(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
 	Sci::Line line, int subLine, Sci::Position posLineStart, Range lineRange, const SelectionSegment &portion,
 	PRectangle rcSegment, PRectangle rcLine, ColourDesired fill, int alpha) {
-	if (WxdSelectionShaped(model) && wxd_selection_eol && subLine == (ll->lines - 1) && line < model.pdoc->LinesTotal() - 1 &&
-		portion.end.Position() == posLineStart + lineRange.end && !portion.end.VirtualSpace() &&
-		model.sel.InSelectionForEOL(model.pdoc->LineStart(line + 1))) {
+	// Selected to the end of this row, and beyond it: the break of the line on its last row, the
+	// next row of the same line on the others (a wrapped line selected across its rows: every
+	// block to the same edge, not each to the end of its own words).
+	const bool toRowEnd = portion.end.Position() == posLineStart + lineRange.end && !portion.end.VirtualSpace();
+	const bool lastRow = subLine == (ll->lines - 1);
+	const bool beyond = lastRow
+		? (line < model.pdoc->LinesTotal() - 1 && model.sel.InSelectionForEOL(model.pdoc->LineStart(line + 1)))
+		: (model.sel.CharacterInSelection(posLineStart + lineRange.end) != 0);
+	if (WxdSelectionShaped(model) && wxd_selection_eol && toRowEnd && beyond) {
 		const XYPOSITION right = WxdColumnRight(vsDraw, rcLine);
 		if (right > rcSegment.right) {
 			rcSegment.right = right;
