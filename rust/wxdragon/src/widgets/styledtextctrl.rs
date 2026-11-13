@@ -790,6 +790,29 @@ impl StyledTextCtrl {
         unsafe { std::slice::from_raw_parts(at, len) }.to_vec()
     }
 
+    /// The first `most` bytes of the text (all of it when shorter), copied from Scintilla's
+    /// buffer (`SCI_GETRANGEPOINTER`): unlike `text_bytes`, the rest of a long text is neither
+    /// copied nor moved (Scintilla closes the gap of its buffer only if it falls in the range).
+    /// The end may cut a character in two. Empty if the control has been destroyed.
+    pub fn text_bytes_head(&self, most: usize) -> Vec<u8> {
+        const SCI_GETLENGTH: i32 = 2006;
+        const SCI_GETRANGEPOINTER: i32 = 2643;
+        if self.stc_ptr().is_null() {
+            return Vec::new();
+        }
+        let len = (self.send_msg(SCI_GETLENGTH, 0, 0).max(0) as usize).min(most);
+        if len == 0 {
+            return Vec::new();
+        }
+        let at = self.send_msg(SCI_GETRANGEPOINTER, 0, len as i64) as *const u8;
+        if at.is_null() {
+            return Vec::new();
+        }
+        // The pointer is to `len` contiguous bytes from the start; valid until the next call
+        // that changes the document.
+        unsafe { std::slice::from_raw_parts(at, len) }.to_vec()
+    }
+
     /// The whole text replaced with `data` (UTF-8 bytes) as it is, with no conversion
     /// (`SCI_CLEARALL`, `SCI_APPENDTEXT`): the caret and the selection go to the start.
     pub fn set_text_bytes(&self, data: &[u8]) {
