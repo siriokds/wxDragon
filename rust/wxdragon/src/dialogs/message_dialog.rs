@@ -79,6 +79,18 @@ impl MessageDialog {
         }
     }
 
+    /// Overrides the default labels of the "Yes", "No" and "Cancel" buttons. Must be called
+    /// before `show_modal()`. Only takes effect if the dialog was created with the `YesNo` and
+    /// `Cancel` styles.
+    pub fn set_yes_no_cancel_labels(&self, yes: &str, no: &str, cancel: &str) {
+        let c_yes = CString::new(yes).expect("CString::new failed for yes label");
+        let c_no = CString::new(no).expect("CString::new failed for no label");
+        let c_cancel = CString::new(cancel).expect("CString::new failed for cancel label");
+        unsafe {
+            ffi::wxd_MessageDialog_SetYesNoCancelLabels(self.as_ptr(), c_yes.as_ptr(), c_no.as_ptr(), c_cancel.as_ptr());
+        }
+    }
+
     pub fn as_ptr(&self) -> MessageDialogPtr {
         self.dialog_base.as_ptr() as MessageDialogPtr
     }

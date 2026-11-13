@@ -38,6 +38,15 @@ wxd_MessageDialog_SetOKCancelLabels(wxd_MessageDialog_t* self, const char* ok, c
     dlg->SetOKCancelLabels(wxString::FromUTF8(ok ? ok : ""), wxString::FromUTF8(cancel ? cancel : ""));
 }
 
+void
+wxd_MessageDialog_SetYesNoCancelLabels(wxd_MessageDialog_t* self, const char* yes, const char* no, const char* cancel)
+{
+    wxMessageDialog* dlg = (wxMessageDialog*)self;
+    if (!dlg) return;
+    dlg->SetYesNoCancelLabels(wxString::FromUTF8(yes ? yes : ""), wxString::FromUTF8(no ? no : ""),
+                              wxString::FromUTF8(cancel ? cancel : ""));
+}
+
 // ShowModal is handled by wxd_Dialog_ShowModal((wxd_Dialog*)dlg_ptr)
 // Destroy is handled by wxd_Window_Destroy((wxd_Window_t*)dlg_ptr)
 

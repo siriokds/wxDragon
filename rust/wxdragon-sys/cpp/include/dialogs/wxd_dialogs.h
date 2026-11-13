@@ -55,6 +55,10 @@ wxd_MessageDialog_SetYesNoLabels(wxd_MessageDialog_t* self, const char* yes, con
 WXD_EXPORTED void
 wxd_MessageDialog_SetOKCancelLabels(wxd_MessageDialog_t* self, const char* ok, const char* cancel);
 
+WXD_EXPORTED void
+wxd_MessageDialog_SetYesNoCancelLabels(wxd_MessageDialog_t* self, const char* yes, const char* no,
+                                       const char* cancel);
+
 // --- FileDialog ---
 
 WXD_EXPORTED wxd_FileDialog_t*
