@@ -210,6 +210,26 @@ impl MenuBar {
             Some(unsafe { Menu::from_raw(ptr) })
         }
     }
+
+    /// Inserts a menu at the given position (`wxMenuBar::Insert`); the menu bar takes ownership.
+    /// Returns false on failure.
+    pub fn insert(&self, pos: usize, menu: Menu, title: &str) -> bool {
+        let c_title = CString::new(title).unwrap_or_default();
+        let raw = menu.into_raw_mut();
+        let done = unsafe { ffi::wxd_MenuBar_Insert(self.ptr, pos, raw, c_title.as_ptr()) };
+        if !done {
+            // Not taken: adopt it again so that it is destroyed.
+            drop(unsafe { Menu::from_raw(raw) });
+        }
+        done
+    }
+
+    /// Removes the menu at the given position (`wxMenuBar::Remove`) and returns it, now owned by
+    /// the caller (dropped, it is destroyed). None if there is no menu there.
+    pub fn remove(&self, pos: usize) -> Option<Menu> {
+        let ptr = unsafe { ffi::wxd_MenuBar_Remove(self.ptr, pos) };
+        if ptr.is_null() { None } else { Some(unsafe { Menu::from_raw(ptr) }) }
+    }
 }
 
 // Note: No Drop impl here, as wxFrame takes ownership via SetMenuBar.

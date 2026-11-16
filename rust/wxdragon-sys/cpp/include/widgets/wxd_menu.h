@@ -286,6 +286,20 @@ wxd_MenuBar_SetMenuLabel(wxd_MenuBar_t* menubar, size_t pos, const char* label);
 WXD_EXPORTED wxd_Menu_t*
 wxd_MenuBar_Replace(wxd_MenuBar_t* menubar, size_t pos, wxd_Menu_t* menu, const char* title);
 
+/**
+ * @brief Insert a menu at the given position (the menu bar takes ownership).
+ * Returns false on failure (the caller keeps ownership then).
+ */
+WXD_EXPORTED bool
+wxd_MenuBar_Insert(wxd_MenuBar_t* menubar, size_t pos, wxd_Menu_t* menu, const char* title);
+
+/**
+ * @brief Remove the menu at the given position from the menu bar.
+ * Returns the removed menu (caller takes ownership), or NULL.
+ */
+WXD_EXPORTED wxd_Menu_t*
+wxd_MenuBar_Remove(wxd_MenuBar_t* menubar, size_t pos);
+
 WXD_EXPORTED void
 wxd_MenuItem_Destroy(wxd_MenuItem_t* item);
 

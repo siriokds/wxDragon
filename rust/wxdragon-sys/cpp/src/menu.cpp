@@ -502,6 +502,25 @@ wxd_MenuBar_Replace(wxd_MenuBar_t* menubar, size_t pos, wxd_Menu_t* menu, const 
     return reinterpret_cast<wxd_Menu_t*>(old);
 }
 
+WXD_EXPORTED bool
+wxd_MenuBar_Insert(wxd_MenuBar_t* menubar, size_t pos, wxd_Menu_t* menu, const char* title)
+{
+    if (!menubar || !menu)
+        return false;
+    wxMenuBar* wx_menubar = reinterpret_cast<wxMenuBar*>(menubar);
+    wxMenu* wx_menu = reinterpret_cast<wxMenu*>(menu);
+    return wx_menubar->Insert(pos, wx_menu, wxString::FromUTF8(title ? title : ""));
+}
+
+WXD_EXPORTED wxd_Menu_t*
+wxd_MenuBar_Remove(wxd_MenuBar_t* menubar, size_t pos)
+{
+    if (!menubar || pos >= reinterpret_cast<wxMenuBar*>(menubar)->GetMenuCount())
+        return nullptr;
+    wxMenuBar* wx_menubar = reinterpret_cast<wxMenuBar*>(menubar);
+    return reinterpret_cast<wxd_Menu_t*>(wx_menubar->Remove(pos));
+}
+
 // --- MenuItem Functions ---
 WXD_EXPORTED void
 wxd_MenuItem_Destroy(wxd_MenuItem_t* item)
