@@ -112,6 +112,12 @@ impl Menu {
         self.owned
     }
 
+    /// The platform's own menu behind this one (`wxMenu::GetHMenu`): an `NSMenu*` on macOS, an
+    /// `HMENU` on Windows; null elsewhere.
+    pub fn native_handle(&self) -> *mut std::ffi::c_void {
+        unsafe { ffi::wxd_Menu_GetNativeHandle(self.ptr) }
+    }
+
     /// Gets the number of items in the menu.
     pub fn get_item_count(&self) -> usize {
         unsafe { ffi::wxd_Menu_GetMenuItemCount(self.ptr) }

@@ -300,6 +300,13 @@ wxd_MenuBar_Insert(wxd_MenuBar_t* menubar, size_t pos, wxd_Menu_t* menu, const c
 WXD_EXPORTED wxd_Menu_t*
 wxd_MenuBar_Remove(wxd_MenuBar_t* menubar, size_t pos);
 
+/**
+ * @brief The platform's own menu behind a wxMenu (wxMenu::GetHMenu): an NSMenu* on macOS,
+ * an HMENU on Windows; NULL elsewhere.
+ */
+WXD_EXPORTED void*
+wxd_Menu_GetNativeHandle(const wxd_Menu_t* menu);
+
 WXD_EXPORTED void
 wxd_MenuItem_Destroy(wxd_MenuItem_t* item);
 

@@ -521,6 +521,18 @@ wxd_MenuBar_Remove(wxd_MenuBar_t* menubar, size_t pos)
     return reinterpret_cast<wxd_Menu_t*>(wx_menubar->Remove(pos));
 }
 
+WXD_EXPORTED void*
+wxd_Menu_GetNativeHandle(const wxd_Menu_t* menu)
+{
+    if (!menu)
+        return nullptr;
+#if defined(__WXOSX__) || defined(__WXMSW__)
+    return (void*)reinterpret_cast<const wxMenu*>(menu)->GetHMenu();
+#else
+    return nullptr;
+#endif
+}
+
 // --- MenuItem Functions ---
 WXD_EXPORTED void
 wxd_MenuItem_Destroy(wxd_MenuItem_t* item)
