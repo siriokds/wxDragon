@@ -190,6 +190,12 @@ wxd_Font_CreateSystemMonospaced(int point_size);
 WXD_EXPORTED wxd_Font_t*
 wxd_Font_WithMonospacedDigits(const wxd_Font_t* font);
 
+// A new wxFont object sharing `font`'s data (wx's copy constructor): everything
+// the font carries survives, also what its description does not say (a native
+// font built by hand, its features). NULL on failure.
+WXD_EXPORTED wxd_Font_t*
+wxd_Font_Copy(const wxd_Font_t* font);
+
 WXD_EXPORTED void
 wxd_Font_Destroy(wxd_Font_t* font);
 

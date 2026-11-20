@@ -355,11 +355,18 @@ impl Default for Font {
 }
 
 impl Clone for Font {
-    /// Creates a deep copy of this font by allocating a new C++ wxFont object.
-    /// This avoids the use-after-free / double-free bugs that would result from
-    /// a shallow pointer copy.
+    /// A new C++ wxFont object (no shallow pointer copy, so no use-after-free or
+    /// double free) made with wx's copy constructor: it shares the font's data, so a
+    /// font built from a native one (`with_monospaced_digits`, `system_monospaced`)
+    /// stays what it is. `to_owned` rebuilds from the description instead and would
+    /// lose what the description does not say.
     fn clone(&self) -> Self {
-        self.to_owned()
+        let ptr = unsafe { ffi::wxd_Font_Copy(self.ptr) };
+        if ptr.is_null() {
+            self.to_owned()
+        } else {
+            unsafe { Font::from_ptr(ptr, true) }
+        }
     }
 }
 
