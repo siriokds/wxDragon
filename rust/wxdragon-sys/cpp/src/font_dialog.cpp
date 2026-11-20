@@ -199,6 +199,14 @@ wxd_Font_AddPrivateFont(const char* font_file_path)
 
 #ifndef __WXOSX__
 WXD_EXPORTED wxd_Font_t*
+wxd_Font_WithMonospacedDigits(const wxd_Font_t* self)
+{
+    const wxFont* base = reinterpret_cast<const wxFont*>(self);
+    if (!base || !base->IsOk()) return nullptr;
+    return reinterpret_cast<wxd_Font_t*>(new wxFont(*base));
+}
+
+WXD_EXPORTED wxd_Font_t*
 wxd_Font_CreateSystemMonospaced(int point_size)
 {
     wxFont* font = new wxFont(wxFontInfo(point_size).Family(wxFONTFAMILY_TELETYPE));

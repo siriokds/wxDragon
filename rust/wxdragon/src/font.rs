@@ -330,6 +330,19 @@ impl Font {
         }
     }
 
+    /// This font with tabular figures: every digit the same width, so dates, times and
+    /// sizes line up in columns (on macOS the system font's digits are proportional by
+    /// default). Elsewhere a copy. The result keeps the feature only while it is not
+    /// modified (changing size or weight rebuilds it from its description).
+    pub fn with_monospaced_digits(&self) -> Option<Font> {
+        let ptr = unsafe { ffi::wxd_Font_WithMonospacedDigits(self.ptr) };
+        if ptr.is_null() {
+            None
+        } else {
+            Some(unsafe { Font::from_ptr(ptr, true) })
+        }
+    }
+
     pub fn builder() -> FontBuilder {
         FontBuilder::default()
     }

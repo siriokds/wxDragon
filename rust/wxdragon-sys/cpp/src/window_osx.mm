@@ -1,4 +1,5 @@
 #import <AppKit/AppKit.h>
+#import <CoreText/CoreText.h>
 #include "../include/wxdragon.h"
 #include <wx/textctrl.h>
 #include <wx/toplevel.h>
@@ -111,6 +112,33 @@ wxd_MenuItem_GetNativeHandle(wxd_MenuItem_t* item)
     wxMenuItem* wx_item = reinterpret_cast<wxMenuItem*>(item);
     wxMenuItemImpl* peer = wx_item->GetPeer();
     return peer ? peer->GetHMenuItem() : nullptr;
+}
+
+wxd_Font_t*
+wxd_Font_WithMonospacedDigits(const wxd_Font_t* self)
+{
+    const wxFont* base = reinterpret_cast<const wxFont*>(self);
+    if (!base || !base->IsOk()) return nullptr;
+    CTFontRef ct = base->OSXGetCTFont();
+    if (!ct) return nullptr;
+    NSDictionary* feature = @{
+        (id)kCTFontFeatureTypeIdentifierKey: @(kNumberSpacingType),
+        (id)kCTFontFeatureSelectorIdentifierKey: @(kMonospacedNumbersSelector),
+    };
+    CTFontDescriptorRef descriptor = CTFontDescriptorCreateWithAttributes(
+        (CFDictionaryRef)@{ (id)kCTFontFeatureSettingsAttribute: @[feature] });
+    if (!descriptor) return nullptr;
+    CTFontRef tabular = CTFontCreateCopyWithAttributes(ct, 0.0, nullptr, descriptor);
+    CFRelease(descriptor);
+    if (!tabular) return nullptr;
+    // wxFont retains the CTFont it is given and draws with it as is.
+    wxFont* font = new wxFont(tabular);
+    CFRelease(tabular);
+    if (font->IsOk()) {
+        return reinterpret_cast<wxd_Font_t*>(font);
+    }
+    delete font;
+    return nullptr;
 }
 
 wxd_Font_t*

@@ -183,6 +183,13 @@ wxd_Font_AddPrivateFont(const char* font_file_path);
 WXD_EXPORTED wxd_Font_t*
 wxd_Font_CreateSystemMonospaced(int point_size);
 
+// A new font like `font` whose digits all have the same width (tabular figures),
+// so numbers line up in columns. On macOS the font's own CTFont with the
+// number-spacing feature set to monospaced numbers; elsewhere a plain copy (the
+// usual UI fonts there already have tabular digits). NULL on failure.
+WXD_EXPORTED wxd_Font_t*
+wxd_Font_WithMonospacedDigits(const wxd_Font_t* font);
+
 WXD_EXPORTED void
 wxd_Font_Destroy(wxd_Font_t* font);
 
