@@ -49,6 +49,12 @@ impl HyperlinkCtrlEventData {
         self.event.get_id()
     }
 
+    /// Controls whether the event is processed further. `skip(false)` marks the click as handled:
+    /// the control's default handler then does not open the URL in the browser.
+    pub fn skip(&self, skip: bool) {
+        self.event.skip(skip);
+    }
+
     /// Get the URL associated with the hyperlink control
     pub fn get_url(&self) -> Option<String> {
         // To get the URL, we need to find the HyperlinkCtrl that triggered this event
